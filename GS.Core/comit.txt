@@ -1,0 +1,18 @@
+git config --global user.name "Gustavo Silva"
+git config --global user.email "gustavoa18@gmail.com"
+
+
+git add .
+git commit -m "Renomeia Controles Básicos e ajusta namespace"
+
+git add .
+git commit -m "Renomeia Controles de Layout e ajusta namespace"
+
+git add .
+git commit -m "Controles Especiais e ajusta namespace"
+
+git add .
+git commit -m "Gráficos e Configurações namespace GS Core"
+
+git add .
+git commit -m "Cria GS.Core.UI.Demo com namespace único e build funcional"
