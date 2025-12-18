@@ -4,7 +4,7 @@ using ECTurbo.Codigos;
 
 namespace ECTurbo.Controles
 {
-    public class ECTurbo_Anos : ECTurbo_TextBox
+    public class ECTurbo_Anos : GsTextBox
     {
 		private int vAnoMin = 1582;
 		[DisplayName("_Ano Mínimo")]

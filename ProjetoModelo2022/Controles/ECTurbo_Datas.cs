@@ -4,7 +4,7 @@ using ECTurbo.Codigos;
 
 namespace ECTurbo.Controles
 {
-    public class ECTurbo_Datas : ECTurbo_TextBox
+    public class ECTurbo_Datas : GsTextBox
     {
         public ECTurbo_Datas() {
             TextAlign = HorizontalAlignment.Center;

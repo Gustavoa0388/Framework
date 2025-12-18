@@ -5,7 +5,7 @@ using ECTurbo.Codigos;
 
 namespace ECTurbo.Controles
 {
-    public class ECTurbo_Numericos : ECTurbo_TextBox
+    public class ECTurbo_Numericos : GsTextBox
     {
         public ECTurbo_Numericos() {
             Tag = "|numero";

@@ -37,11 +37,11 @@
             ecTurbo_Label5 = new ECTurbo.Controles.ECTurbo_Label();
             ecTurbo_Label6 = new ECTurbo.Controles.ECTurbo_Label();
             ecTurbo_Label7 = new ECTurbo.Controles.ECTurbo_Label();
-            TxtBanco = new ECTurbo.Controles.ECTurbo_TextBox();
-            TxtServidor = new ECTurbo.Controles.ECTurbo_TextBox();
-            TxtPorta = new ECTurbo.Controles.ECTurbo_TextBox();
-            TxtUsuario = new ECTurbo.Controles.ECTurbo_TextBox();
-            TxtSenha = new ECTurbo.Controles.ECTurbo_TextBox();
+            TxtBanco = new ECTurbo.Controles.GsTextBox();
+            TxtServidor = new ECTurbo.Controles.GsTextBox();
+            TxtPorta = new ECTurbo.Controles.GsTextBox();
+            TxtUsuario = new ECTurbo.Controles.GsTextBox();
+            TxtSenha = new ECTurbo.Controles.GsTextBox();
             BtSalvar = new ECTurbo.Controles.ECTurbo_Botao();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -285,11 +285,11 @@
         private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label5;
         private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label6;
         private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label7;
-        private ECTurbo.Controles.ECTurbo_TextBox TxtBanco;
-        private ECTurbo.Controles.ECTurbo_TextBox TxtServidor;
-        private ECTurbo.Controles.ECTurbo_TextBox TxtPorta;
-        private ECTurbo.Controles.ECTurbo_TextBox TxtUsuario;
-        private ECTurbo.Controles.ECTurbo_TextBox TxtSenha;
+        private ECTurbo.Controles.GsTextBox TxtBanco;
+        private ECTurbo.Controles.GsTextBox TxtServidor;
+        private ECTurbo.Controles.GsTextBox TxtPorta;
+        private ECTurbo.Controles.GsTextBox TxtUsuario;
+        private ECTurbo.Controles.GsTextBox TxtSenha;
         private ECTurbo.Controles.ECTurbo_Botao BtSalvar;
     }
 }

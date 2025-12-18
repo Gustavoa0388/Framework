@@ -2,7 +2,7 @@
 
 namespace ECTurbo.Controles
 {
-    public class ECTurbo_TextBoxSenha : ECTurbo_TextBox
+    public class ECTurbo_TextBoxSenha : GsTextBox
     {
         private PictureBox BtVerSenha;
 

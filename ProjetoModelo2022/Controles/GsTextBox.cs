@@ -2,12 +2,12 @@
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_TextBox : TextBox
+    public class GsTextBox : TextBox
     { 
 
-        public ECTurbo_TextBox()
+        public GsTextBox()
         {
             Tag = "";
         }
