@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using GS.Core.UI.Theming;
+using System.ComponentModel;
 
 
 
 namespace GS.Core.UI.Controls
 {
-    public class GsTextBox : TextBox
+    public class GsTextBox : TextBox, IThemedControl
     { 
 
         public GsTextBox()
@@ -133,6 +134,13 @@ namespace GS.Core.UI.Controls
             }
         }
 
+        public void ApplyTheme(GsTheme theme)
+        {
+            BackColor = theme.InputBack;
+            ForeColor = theme.ForeColor;
+            Font = theme.DefaultFont;
+            BorderStyle = BorderStyle.FixedSingle;
+        }
 
     }
 }

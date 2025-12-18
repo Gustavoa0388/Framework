@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using GS.Core.UI.Theming;
+using System.ComponentModel;
 using System.Drawing.Drawing2D;
 
 
 namespace GS.Core.UI.Controls
 {
-    public class GsButton : Button
+    public class GsButton : Button, IThemedControl
     {
         public GsButton()
         {
@@ -323,5 +324,15 @@ namespace GS.Core.UI.Controls
             base.OnLeave(e);
             OnMouseLeave(e);
         }
+
+        public void ApplyTheme(GsTheme theme)
+        {
+            BackColor = theme.Primary;
+            ForeColor = Color.White;
+            Font = theme.DefaultFont;
+            FlatStyle = FlatStyle.Flat;
+            FlatAppearance.BorderColor = theme.Border;
+        }
+
     }
 }

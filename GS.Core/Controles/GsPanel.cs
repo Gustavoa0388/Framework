@@ -1,11 +1,11 @@
-﻿using System.Drawing.Drawing2D;
-
+﻿using GS.Core.UI.Theming;
 using System.ComponentModel;
+using System.Drawing.Drawing2D;
 
 
 namespace GS.Core.UI.Controls
 {
-    public class GsPanel : Panel
+    public class GsPanel : Panel, IThemedControl
     {
         public GsPanel()
         {
@@ -250,6 +250,9 @@ namespace GS.Core.UI.Controls
             }
         }
         // FIM - EFEITO SOMBRA
-
+        public void ApplyTheme(GsTheme theme)
+        {
+            BackColor = theme.Secondary;
+        }
     }
 }

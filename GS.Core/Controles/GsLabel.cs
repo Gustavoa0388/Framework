@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿using GS.Core.UI.Theming;
+using System.ComponentModel;
 using System.Drawing.Drawing2D;
 
 namespace GS.Core.UI.Controls
 {
-    public class GsLabel : Label
+    public class GsLabel : Label, IThemedControl
     {
         public GsLabel()
         {
@@ -242,6 +243,13 @@ namespace GS.Core.UI.Controls
                     g.DrawString(Text, Font, Pincel, new PointF(textX, textY));
                 }
             }
+        }
+
+        public void ApplyTheme(GsTheme theme)
+        {
+            ForeColor = theme.ForeColor;
+            Font = theme.DefaultFont;
+            BackColor = System.Drawing.Color.Transparent;
         }
     }
 }
