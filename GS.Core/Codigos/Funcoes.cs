@@ -95,7 +95,7 @@ namespace GS.Core.UI
 
         public static void MsgOk(string Msg, string Titulo = "SUCESSO!", int Opacidade = 60, Color Cor = default)
         {
-            Formularios.F frm = new Formularios.FormMsg();
+            Formularios.FormMsg frm = new Formularios.FormMsg();
 
             frm.TituloSucesso.Text = Titulo;
             frm.MsgSucesso.Text = Msg;

@@ -1,5 +1,9 @@
-﻿namespace ECTurbo.Formularios
+﻿using System;
+using System.Windows.Forms;
+
+namespace GS.Core.UI.Formularios
 {
+    public partial class FormMsg : Form;
     partial class FormMsg
     {
         /// <summary>

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 
 
-namespace GS.Core.UI
+namespace GS.Core.UI.Formularios
 {
     public partial class FormMsg : Form
     {
@@ -21,13 +21,13 @@ namespace GS.Core.UI
 
         private void BtOkSucesso_Click(object sender, EventArgs e)
         {
-            Close();
+            this.Close();
         }
 
         private void MpConteudo_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-                Close();
+                this.Close();
         }
 
         private void FormMsg_Load(object sender, EventArgs e)
@@ -37,13 +37,14 @@ namespace GS.Core.UI
 
         private void BtSim_Click(object sender, EventArgs e)
         {
-            Funcoes.Resposta = true;
-            Close();
+            this.DialogResult = DialogResult.Yes;
+            this.Close();
         }
 
         private void BtNao_Click(object sender, EventArgs e)
         {
-            Close();
+            this.DialogResult = DialogResult.No;
+            this.Close();
         }
     }
 }
