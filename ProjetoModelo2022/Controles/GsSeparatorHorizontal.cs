@@ -5,9 +5,9 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_SeparadorHorizontal : Control
+    public class GsSeparatorHorizontal : Control
     {
-        public ECTurbo_SeparadorHorizontal()
+        public GsSeparatorHorizontal()
         {
             DoubleBuffered = true;
             Size = new Size(150, 1);

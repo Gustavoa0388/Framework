@@ -4,7 +4,7 @@ using ECTurbo.Codigos;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Anos : GsTextBox
+    public class GsYearSelector : GsTextBox
     {
 		private int vAnoMin = 1582;
 		[DisplayName("_Ano Mínimo")]

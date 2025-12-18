@@ -3,12 +3,12 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Grafico1 : Control
+    public class GsChart1 : Control
     {
         private System.Windows.Forms.Timer animationTimer;
         private float targetPercentual;
 
-        public ECTurbo_Grafico1()
+        public GsChart1()
         {
             DoubleBuffered = true;
             Size = new Size(100, 100);

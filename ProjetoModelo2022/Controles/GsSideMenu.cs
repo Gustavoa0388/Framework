@@ -5,9 +5,9 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_MenuLateral : Panel
+    public class GsSideMenu : Panel
     {
-        public ECTurbo_MenuLateral()
+        public GsSideMenu()
         {
             DoubleBuffered = true;
             BackColor = Color.Transparent;

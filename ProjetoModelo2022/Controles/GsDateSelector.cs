@@ -4,9 +4,9 @@ using ECTurbo.Codigos;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Datas : GsTextBox
+    public class GsDateSelector : GsTextBox
     {
-        public ECTurbo_Datas() {
+        public GsDateSelector() {
             TextAlign = HorizontalAlignment.Center;
             Tag = "|data";
         }

@@ -6,9 +6,9 @@ using ECTurbo.Codigos;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_LabelProgresso : Label
+    public class GsProgressLabel : Label
     {
-        public ECTurbo_LabelProgresso()
+        public GsProgressLabel()
         {
             DoubleBuffered = true;
         }

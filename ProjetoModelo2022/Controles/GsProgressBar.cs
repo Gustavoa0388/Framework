@@ -4,13 +4,13 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_BarraProgresso : Control
+    public class GsProgressBar : Control
     {
         private System.Windows.Forms.Timer timer;
         private float targetPercentual;
         private float step = 1; // Passo de incremento da animação
 
-        public ECTurbo_BarraProgresso()
+        public GsProgressBar()
         {
             DoubleBuffered = true;
             MinimumSize = new Size(50, 12);

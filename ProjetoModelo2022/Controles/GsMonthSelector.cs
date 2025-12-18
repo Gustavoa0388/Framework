@@ -2,7 +2,7 @@
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_CbMeses : GsComboBox
+    public class GsMonthSelector : GsComboBox
     {
 		private bool vMesAbreviado = false;
 		[DisplayName("_Mês Abreviado")]

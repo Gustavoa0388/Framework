@@ -6,9 +6,9 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Imagem : PictureBox
+    public class GsImageBox : PictureBox
     {
-        public ECTurbo_Imagem()
+        public GsImageBox()
         {
             DoubleBuffered = true;
             Size = new Size(50, 50);

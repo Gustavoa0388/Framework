@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Grafico2 : Control
+    public class GsChart2 : Control
     {
 
         private System.Windows.Forms.Timer timer;
@@ -34,7 +34,7 @@ namespace GS.Core.UI.Controls
             if (vPercentual == targetPercentual)
                 timer.Stop();
         }
-        public ECTurbo_Grafico2()
+        public GsChart2()
         {
             DoubleBuffered = true;
             Size = new Size(100, 100);

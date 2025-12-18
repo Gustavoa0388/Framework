@@ -5,9 +5,9 @@ using ECTurbo.Codigos;
 
 namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Numericos : GsTextBox
+    public class GsNumericBox : GsTextBox
     {
-        public ECTurbo_Numericos() {
+        public GsNumericBox() {
             Tag = "|numero";
         }
 
