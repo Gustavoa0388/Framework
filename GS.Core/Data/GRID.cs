@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Reflection;
 
-namespace GS.Core.UI
+namespace GS.Core.UI.Data
 {
     public class GRID
     {

@@ -1,6 +1,6 @@
-﻿namespace GS.Core.UI.Formularios
+﻿namespace GS.Core.UI.Forms
 {
-    partial class FrmPrincipal
+    partial class GsBaseForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,19 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            SuspendLayout();
-            // 
-            // FrmPrincipal
-            // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            KeyPreview = true;
-            Name = "FrmPrincipal";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "FrmPrincipal";
-            KeyDown += FrmPrincipal_KeyDown;
-            ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "GsBaseForm";
         }
 
         #endregion

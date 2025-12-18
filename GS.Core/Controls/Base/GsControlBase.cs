@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace GS.Core.UI.Controls.Base
+namespace GS.Core.UI.Controles.Base
 {
     public abstract class GsControlBase : Control
     {

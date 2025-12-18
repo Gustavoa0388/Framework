@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 using GS.Core.UI.Properties;
 using GS.Core.UI;
 
-namespace ECTurbo_CRUD
+namespace GS.Core.UI.Data
 {
     public class MYSQL
     {

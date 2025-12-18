@@ -1,7 +1,4 @@
-﻿
-
-using ECTurbo_CRUD;
-
+﻿using GS.Core.UI.Data;
 using GS.Core.UI.Properties;
 
 namespace GS.Core.UI.Formularios

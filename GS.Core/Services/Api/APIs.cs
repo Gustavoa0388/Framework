@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Net.Http;
-
 using Newtonsoft.Json;
 
-namespace GS.Core.UI
+namespace GS.Core.UI.Services.Api
 {
     public class APIs
     {
