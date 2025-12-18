@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_LabelProgresso : Label
     {

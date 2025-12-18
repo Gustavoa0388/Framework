@@ -1,12 +1,12 @@
 ﻿using ProjetoModelo2022.Properties;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_TextBoxSenha : GsTextBox
+    public class GsPasswordTextBox : GsTextBox
     {
         private PictureBox BtVerSenha;
 
-        public ECTurbo_TextBoxSenha()
+        public GsPasswordTextBox()
         {
             UseSystemPasswordChar = true;
             Layout += ECTurbo_TextBoxSenha_Layout;

@@ -3,15 +3,15 @@ using System.Drawing.Drawing2D;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_ToggleButton : CheckBox
+    public class GsToggleButton : CheckBox
     {
         private float animationProgress = 1f;
         private const float animationStep = 0.05f; // Velocidade da animação
         private System.Windows.Forms.Timer animationTimer;
 
-        public ECTurbo_ToggleButton()
+        public GsToggleButton()
         {
             Tag = "";
             DoubleBuffered = true;

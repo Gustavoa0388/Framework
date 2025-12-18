@@ -2,7 +2,7 @@
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_Anos : GsTextBox
     {

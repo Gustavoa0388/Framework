@@ -3,11 +3,11 @@ using ECTurbo.Codigos;
 using System.ComponentModel;
 
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Panel : Panel
+    public class GsPanel : Panel
     {
-        public ECTurbo_Panel()
+        public GsPanel()
         {
             DoubleBuffered = true;
         }

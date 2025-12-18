@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_CbMeses : ECTurbo_ComboBox
+    public class ECTurbo_CbMeses : GsComboBox
     {
 		private bool vMesAbreviado = false;
 		[DisplayName("_Mês Abreviado")]

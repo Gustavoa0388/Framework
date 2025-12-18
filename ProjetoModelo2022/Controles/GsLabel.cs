@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Drawing2D;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Label : Label
+    public class GsLabel : Label
     {
-        public ECTurbo_Label()
+        public GsLabel()
         {
             DoubleBuffered = true;
             TextAlign = ContentAlignment.MiddleLeft;

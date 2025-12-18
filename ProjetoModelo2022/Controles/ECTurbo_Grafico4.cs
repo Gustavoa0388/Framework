@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_Grafico4 : Control
     {

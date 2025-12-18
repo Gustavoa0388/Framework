@@ -3,11 +3,11 @@ using System.Drawing.Drawing2D;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_Botao : Button
+    public class GsButton : Button
     {
-        public ECTurbo_Botao()
+        public GsButton()
         {
             DoubleBuffered = true;
             Cursor = Cursors.Hand;

@@ -3,7 +3,7 @@ using System.Drawing;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_Configuracoes : Component
     {

@@ -4,11 +4,11 @@ using System.Windows.Forms;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_ComboBox : ComboBox
+    public class GsComboBox : ComboBox
     {
-        public ECTurbo_ComboBox()
+        public GsComboBox()
         {
             Tag = "";
             AutoCompleteMode = AutoCompleteMode.SuggestAppend;

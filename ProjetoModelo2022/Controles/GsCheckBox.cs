@@ -4,15 +4,15 @@ using System.Drawing.Drawing2D;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_CheckBox : CheckBox
+    public class GsCheckBox : CheckBox
     {
         private System.Windows.Forms.Timer timer;
         private float animationProgress;
         private const float animationStep = 0.05f; // Define a velocidade da animação
 
-        public ECTurbo_CheckBox()
+        public GsCheckBox()
         {
             Tag = "";
 

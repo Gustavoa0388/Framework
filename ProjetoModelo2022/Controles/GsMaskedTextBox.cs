@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_MaskedTextBox : MaskedTextBox
+    public class GsMaskedTextBox : MaskedTextBox
     {
-        public ECTurbo_MaskedTextBox()
+        public GsMaskedTextBox()
         {
             Tag = "";
         }

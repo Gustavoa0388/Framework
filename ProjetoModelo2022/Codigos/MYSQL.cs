@@ -2,7 +2,7 @@
 using System.Globalization;
 
 using ECTurbo.Codigos;
-using ECTurbo.Controles;
+using GS.Core.UI.Controls;
 
 using MySql.Data.MySqlClient;
 
@@ -1013,7 +1013,7 @@ namespace ECTurbo_CRUD
                 if (tag.Contains("|obgt"))
                 {
 
-                    if (Ctr is ECTurbo_MaskedTextBox mk)
+                    if (Ctr is GsMaskedTextBox mk)
                     {
                         if (mk.SalvarMascara == true)
                         {

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_Numericos : GsTextBox
     {

@@ -2,16 +2,16 @@
 using System.Drawing.Drawing2D;
 using ECTurbo.Codigos;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
-    public class ECTurbo_RadioButton : RadioButton
+    public class GsRadioButton : RadioButton
     {
         private System.Windows.Forms.Timer animationTimer;
         private float currentMarkerSize;
         private bool isAnimating;
         private bool expanding; // Controla se o marcador está aumentando ou diminuindo
 
-        public ECTurbo_RadioButton()
+        public GsRadioButton()
         {
             Tag = "";
 

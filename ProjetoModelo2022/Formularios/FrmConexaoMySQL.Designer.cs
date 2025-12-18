@@ -30,19 +30,19 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmConexaoMySQL));
             pictureBox1 = new PictureBox();
-            ecTurbo_Label1 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label2 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label3 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label4 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label5 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label6 = new ECTurbo.Controles.ECTurbo_Label();
-            ecTurbo_Label7 = new ECTurbo.Controles.ECTurbo_Label();
-            TxtBanco = new ECTurbo.Controles.GsTextBox();
-            TxtServidor = new ECTurbo.Controles.GsTextBox();
-            TxtPorta = new ECTurbo.Controles.GsTextBox();
-            TxtUsuario = new ECTurbo.Controles.GsTextBox();
-            TxtSenha = new ECTurbo.Controles.GsTextBox();
-            BtSalvar = new ECTurbo.Controles.ECTurbo_Botao();
+            ecTurbo_Label1 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label2 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label3 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label4 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label5 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label6 = new GS.Core.UI.Controls.GsLabel();
+            ecTurbo_Label7 = new GS.Core.UI.Controls.GsLabel();
+            TxtBanco = new GS.Core.UI.Controls.GsTextBox();
+            TxtServidor = new GS.Core.UI.Controls.GsTextBox();
+            TxtPorta = new GS.Core.UI.Controls.GsTextBox();
+            TxtUsuario = new GS.Core.UI.Controls.GsTextBox();
+            TxtSenha = new GS.Core.UI.Controls.GsTextBox();
+            BtSalvar = new GS.Core.UI.Controls.GsButton();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -232,7 +232,7 @@
             BtSalvar.ForeColor = Color.White;
             BtSalvar.Location = new Point(23, 264);
             BtSalvar.Name = "BtSalvar";
-            BtSalvar.PosicaoImagem = ECTurbo.Controles.ECTurbo_Botao.Posicoes.Esquerda;
+            BtSalvar.PosicaoImagem = GS.Core.UI.Controls.GsButton.Posicoes.Esquerda;
             BtSalvar.Size = new Size(428, 45);
             BtSalvar.TabIndex = 4;
             BtSalvar.TamanhoIcone = 16;
@@ -278,18 +278,18 @@
         #endregion
 
         private PictureBox pictureBox1;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label1;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label2;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label3;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label4;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label5;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label6;
-        private ECTurbo.Controles.ECTurbo_Label ecTurbo_Label7;
-        private ECTurbo.Controles.GsTextBox TxtBanco;
-        private ECTurbo.Controles.GsTextBox TxtServidor;
-        private ECTurbo.Controles.GsTextBox TxtPorta;
-        private ECTurbo.Controles.GsTextBox TxtUsuario;
-        private ECTurbo.Controles.GsTextBox TxtSenha;
-        private ECTurbo.Controles.ECTurbo_Botao BtSalvar;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label1;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label2;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label3;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label4;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label5;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label6;
+        private GS.Core.UI.Controls.GsLabel ecTurbo_Label7;
+        private GS.Core.UI.Controls.GsTextBox TxtBanco;
+        private GS.Core.UI.Controls.GsTextBox TxtServidor;
+        private GS.Core.UI.Controls.GsTextBox TxtPorta;
+        private GS.Core.UI.Controls.GsTextBox TxtUsuario;
+        private GS.Core.UI.Controls.GsTextBox TxtSenha;
+        private GS.Core.UI.Controls.GsButton BtSalvar;
     }
 }

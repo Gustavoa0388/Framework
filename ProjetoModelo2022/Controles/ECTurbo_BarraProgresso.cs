@@ -2,7 +2,7 @@
 using ECTurbo.Codigos;
 using System.ComponentModel;
 
-namespace ECTurbo.Controles
+namespace GS.Core.UI.Controls
 {
     public class ECTurbo_BarraProgresso : Control
     {
