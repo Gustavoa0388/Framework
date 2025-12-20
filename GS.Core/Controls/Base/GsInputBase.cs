@@ -5,7 +5,7 @@ using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Base
 {
-    public abstract class GsInputBase : UserControl, IThemedControl, IGsValidatable
+    public abstract class GsInputBase : UserControl, IThemedControl, IGsRequiredAware
 
     {
         protected TextBox InnerTextBox;

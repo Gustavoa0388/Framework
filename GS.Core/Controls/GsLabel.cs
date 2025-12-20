@@ -50,6 +50,10 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Espaço Imagem x Texto")]
         public int EspacoTexto { get; set; } = 5;
 
+        [DisplayName("_Require")]
+        public Control TargetControl { get; set; }
+
+
         // ===============================
         // PINTURA
         // ===============================
@@ -70,6 +74,19 @@ namespace GS.Core.UI.Controls
             SizeF textSize = g.MeasureString(Text, Font);
             float textX = 0;
             float textY = (Height - textSize.Height) / 2;
+
+            bool isRequired = false;
+
+            if (TargetControl is IGsRequiredAware req)
+                isRequired = req.Required;
+            
+            string labelText = Text;
+
+            if (isRequired)
+                labelText += " *";
+
+            using var brush = new SolidBrush(ForeColor);
+            g.DrawString(labelText, Font, brush, new PointF(0, 0));
 
             // ===============================
             // SOMBRA (APENAS SE GRADIENTE)

@@ -64,6 +64,9 @@ namespace GS.Core.UI.Demo
             control.Location = new Point(x, y + 22);
             control.Width = width;
 
+            if (lbl is GsLabel gsLabel)
+                gsLabel.TargetControl = control;
+
             parent.Controls.Add(lbl);
             parent.Controls.Add(control);
         }
