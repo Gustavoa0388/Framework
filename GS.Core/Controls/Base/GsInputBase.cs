@@ -40,7 +40,7 @@ namespace GS.Core.UI.Controls.Base
         // ===============================
         // ANIMAÇÃO DE BORDA
         // ===============================
-        private readonly Timer _animTimer;
+        private readonly System.Windows.Forms.Timer _animTimer;
         private float _animProgress;
         private Color _fromBorder;
         private Color _toBorder;
@@ -63,7 +63,7 @@ namespace GS.Core.UI.Controls.Base
             BackColor = Color.Transparent;
 
             // Timer da animação (leve, ~60fps)
-            _animTimer = new Timer { Interval = 15 };
+            _animTimer = new System.Windows.Forms.Timer { Interval = 15 };
             _animTimer.Tick += AnimateTick;
         }
 
@@ -127,16 +127,20 @@ namespace GS.Core.UI.Controls.Base
         // ===============================
         // LAYOUT INTERNO
         // ===============================
-        private void UpdateLayout()
+        protected virtual void UpdateLayout()
         {
             if (InnerTextBox == null)
                 return;
 
-            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
-            InnerTextBox.Width = Width - Padding.Horizontal;
-            InnerTextBox.Height = Height - Padding.Vertical;
+            int rightPadding = Padding.Right + GetRightPadding();
 
-            UpdateErrorPosition();
+            InnerTextBox.Location = new Point(
+                Padding.Left,
+                Padding.Top
+            );
+
+            InnerTextBox.Width = Width - Padding.Left - rightPadding;
+            InnerTextBox.Height = Height - Padding.Vertical;
         }
 
         private void UpdateErrorPosition()
@@ -211,6 +215,17 @@ namespace GS.Core.UI.Controls.Base
 
             using var pen = new Pen(baseBorder, 1f);
             g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+
+            if (HasErrorIcon)
+            {
+                int x = Width - ErrorIconSize - ErrorIconPadding;
+                int y = (Height - ErrorIconSize) / 2;
+
+                g.DrawImage(
+                    Properties.Resources.error, // sua imagem
+                    new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
+                );
+            }
         }
 
         // ===============================
@@ -232,14 +247,19 @@ namespace GS.Core.UI.Controls.Base
 
         protected void ShowError(string message)
         {
+            HasErrorIcon = true;
             errorLabel?.ShowError(message);
-            StartBorderAnimation(ThemeManager.Current.Error);
+            UpdateLayout();
+            Invalidate();
         }
+
 
         protected void ClearError()
         {
+            HasErrorIcon = false;
             errorLabel?.ClearError();
-            StartBorderAnimation(ThemeManager.Current.InputBorder);
+            UpdateLayout();
+            Invalidate();
         }
 
         // ===============================
@@ -283,5 +303,15 @@ namespace GS.Core.UI.Controls.Base
                     InnerTextBox.PlaceholderText = value;
             }
         }
+
+        // Espaço reservado à direita para ícones (erro, botão, etc.)
+        protected virtual int GetRightPadding()
+        {
+            return HasErrorIcon ? (ErrorIconSize + ErrorIconPadding) : 0;
+        }
+        protected bool HasErrorIcon = false;
+        protected const int ErrorIconSize = 16;
+        protected const int ErrorIconPadding = 6;
+
     }
 }
