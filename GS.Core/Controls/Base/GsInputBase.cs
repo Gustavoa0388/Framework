@@ -5,7 +5,8 @@ using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Base
 {
-    public abstract class GsInputBase : UserControl, IThemedControl
+    public abstract class GsInputBase : UserControl, IThemedControl, IGsValidatable
+
     {
         protected TextBox InnerTextBox;
         protected bool IsHovered;
@@ -16,6 +17,10 @@ namespace GS.Core.UI.Controls.Base
 
         public bool Required { get; set; }
         public string RequiredMessage { get; set; } = "Campo obrigatório";
+
+        public bool IsValid { get; private set; } = true;
+
+        public string ErrorMessage { get; private set; } = string.Empty;
 
         protected GsInputBase()
         {
@@ -32,6 +37,29 @@ namespace GS.Core.UI.Controls.Base
             BackColor = ThemeManager.Current.InputBackground;
 
         }
+        public virtual void Validate()
+        {
+            if (!Required)
+            {
+                IsValid = true;
+                ClearError();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Text))
+            {
+                IsValid = false;
+                ErrorMessage = RequiredMessage;
+                ShowError(ErrorMessage);
+            }
+            else
+            {
+                IsValid = true;
+                ErrorMessage = string.Empty;
+                ClearError();
+            }
+        }
+
 
         protected abstract TextBox CreateInnerTextBox();
 
@@ -60,7 +88,7 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox.LostFocus += (_, _) =>
             {
                 IsFocused = false;
-                ValidateRequired();
+                Validate();
                 Invalidate();
             };
 
