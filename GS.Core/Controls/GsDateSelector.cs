@@ -7,7 +7,7 @@ namespace GS.Core.UI.Controls
     public class GsDateSelector : GsTextBox
     {
         public GsDateSelector() {
-            InnerTextBox.TextAlign = HorizontalAlignment.Center;
+            
             Tag = "|data";
         }
 
@@ -34,19 +34,14 @@ namespace GS.Core.UI.Controls
             }
         }
 
-
-
-
-
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
 
-            if(DataAtual == true)
+            if (InnerTextBox != null)
             {
-                Text = DateTime.Now.ToShortDateString();
+                InnerTextBox.TextAlign = HorizontalAlignment.Center;
             }
-
         }
 
         protected override void OnValidating(CancelEventArgs e)

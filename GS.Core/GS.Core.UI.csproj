@@ -8,11 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\eye_closed.png" />
+    <None Remove="Resources\eye_open.png" />
     <None Remove="Resources\icone_senha_mostrar.png" />
     <None Remove="Resources\icone_senha_ocultar.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\eye_closed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\eye_open.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\icone_senha_mostrar.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -23,6 +23,8 @@ namespace GS.Core.UI.Theming
         public Color InputBorder { get; set; }   
         public Color TextSecondary { get; set; }    // texto claro p/ dark
         public bool IsDark { get; set; }
+        public Color Error { get; set; }
+
 
 
 
