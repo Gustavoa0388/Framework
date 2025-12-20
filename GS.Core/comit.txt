@@ -16,3 +16,7 @@ git commit -m "Gráficos e Configurações namespace GS Core"
 
 git add .
 git commit -m "Cria GS.Core.UI.Demo com namespace único e build funcional"
+
+
+git add .
+git commit -m "Remove GsControlBase e consolida base em GsInputBase (UserControl)"

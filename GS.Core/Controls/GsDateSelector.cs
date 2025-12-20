@@ -7,7 +7,7 @@ namespace GS.Core.UI.Controls
     public class GsDateSelector : GsTextBox
     {
         public GsDateSelector() {
-            TextAlign = HorizontalAlignment.Center;
+            InnerTextBox.TextAlign = HorizontalAlignment.Center;
             Tag = "|data";
         }
 
@@ -72,7 +72,7 @@ namespace GS.Core.UI.Controls
             if(Convert.ToInt32(q[2]) < 1582)
             {
                 Funcoes.CriarLabel(this, "Ano inválido", descricao: "O Ano aceito deve ser acima de 1582");
-                SelectionStart = Text.Length;
+                InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                 e.Cancel = true;
             }
 
@@ -85,17 +85,17 @@ namespace GS.Core.UI.Controls
             base.OnKeyPress(e);
 
 
-            if (ReadOnly)
+            if (InnerTextBox.ReadOnly)
                 return;
 
             //Liberar backspace
             if (e.KeyChar == (char)Keys.Back)
                 return;
 
-            if (SelectionLength == Text.Length)
+            if (InnerTextBox.SelectionLength == Text.Length)
                 Text = string.Empty;
 
-            int i = SelectionStart;
+            int i = InnerTextBox.SelectionStart;
 
             int t = Text.Length;
 
@@ -138,7 +138,7 @@ namespace GS.Core.UI.Controls
                     Text = q[0] + "/0" + q[1] + "/";
                 }
 
-                SelectionStart = Text.Length;
+                InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
 
             }
 
@@ -153,18 +153,18 @@ namespace GS.Core.UI.Controls
                 Text = Text.Insert(i+1, e.KeyChar.ToString());
                 
 
-                SelectionStart = Text.Length;
+                InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
 
                 e.Handled = true;
 
                 return;
             }
 
-            //SelectionStart = Text.Length;
+            //InnerTextBox.SelectionStart = InnerTextBox.Text.Length;h;
 
             Text = Text.Insert(i, e.KeyChar.ToString());
 
-            SelectionStart = i + 1;
+            InnerTextBox.SelectionStart = i + 1;
 
             e.Handled = true;
 

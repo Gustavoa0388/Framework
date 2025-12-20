@@ -153,10 +153,10 @@ namespace GS.Core.UI.Controls
             base.OnKeyPress(e);
 
 
-            if (ReadOnly)
+            if (InnerTextBox.ReadOnly)
                 return;
 
-            if (Text.Length > 0 && SelectionLength == Text.Length && (e.KeyChar == '+' == false && e.KeyChar == '-' == false))
+            if (Text.Length > 0 && InnerTextBox.SelectionStart == Text.Length && (e.KeyChar == '+' == false && e.KeyChar == '-' == false))
             {
                 Text = string.Empty;
                 return;
@@ -192,7 +192,7 @@ namespace GS.Core.UI.Controls
             if (e.KeyChar == '+')
             {
                 Text = Text.Replace("-", "");
-                SelectionStart = Text.Length;
+                InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
             }
 
             if (FormatarAuto == true)
@@ -201,10 +201,10 @@ namespace GS.Core.UI.Controls
                 {
                     bool Neg = false;
 
-                    if (Text.Contains("-"))
+                    if (InnerTextBox.Text.Contains("-"))
                         Neg = true;
 
-                    string vTxtBox = Regex.Replace(Text, "[^0-9]", string.Empty);
+                    string vTxtBox = Regex.Replace(InnerTextBox.Text, "[^0-9]", string.Empty);
 
                     if (vTxtBox == string.Empty)
                         vTxtBox = "0,00";
@@ -230,7 +230,7 @@ namespace GS.Core.UI.Controls
                     if(Neg)
                         Text = "-" + Text;
 
-                    Select(Text.Length, 0);
+                    InnerTextBox.Select(InnerTextBox.Text.Length, 0);
                 }
 
                 e.Handled = true;
@@ -249,7 +249,7 @@ namespace GS.Core.UI.Controls
                     {
                         Text = "0,";
                         e.Handled = true;
-                        SelectionStart = Text.Length;
+                        InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                         return;
                     }
 
@@ -260,7 +260,7 @@ namespace GS.Core.UI.Controls
 
                 if (e.KeyChar == ',')
                 {
-                    if (SelectionStart < Text.Length - CasasDecimais)
+                    if (InnerTextBox.SelectionStart < InnerTextBox.Text.Length - CasasDecimais)
                     {
                         e.Handled = true;
                         return;
@@ -271,7 +271,7 @@ namespace GS.Core.UI.Controls
                 {
                     string[] q = Text.Split(",");
 
-                    if (q[1].Length == CasasDecimais && SelectionStart > Text.Length - CasasDecimais - 1)
+                    if (q[1].Length == CasasDecimais && InnerTextBox.SelectionStart > InnerTextBox.Text.Length - CasasDecimais - 1)
                     {
                         e.Handled = true;
                         return;
@@ -283,32 +283,26 @@ namespace GS.Core.UI.Controls
 
         Continuar:
 
-            int i = SelectionStart;
+            int i = InnerTextBox.SelectionStart;
 
-            //SelectionStart = Text.Length;
+            //InnerTextBox.SelectionStart = InnerTextBox.Text.Length;h;
 
             if (e.KeyChar == '+' || e.KeyChar == '-')
             {
                 e.Handled = true;
-                SelectionStart = Text.Length;
+                InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                 return;
             }
 
             Text = Text.Insert(i, e.KeyChar.ToString());
 
-            SelectionStart = i + 1;
+            InnerTextBox.SelectionStart = i + 1;
 
             e.Handled = true;
 
 
 
         }
-
-
-
-
-
-
 
         protected override void OnValidating(CancelEventArgs e)
         {
@@ -340,7 +334,7 @@ namespace GS.Core.UI.Controls
                 {
                     Funcoes.CriarLabel(this, "Valor Inválido", descricao: "Este campo não pode permanecer com valores zerados");
                     e.Cancel = true;
-                    SelectionStart = Text.Length;
+                    InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                     return;
                 }
 
@@ -356,7 +350,7 @@ namespace GS.Core.UI.Controls
         Continuar:
             Funcoes.CriarLabel(this, "Valor inválido");
             e.Cancel = true;
-            SelectionStart = Text.Length;
+            InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
 
             
         }

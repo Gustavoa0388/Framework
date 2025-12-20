@@ -8,11 +8,19 @@ namespace GS.Core.UI.Theming
         {
             BackColor = Color.White,
             ForeColor = Color.Black,
-            Primary = Color.FromArgb(0, 120, 215),
+            Primary = Color.FromArgb(25, 25, 25), // Preto suave
             Secondary = Color.Gray,
             InputBack = Color.White,
             Border = Color.Silver,
-            DefaultFont = SystemFonts.DefaultFont
+            DefaultFont = SystemFonts.DefaultFont,
+            InputBackground = Color.White,                  // Fundo limpo
+            InputHover = Color.FromArgb(245, 245, 245),// Cinza claro suave
+            InputFocus = Color.FromArgb(25, 25, 25),// Azul claro de foco
+            TextPrimary = Color.FromArgb(50, 50, 50),   // Preto suave (menos agressivo)
+            InputError = Color.FromArgb(255, 230, 230),
+            TextSecondary = Color.FromArgb(80, 80, 80), // Cinza escuro para texto secundário
+            InputBorder = Color.FromArgb(200, 200, 200),
+            IsDark = false
         };
 
         public static GsTheme Dark = new GsTheme
@@ -23,7 +31,15 @@ namespace GS.Core.UI.Theming
             Secondary = Color.DarkGray,
             InputBack = Color.FromArgb(45, 45, 45),
             Border = Color.FromArgb(70, 70, 70),
-            DefaultFont = SystemFonts.DefaultFont
+            DefaultFont = SystemFonts.DefaultFont,
+            InputBackground = Color.FromArgb(45, 45, 48),   // Fundo escuro padrão VS
+            InputHover = Color.FromArgb(60, 60, 64),   // Hover discreto
+            InputFocus = Color.FromArgb(70, 85, 110),  // Azul acinzentado
+            TextPrimary = Color.FromArgb(230, 230, 230), // Branco suave
+            InputError = Color.FromArgb(90, 40, 40),
+            InputBorder = Color.FromArgb(200, 200, 200),
+            TextSecondary = Color.Gainsboro, // Cinza claro para texto secundário
+            IsDark = true
         };
     }
 }

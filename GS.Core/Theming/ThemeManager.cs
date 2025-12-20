@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace GS.Core.UI.Theming
 {
     public static class ThemeManager
     {
-        public static GsTheme Current { get; private set; }
+        public static GsTheme Current { get; private set; } = GsThemes.Light;
 
         public static void ApplyTheme(Control root, GsTheme theme)
         {
@@ -28,5 +29,7 @@ namespace GS.Core.UI.Theming
             foreach (Control child in ctrl.Controls)
                 ApplyRecursive(child);
         }
+
     }
 }
+

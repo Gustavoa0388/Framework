@@ -1,81 +1,78 @@
-﻿using GS.Core.UI.Properties;
+﻿using System.Drawing;
+using GS.Core.UI.Controls.Base;
 
 namespace GS.Core.UI.Controls
 {
-    public class GsPasswordTextBox : GsTextBox
+    public class GsPasswordTextBox : GsInputBase
     {
-        private PictureBox BtVerSenha;
+        private bool _showPassword;
+        private bool _hoverEye;
 
         public GsPasswordTextBox()
         {
-            UseSystemPasswordChar = true;
-            Layout += ECTurbo_TextBoxSenha_Layout;
+            InnerTextBox.UseSystemPasswordChar = true;
+            Padding = new Padding(8, 6, 32, 6);
         }
 
-        protected override void OnCreateControl()
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            base.OnCreateControl();
-            CriarBotao();
-        }
+            base.OnMouseMove(e);
 
-        private void CriarBotao()
-        {
-            if (BtVerSenha == null)
+            bool hoverNow = GetEyeRect().Contains(e.Location);
+            if (hoverNow != _hoverEye)
             {
-                BtVerSenha = new PictureBox
-                {
-                    Cursor = Cursors.Hand,
-                    SizeMode = PictureBoxSizeMode.AutoSize,
-                    Image = Resources.icone_senha_mostrar,
-                    BackColor = Color.Transparent
-                };
-
-                BtVerSenha.MouseDown += BtVerSenhaMouseDown;
-                BtVerSenha.MouseUp += BtVerSenhaMouseUp;
-
-                Parent.Controls.Add(BtVerSenha);
-                BtVerSenha.BringToFront();
-
-                AtualizarPosicaoBotao();
+                _hoverEye = hoverNow;
+                Cursor = _hoverEye ? Cursors.Hand : Cursors.IBeam;
+                Invalidate();
             }
         }
 
-        private void ECTurbo_TextBoxSenha_Layout(object sender, EventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
-            AtualizarPosicaoBotao();
-        }
+            base.OnMouseDown(e);
 
-        private void AtualizarPosicaoBotao()
-        {
-            if (BtVerSenha != null)
+            if (GetEyeRect().Contains(e.Location))
             {
-                BtVerSenha.Top = Top + ((Height - BtVerSenha.Height) / 2);
-                BtVerSenha.Left = Right + 5;
+                TogglePassword();
             }
         }
 
-        private void BtVerSenhaMouseUp(object sender, MouseEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            BtVerSenha.Image = Resources.icone_senha_mostrar;
-            UseSystemPasswordChar = true;
+            base.OnPaint(e);
+            DrawEye(e.Graphics);
         }
 
-        private void BtVerSenhaMouseDown(object sender, MouseEventArgs e)
+        private void TogglePassword()
         {
-            BtVerSenha.Image = Resources.icone_senha_ocultar;
-            UseSystemPasswordChar = false;
+            _showPassword = !_showPassword;
+            InnerTextBox.UseSystemPasswordChar = !_showPassword;
+            Invalidate();
         }
 
-        protected override void Dispose(bool disposing)
+        private Rectangle GetEyeRect()
         {
-            base.Dispose(disposing);
-            if (BtVerSenha != null)
-            {
-                BtVerSenha.MouseDown -= BtVerSenhaMouseDown;
-                BtVerSenha.MouseUp -= BtVerSenhaMouseUp;
-                BtVerSenha.Dispose();
-            }
+            return new Rectangle(Width - 24, (Height - 16) / 2, 16, 16);
         }
 
+        private void DrawEye(Graphics g)
+        {
+            var rect = GetEyeRect();
+            var color =
+                _hoverEye ? Theme.InputFocus :
+                _showPassword ? Theme.TextPrimary :
+                Theme.TextPlaceholder;
+
+            using var pen = new Pen(color, 1.5f);
+
+            g.DrawEllipse(pen, rect);
+            g.DrawEllipse(
+                pen,
+                rect.X + 5,
+                rect.Y + 5,
+                rect.Width - 10,
+                rect.Height - 10
+            );
+        }
     }
 }

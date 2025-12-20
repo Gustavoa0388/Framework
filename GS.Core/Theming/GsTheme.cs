@@ -14,5 +14,20 @@ namespace GS.Core.UI.Theming
         public Color Border { get; set; }
 
         public Font DefaultFont { get; set; }
+        public Color InputBackground { get; set; }
+        public Color InputHover { get; set; }
+        public Color InputFocus { get; set; }
+        public Color TextPrimary { get; set; }
+        public Color InputError { get; set; }
+        public Color TextPlaceholder { get; set; }
+        public Color InputBorder { get; set; }   
+        public Color TextSecondary { get; set; }    // texto claro p/ dark
+        public bool IsDark { get; set; }
+
+
+
+
+
+
     }
 }

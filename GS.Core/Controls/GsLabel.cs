@@ -1,6 +1,8 @@
 ﻿using GS.Core.UI.Theming;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace GS.Core.UI.Controls
 {
@@ -9,247 +11,163 @@ namespace GS.Core.UI.Controls
         public GsLabel()
         {
             DoubleBuffered = true;
+            AutoSize = true;
             TextAlign = ContentAlignment.MiddleLeft;
+            BackColor = Color.Transparent;
         }
 
-        private bool vQuebraTexto = false;
+        // ===============================
+        // PROPRIEDADES CUSTOM
+        // ===============================
+
         [DisplayName("_Quebra de Texto")]
-        public bool QuebraTexto
-        {
-            get { return vQuebraTexto; }
-            set { vQuebraTexto = value; Invalidate(); }
-        }
+        public bool QuebraTexto { get; set; } = false;
 
-        private ContentAlignment textAlign = ContentAlignment.MiddleLeft;
-        public ContentAlignment TextAlign
-        {
-            get { return textAlign; }
-            set { textAlign = value; Invalidate(); }
-        }
+        [DisplayName("_Usar Gradiente no Texto")]
+        public bool UsarGradienteTexto { get; set; } = true;
 
-        private Color vCor1 = Color.SteelBlue;
-        [DisplayName("_Cor 1")]
-        public Color Cor1
-        {
-            get { return vCor1; }
-            set { vCor1 = value; Invalidate(); }
-        }
+        [DisplayName("_Cor Gradiente 1")]
+        public Color Cor1 { get; set; } = Color.SteelBlue;
 
-        private Color vCor2 = Color.MidnightBlue;
-        [DisplayName("_Cor 2")]
-        public Color Cor2
-        {
-            get { return vCor2; }
-            set { vCor2 = value; Invalidate(); }
-        }
+        [DisplayName("_Cor Gradiente 2")]
+        public Color Cor2 { get; set; } = Color.MidnightBlue;
 
-        private int vAngulo = 90;
-        [DisplayName("_Angulo do Gradiente")]
-        public int Angulo
-        {
-            get { return vAngulo; }
-            set
-            {
-                if (value < 1) value = 1;
-                vAngulo = value;
-                Invalidate();
-            }
-        }
+        [DisplayName("_Ângulo do Gradiente")]
+        public int Angulo { get; set; } = 90;
 
-        private bool vAtivarSombra = false;
         [DisplayName("_Ativar Sombra")]
-        public bool AtivarSombra
-        {
-            get { return vAtivarSombra; }
-            set { vAtivarSombra = value; Invalidate(); }
-        }
+        public bool AtivarSombra { get; set; } = false;
 
-        private int vX = 2;
-        [DisplayName("_Distancia Sombra Eixo X")]
-        public int X
-        {
-            get { return vX; }
-            set { vX = value; Invalidate(); }
-        }
+        [DisplayName("_Sombra X")]
+        public int SombraX { get; set; } = 1;
 
-        private int vY = 2;
-        [DisplayName("_Distancia Sombra Eixo Y")]
-        public int Y
-        {
-            get { return vY; }
-            set { vY = value; Invalidate(); }
-        }
+        [DisplayName("_Sombra Y")]
+        public int SombraY { get; set; } = 1;
 
-        private Color vCorSombra = Color.Black;
         [DisplayName("_Cor da Sombra")]
-        public Color CorSombra
-        {
-            get { return vCorSombra; }
-            set { vCorSombra = value; Invalidate(); }
-        }
+        public Color CorSombra { get; set; } = Color.Black;
 
-        private PointF GetTextAndImagePosition(Graphics g, int imageWidth, int totalWidth, int totalHeight, bool quebraTexto, string text, Font font, float textX, float textY)
-        {
-            float x = 0;
-            float y = 0;
+        [DisplayName("_Espaço Imagem x Texto")]
+        public int EspacoTexto { get; set; } = 5;
 
-            if (quebraTexto)
-            {
-                // Calcula a altura do texto quebrado
-                SizeF textSize = g.MeasureString(text, font, Width - (int)textX);
-                totalHeight = (int)textSize.Height;
-            }
-
-            switch (TextAlign)
-            {
-                case ContentAlignment.TopLeft:
-                    x = 0;
-                    y = 0;
-                    break;
-                case ContentAlignment.TopCenter:
-                    x = (Width - totalWidth) / 2;
-                    y = 0;
-                    break;
-                case ContentAlignment.TopRight:
-                    x = Width - totalWidth;
-                    y = 0;
-                    break;
-                case ContentAlignment.MiddleLeft:
-                    x = 0;
-                    y = (Height - totalHeight) / 2;
-                    break;
-                case ContentAlignment.MiddleCenter:
-                    x = (Width - totalWidth) / 2;
-                    y = (Height - totalHeight) / 2;
-                    break;
-                case ContentAlignment.MiddleRight:
-                    x = Width - totalWidth;
-                    y = (Height - totalHeight) / 2;
-                    break;
-                case ContentAlignment.BottomLeft:
-                    x = 0;
-                    y = Height - totalHeight;
-                    break;
-                case ContentAlignment.BottomCenter:
-                    x = (Width - totalWidth) / 2;
-                    y = Height - totalHeight;
-                    break;
-                case ContentAlignment.BottomRight:
-                    x = Width - totalWidth;
-                    y = Height - totalHeight;
-                    break;
-            }
-
-            return new PointF(x, y);
-        }
-
-        private int vEspacoTexto = 5;
-        [DisplayName("_Espaçamento Imagem x Texto")]
-        public int EspacoTexto
-        {
-            get { return vEspacoTexto; }
-            set { vEspacoTexto = value; Invalidate(); }
-        }
-
+        // ===============================
+        // PINTURA
+        // ===============================
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
             Graphics g = e.Graphics;
-            g.Clear(BackColor);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+            // fundo
+            using (var bg = new SolidBrush(BackColor))
+                g.FillRectangle(bg, ClientRectangle);
+
+            if (string.IsNullOrEmpty(Text))
+                return;
 
             SizeF textSize = g.MeasureString(Text, Font);
-            int imageWidth = 0, imageHeight = 0;
-            int spacing = 0;
+            float textX = 0;
+            float textY = (Height - textSize.Height) / 2;
 
-            if (Image != null)
+            // ===============================
+            // SOMBRA (APENAS SE GRADIENTE)
+            // ===============================
+            if (AtivarSombra && UsarGradienteTexto)
             {
-                imageHeight = (int)textSize.Height;
-                imageWidth = (int)((float)Image.Width / Image.Height * imageHeight);
-                spacing = EspacoTexto;
+                using var shadowBrush = new SolidBrush(Color.FromArgb(60, CorSombra));
+                g.DrawString(Text, Font, shadowBrush, textX + SombraX, textY + SombraY);
             }
 
-            int totalWidth = imageWidth + spacing + (int)textSize.Width;
-            int totalHeight = Math.Max(imageHeight, (int)textSize.Height);
+            // ===============================
+            // ESCOLHA DO PINCEL
+            // ===============================
+            Brush textBrush;
 
-            float textX = imageWidth + spacing;
-            float textY = 0;
-
-            // Calcula a posição do texto e da imagem
-            PointF position = GetTextAndImagePosition(g, imageWidth, totalWidth, totalHeight, QuebraTexto, Text, Font, textX, textY);
-
-            // Desenha a Image, se existir
-            if (Image != null)
+            if (UsarGradienteTexto)
             {
-                g.DrawImage(Image, new Rectangle((int)position.X, (int)position.Y + (totalHeight - imageHeight) / 2, imageWidth, imageHeight));
+                textBrush = new LinearGradientBrush(
+                    ClientRectangle,
+                    Cor1,
+                    Cor2,
+                    Angulo
+                );
+            }
+            else
+            {
+                textBrush = new SolidBrush(ForeColor);
             }
 
-            // Ajusta a posição do texto
-            textX = position.X + imageWidth + spacing;
-            textY = position.Y + (totalHeight - textSize.Height) / 2;
-
-            using (LinearGradientBrush Pincel = new LinearGradientBrush(ClientRectangle, Cor1, Cor2, Angulo))
+            // ===============================
+            // DESENHO DO TEXTO
+            // ===============================
+            if (AutoEllipsis && textSize.Width > Width)
             {
-                if (AtivarSombra)
+                string ellipsed = Text;
+                while (ellipsed.Length > 0 &&
+                       g.MeasureString(ellipsed + "...", Font).Width > Width)
                 {
-                    if (QuebraTexto)
-                    {
-                        RectangleF shadowRect = new RectangleF(textX + X, textY + Y, Width - textX, Height - textY);
-                        g.DrawString(Text, Font, new SolidBrush(CorSombra), shadowRect);
-                    }
-                    else
-                    {
-                        g.DrawString(Text, Font, new SolidBrush(CorSombra), textX + X, textY + Y);
-                    }
+                    ellipsed = ellipsed[..^1];
                 }
 
-                // Verifica se a propriedade AutoEllipse está ativada
-                if (AutoEllipsis && totalWidth > Width)
-                {
-                    string ellipsedText = Text;
-                    while (g.MeasureString(ellipsedText + "...", Font).Width > (Width - textX))
-                    {
-                        ellipsedText = ellipsedText.Substring(0, ellipsedText.Length - 1);
-                    }
-                    ellipsedText += "...";
-                    g.DrawString(ellipsedText, Font, Pincel, new PointF(textX, textY));
-                }
-                else if (QuebraTexto)
-                {
-                    // Ajusta o alinhamento horizontal para o texto quebrado
-                    RectangleF textRect = new RectangleF(0, textY, Width, Height - textY);
-                    switch (TextAlign)
-                    {
-                        case ContentAlignment.TopLeft:
-                        case ContentAlignment.MiddleLeft:
-                        case ContentAlignment.BottomLeft:
-                            textRect.X = textX;
-                            break;
-                        case ContentAlignment.TopCenter:
-                        case ContentAlignment.MiddleCenter:
-                        case ContentAlignment.BottomCenter:
-                            textRect.X = (Width - g.MeasureString(Text, Font, (int)textRect.Width).Width) / 2;
-                            break;
-                        case ContentAlignment.TopRight:
-                        case ContentAlignment.MiddleRight:
-                        case ContentAlignment.BottomRight:
-                            textRect.X = Width - g.MeasureString(Text, Font, (int)textRect.Width).Width;
-                            break;
-                    }
-                    g.DrawString(Text, Font, Pincel, textRect);
-                }
-                else
-                {
-                    g.DrawString(Text, Font, Pincel, new PointF(textX, textY));
-                }
+                g.DrawString(ellipsed + "...", Font, textBrush, textX, textY);
             }
+            else if (QuebraTexto)
+            {
+                RectangleF rect = new RectangleF(0, 0, Width, Height);
+                g.DrawString(Text, Font, textBrush, rect);
+            }
+            else
+            {
+                g.DrawString(Text, Font, textBrush, textX, textY);
+            }
+
+            textBrush.Dispose();
         }
+
+        // ===============================
+        // THEME
+        // ===============================
 
         public void ApplyTheme(GsTheme theme)
         {
-            ForeColor = theme.ForeColor;
+            BackColor = theme.IsDark
+                ? theme.BackColor
+                : Color.White;
+
+            ForeColor = theme.IsDark
+                ? theme.TextSecondary   // branco / cinza claro
+                : theme.Primary;        // azul no light
+
             Font = theme.DefaultFont;
-            BackColor = System.Drawing.Color.Transparent;
+
+            // REGRA-CHAVE
+            UsarGradienteTexto = !theme.IsDark;
+
+            Invalidate();
         }
+
+        // ===============================
+        // COMPATIBILIDADE COM VERSÕES ANTIGAS
+        // (Designer.cs legado)
+        // ===============================
+
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public int X
+        {
+            get => SombraX;
+            set => SombraX = value;
+        }
+
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public int Y
+        {
+            get => SombraY;
+            set => SombraY = value;
+        }
+
     }
 }
