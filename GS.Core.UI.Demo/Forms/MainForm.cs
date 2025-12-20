@@ -140,7 +140,15 @@ namespace GS.Core.UI.Demo
 
             var page = tabMain.TabPages[1];
 
-            AddLabeledControl(page, "Primary Button", new GsButton { Text = "Salvar" }, 20, 20);
+            var btnSalvar = new GsButton
+            {
+                Text = "Salvar"
+            };
+
+            btnSalvar.Click += btnSalvar_Click;
+
+            AddLabeledControl(page, "Primary Button", btnSalvar, 20, 20);
+
             AddLabeledControl(page, "Toggle Button", new GsToggleButton { Text = "Ativo" }, 20, 80);
 
             var chk = new GsCheckBox { Text = "Aceito os termos" };
@@ -245,7 +253,24 @@ namespace GS.Core.UI.Demo
                 Location = new Point(340, 45),
                 Size = new Size(300, 180)
             });
-        }    
-              
+        }
+
+        private void btnSalvar_Click(object sender, EventArgs e)
+        {
+            if (!ValidateForm())
+            {
+                MessageBox.Show(
+                    "Existem campos obrigatórios não preenchidos.",
+                    "Validação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            // Aqui entra a lógica real (salvar, conectar, etc.)
+        }
+
+
     }
 }

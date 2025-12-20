@@ -1,6 +1,9 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using GS.Core.UI.Controls.Base;
 using GS.Core.UI.Theming;
+using System;
+using System.Windows.Forms;
+using GS.Core.UI.Controls.Base;
+using System.Linq;
 
 namespace GS.Core.UI.Forms
 {
@@ -52,6 +55,38 @@ namespace GS.Core.UI.Forms
             ThemeManager.ApplyTheme(this, theme);
         }
 
-        
+        public bool ValidateForm()
+        {
+            var inputs = GetAllInputs(this);
+
+            bool allValid = true;
+
+            foreach (var input in inputs)
+            {
+                input.Validate();
+
+                if (!input.IsValid)
+                    allValid = false;
+            }
+
+            return allValid;
+        }
+
+        private List<IGsValidatable> GetAllInputs(Control parent)
+        {
+            var list = new List<IGsValidatable>();
+
+            foreach (Control ctrl in parent.Controls)
+            {
+                if (ctrl is IGsValidatable validatable)
+                    list.Add(validatable);
+
+                // 🔹 entra em containers (TabPage, Panel, etc.)
+                if (ctrl.HasChildren)
+                    list.AddRange(GetAllInputs(ctrl));
+            }
+
+            return list;
+        }
     }
 }
