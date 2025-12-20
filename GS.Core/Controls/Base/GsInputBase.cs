@@ -6,43 +6,39 @@ using GS.Core.UI.Theming;
 namespace GS.Core.UI.Controls.Base
 {
     /// <summary>
-    /// Classe base para todos os inputs do GS Core.
+    /// Classe base para TODOS os inputs do GS Core.
     /// Responsável por:
-    /// - Renderização da borda
+    /// - Fundo
+    /// - Borda
+    /// - Estado de foco/hover
     /// - Validação Required
-    /// - Placeholder
-    /// - Integração com tema
-    /// 
-    /// IMPORTANTE:
-    /// - NÃO conhece ícones
-    /// - NÃO conhece Password / Date / Masked
-    /// Cada input especializado resolve isso sozinho.
+    /// - Ícone de erro interno
     /// </summary>
     public abstract class GsInputBase : UserControl, IThemedControl
     {
-        // TextBox interno real
+        // ======================================================
+        // CAMPOS BASE
+        // ======================================================
+
         protected TextBox InnerTextBox;
 
-        // Estados visuais
         protected bool IsFocused;
         protected bool IsHovered;
 
-        // Controle de validação
+        // Controle de erro
+        private GsErrorLabel errorLabel;
+
         public bool Required { get; set; }
         public string RequiredMessage { get; set; } = "Campo obrigatório";
 
-        private GsErrorLabel errorLabel;
-
         /// <summary>
-        /// Indica se o controle está em estado de erro
-        /// </summary>
-        /// <summary>
-        /// Indica se o input está atualmente em estado de erro.
-        /// Esse estado é controlado internamente pelo próprio controle.
+        /// Indica se o input está atualmente em erro
         /// </summary>
         public bool HasError { get; private set; }
 
-
+        // Ícone de erro
+        protected const int ErrorIconSize = 14;
+        protected const int ErrorIconSpacing = 6;
 
         // ======================================================
         // CONSTRUTOR
@@ -58,14 +54,14 @@ namespace GS.Core.UI.Controls.Base
 
             Height = 36;
 
-            // Padding DEFINITIVO (não mexer sem critério)
+            // Padding PADRÃO (não mexer sem motivo)
             Padding = new Padding(8, 6, 8, 6);
 
             BackColor = Color.Transparent;
         }
 
         // ======================================================
-        // MÉTODO OBRIGATÓRIO PARA DERIVADOS
+        // CONTRATO PARA FILHOS
         // ======================================================
         protected abstract TextBox CreateInnerTextBox();
 
@@ -82,10 +78,9 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox = CreateInnerTextBox();
             InnerTextBox.BorderStyle = BorderStyle.None;
 
-            // Posicionamento seguro
             InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
             InnerTextBox.Width = Width - Padding.Horizontal;
-            InnerTextBox.Height = 20; // FIXO → evita borda dupla
+            InnerTextBox.Height = 20;
 
             InnerTextBox.GotFocus += (_, _) =>
             {
@@ -102,7 +97,7 @@ namespace GS.Core.UI.Controls.Base
 
             Controls.Add(InnerTextBox);
 
-            // Label de erro (externo ao input)
+            // Label de erro (texto abaixo do input)
             errorLabel = new GsErrorLabel { Visible = false };
 
             ParentChanged += (_, _) =>
@@ -126,7 +121,12 @@ namespace GS.Core.UI.Controls.Base
                 return;
 
             InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
-            InnerTextBox.Width = Width - Padding.Horizontal;
+
+            // Reserva espaço do ícone de erro à direita
+            int rightPadding = Padding.Right +
+                               (HasError ? ErrorIconSize + ErrorIconSpacing : 0);
+
+            InnerTextBox.Width = Width - Padding.Left - rightPadding;
 
             UpdateErrorPosition();
         }
@@ -147,37 +147,40 @@ namespace GS.Core.UI.Controls.Base
         {
             base.OnPaint(e);
 
-            var g = e.Graphics;
+            Graphics g = e.Graphics;
 
-            // ⚠️ REGRA DE OURO
+            // REGRA: SEM anti-alias em retângulo
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
             var theme = ThemeManager.Current;
 
-            // Fundo do input (ESSENCIAL)
+            // Fundo
             using (var bg = new SolidBrush(theme.InputBackground))
-            {
                 g.FillRectangle(bg, ClientRectangle);
-            }
 
-            // Cor da borda conforme estado
+            // Cor da borda
             Color borderColor =
-                errorLabel?.Visible == true ? theme.Error :
+                HasError ? theme.Error :
                 IsFocused ? theme.InputFocus :
                 IsHovered ? theme.InputHover :
                 theme.InputBorder;
 
-            using var pen = new Pen(borderColor, 1f);
+            using (var pen = new Pen(borderColor, 1f))
+            {
+                g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+            }
 
-            // Retângulo exato (sem borrar)
-            g.DrawRectangle(
-                pen,
-                0,
-                0,
-                Width - 1,
-                Height - 1
-            );
+            // ÍCONE DE ERRO (interno)
+            if (HasError)
+            {
+                int x = Width - Padding.Right - ErrorIconSize;
+                int y = (Height - ErrorIconSize) / 2;
+
+                g.DrawImage(
+                    Properties.Resources.error,
+                    new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
+                );
+            }
         }
 
         // ======================================================
@@ -197,47 +200,24 @@ namespace GS.Core.UI.Controls.Base
                 ClearError();
         }
 
-        /// <summary>
-        /// Ativa o estado de erro do input e exibe a mensagem.
-        /// </summary>
         protected void ShowError(string message)
         {
             HasError = true;
-
             errorLabel?.ShowError(message);
-
-            // Repaint do controle e dos filhos
+            UpdateLayout();
             Invalidate();
-            OnErrorStateChanged();
         }
 
-        /// <summary>
-        /// Limpa o estado de erro do input.
-        /// </summary>
         protected void ClearError()
         {
             HasError = false;
-
             errorLabel?.ClearError();
-
+            UpdateLayout();
             Invalidate();
-            OnErrorStateChanged();
         }
-
-   
-        /// <summary>
-        /// Notifica controles derivados que o estado de erro mudou
-        /// </summary>
-        protected virtual void OnErrorStateChanged()
-        {
-            // Força repaint dos filhos (GsTextBox, GsPasswordTextBox etc.)
-            foreach (Control c in Controls)
-                c.Invalidate();
-        }
-
 
         // ======================================================
-        // THEME
+        // TEMA
         // ======================================================
         public virtual void ApplyTheme(GsTheme theme)
         {
@@ -251,7 +231,6 @@ namespace GS.Core.UI.Controls.Base
 
             Invalidate();
         }
-
 
         // ======================================================
         // TEXTO / PLACEHOLDER

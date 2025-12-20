@@ -6,31 +6,16 @@ using GS.Core.UI.Controls.Base;
 namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// TextBox de senha com botão de visibilidade (ícone de olho).
-    /// Totalmente compatível com:
-    /// - GsInputBase
-    /// - Validação Required
-    /// - Tema
+    /// TextBox de senha com botão de visibilidade (olho).
+    /// NÃO desenha erro. Apenas reserva espaço.
     /// </summary>
     public class GsPasswordTextBox : GsInputBase
     {
-        // ======================================================
-        // CAMPOS PRIVADOS
-        // ======================================================
-
-        // Ícone do olho
         private PictureBox _eyeIcon;
+        private bool _showPassword;
 
-        // Estado atual da senha
-        private bool _showPassword = false;
-
-        // Dimensões fixas do ícone
         private const int EyeIconSize = 20;
-        private const int EyeIconPadding = 6;
-
-        // ======================================================
-        // CRIAÇÃO DO TEXTBOX INTERNO
-        // ======================================================
+        private const int EyeIconSpacing = 6;
 
         protected override TextBox CreateInnerTextBox()
         {
@@ -40,15 +25,10 @@ namespace GS.Core.UI.Controls
             };
         }
 
-        // ======================================================
-        // INICIALIZAÇÃO DO CONTROLE
-        // ======================================================
-
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
 
-            // Cria o ícone do olho
             _eyeIcon = new PictureBox
             {
                 Size = new Size(EyeIconSize, EyeIconSize),
@@ -59,7 +39,6 @@ namespace GS.Core.UI.Controls
                 TabStop = false
             };
 
-            // Clique alterna visibilidade
             _eyeIcon.Click += (_, _) => TogglePassword();
 
             Controls.Add(_eyeIcon);
@@ -68,46 +47,29 @@ namespace GS.Core.UI.Controls
             UpdateLayout();
         }
 
-        // ======================================================
-        // LAYOUT
-        // ======================================================
-
-        /// <summary>
-        /// Ajusta:
-        /// - Largura do TextBox (para não passar por baixo do olho)
-        /// - Posição do ícone do olho
-        /// </summary>
         protected override void UpdateLayout()
         {
             base.UpdateLayout();
 
-            if (InnerTextBox == null || _eyeIcon == null)
+            if (_eyeIcon == null)
                 return;
 
-            // Reserva espaço do olho
-            InnerTextBox.Width =
-                Width
-                - Padding.Horizontal
-                - EyeIconSize
-                - EyeIconPadding;
+            // Posiciona o olho ANTES do ícone de erro
+            int errorOffset = HasError
+                ? ErrorIconSize + ErrorIconSpacing
+                : 0;
 
-            // Posiciona o ícone do olho à direita
             _eyeIcon.Location = new Point(
-                Width - Padding.Right - EyeIconSize - EyeIconPadding,
+                Width - Padding.Right - EyeIconSize - errorOffset,
                 (Height - EyeIconSize) / 2
             );
         }
-
-        // ======================================================
-        // LÓGICA DO OLHO
-        // ======================================================
 
         private void TogglePassword()
         {
             _showPassword = !_showPassword;
 
             InnerTextBox.UseSystemPasswordChar = !_showPassword;
-
             _eyeIcon.Image = _showPassword
                 ? Properties.Resources.eye_open
                 : Properties.Resources.eye_closed;
