@@ -2,8 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
-using GS.Core.UI.Theming;
-using GS.Core.UI.Properties;
 
 namespace GS.Core.UI.Controls
 {
@@ -11,6 +9,8 @@ namespace GS.Core.UI.Controls
     {
         private PictureBox _eyeIcon;
         private bool _showPassword;
+
+        protected override bool SupportsExtraIcon => true;
 
         protected override TextBox CreateInnerTextBox()
         {
@@ -24,27 +24,36 @@ namespace GS.Core.UI.Controls
         {
             base.OnCreateControl();
 
-            // espaço para o ícone
-            InnerTextBox.Width -= 28;
-
             _eyeIcon = new PictureBox
             {
                 Size = new Size(20, 20),
-                Location = new Point(Width - 26, 6),
+                SizeMode = PictureBoxSizeMode.CenterImage,
                 Cursor = Cursors.Hand,
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                Image = Resources.eye_closed
+                Image = Properties.Resources.eye_closed,
+                BackColor = Color.Transparent
             };
 
             _eyeIcon.Click += (_, _) => TogglePassword();
 
             Controls.Add(_eyeIcon);
+            BringToFront();
 
-            Resize += (_, _) =>
-            {
-                _eyeIcon.Location = new Point(Width - 26, 6);
-                InnerTextBox.Width = Width - 36;
-            };
+            UpdateLayout();
+        }
+
+        protected override void UpdateLayout()
+        {
+            base.UpdateLayout();
+
+            if (_eyeIcon == null)
+                return;
+
+            int errorOffset = GetRightIconsWidth() - 24;
+
+            _eyeIcon.Location = new Point(
+                Width - Padding.Right - 20 - errorOffset,
+                (Height - 20) / 2
+            );
         }
 
         private void TogglePassword()
@@ -53,16 +62,8 @@ namespace GS.Core.UI.Controls
 
             InnerTextBox.UseSystemPasswordChar = !_showPassword;
             _eyeIcon.Image = _showPassword
-                ? Resources.eye_open
-                : Resources.eye_closed;
-        }
-
-        public override void ApplyTheme(GsTheme theme)
-        {
-            base.ApplyTheme(theme);
-
-            // opcional: adaptar fundo do ícone
-            _eyeIcon.BackColor = Color.Transparent;
+                ? Properties.Resources.eye_open
+                : Properties.Resources.eye_closed;
         }
     }
 }

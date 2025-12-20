@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\error.png" />
     <None Remove="Resources\eye_closed.png" />
     <None Remove="Resources\eye_open.png" />
     <None Remove="Resources\icone_senha_mostrar.png" />
@@ -15,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\eye_closed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

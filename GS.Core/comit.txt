@@ -20,3 +20,22 @@ git commit -m "Cria GS.Core.UI.Demo com namespace único e build funcional"
 
 git add .
 git commit -m "Remove GsControlBase e consolida base em GsInputBase (UserControl)"
+
+feat(ui-inputs): organiza slots de ícones e restaura visual consistente dos inputs com erro
+
+- Centraliza cálculo de espaço para ícones no GsInputBase
+- Padroniza renderização de ícone de erro
+- Evita conflito entre ícones de validação e ícones extras
+- Mantém visual ECturbo consistente e escalável
+- Remove uso de BackColor transparente em inputs
+- Garante pintura explícita do fundo antes da borda
+- Mantém visual pixel-perfect no tema light e dark
+- Preserva comportamento de ícones e validação
+- Garante pintura explícita do fundo antes da borda
+- Corrige renderização das bordas em temas light e dark
+- Reintroduz ícone de erro interno sem conflito com outros ícones
+- Mantém validação automática e limpeza ao corrigir
+- Preserva layout e comportamento estilo ECturbo
+
+
+

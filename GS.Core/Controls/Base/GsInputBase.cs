@@ -6,22 +6,19 @@ using GS.Core.UI.Theming;
 namespace GS.Core.UI.Controls.Base
 {
     public abstract class GsInputBase : UserControl, IThemedControl, IGsRequiredAware
-
-
     {
         protected TextBox InnerTextBox;
+
         protected bool IsHovered;
         protected bool IsFocused;
-        private bool _touched;
 
-        private GsErrorLabel errorLabel;
+        private bool _touched;
+        private bool _hasError;
+
+        protected virtual bool SupportsExtraIcon => false;
 
         public bool Required { get; set; }
         public string RequiredMessage { get; set; } = "Campo obrigatório";
-
-        public bool IsValid { get; private set; } = true;
-
-        public string ErrorMessage { get; private set; } = string.Empty;
 
         protected GsInputBase()
         {
@@ -35,32 +32,9 @@ namespace GS.Core.UI.Controls.Base
             Height = 36;
             Padding = new Padding(8, 6, 8, 6);
 
-            BackColor = ThemeManager.Current.InputBackground;
-
+            // ❗ NUNCA transparente
+            BackColor = Color.White;
         }
-        public virtual void Validate()
-        {
-            if (!Required)
-            {
-                IsValid = true;
-                ClearError();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(Text))
-            {
-                IsValid = false;
-                ErrorMessage = RequiredMessage;
-                ShowError(ErrorMessage);
-            }
-            else
-            {
-                IsValid = true;
-                ErrorMessage = string.Empty;
-                ClearError();
-            }
-        }
-
 
         protected abstract TextBox CreateInnerTextBox();
 
@@ -73,11 +47,8 @@ namespace GS.Core.UI.Controls.Base
 
             InnerTextBox = CreateInnerTextBox();
             InnerTextBox.BorderStyle = BorderStyle.None;
-
-            // 🔥 PIXEL PERFEITO (estilo ECturbo)
-            InnerTextBox.Location = new Point(8, 7);
-            InnerTextBox.Width = Width - 16;
-            InnerTextBox.Height = 18;
+            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
+            InnerTextBox.Height = Height - Padding.Vertical;
 
             InnerTextBox.GotFocus += (_, _) =>
             {
@@ -89,48 +60,35 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox.LostFocus += (_, _) =>
             {
                 IsFocused = false;
-                Validate();
+                ValidateRequired();
                 Invalidate();
             };
 
             Controls.Add(InnerTextBox);
 
-            errorLabel = new GsErrorLabel { Visible = false };
-
-            ParentChanged += (_, _) =>
-            {
-                if (Parent != null && !Parent.Controls.Contains(errorLabel))
-                    Parent.Controls.Add(errorLabel);
-
-                UpdateErrorPosition();
-            };
-
             Resize += (_, _) => UpdateLayout();
             UpdateLayout();
         }
 
-        private void UpdateLayout()
+        protected virtual int GetRightIconsWidth()
+        {
+            int width = 0;
+
+            if (_hasError)
+                width += 24;
+
+            if (SupportsExtraIcon)
+                width += 24;
+
+            return width;
+        }
+
+        protected virtual void UpdateLayout()
         {
             if (InnerTextBox == null)
                 return;
 
-            InnerTextBox.Location = new Point(
-                Padding.Left,
-                Padding.Top
-            );
-
-            InnerTextBox.Width = Width - Padding.Horizontal;
-            InnerTextBox.Height = Height - Padding.Vertical;
-
-            UpdateErrorPosition();
-        }
-
-
-        private void UpdateErrorPosition()
-        {
-            if (errorLabel == null) return;
-            errorLabel.Location = new Point(Left, Bottom + 4);
-            errorLabel.Width = Width;
+            InnerTextBox.Width = Width - Padding.Horizontal - GetRightIconsWidth();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -138,67 +96,79 @@ namespace GS.Core.UI.Controls.Base
             base.OnPaint(e);
 
             var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-            g.Clear(Color.Transparent);
-
             var theme = ThemeManager.Current;
 
-            // 🔹 FUNDO DO INPUT (ESSENCIAL NO DARK)
+            // 🔹 FUNDO (ESSENCIAL)
             using (var bg = new SolidBrush(theme.InputBackground))
-            {
                 g.FillRectangle(bg, ClientRectangle);
-            }
 
-            // 🔹 COR DA BORDA
             Color borderColor =
-                errorLabel?.Visible == true ? theme.Error :
+                _hasError ? theme.Error :
                 IsFocused ? theme.InputFocus :
                 IsHovered ? theme.InputHover :
                 theme.InputBorder;
 
-            var rect = new Rectangle(
+            using var pen = new Pen(borderColor, 1f);
+
+            g.DrawRectangle(
+                pen,
                 0,
                 0,
                 Width - 1,
                 Height - 1
             );
 
-            using var pen = new Pen(borderColor, 1f);
-            g.DrawRectangle(pen, rect);
+            DrawErrorIcon(g);
         }
 
+        protected virtual void DrawErrorIcon(Graphics g)
+        {
+            if (!_hasError)
+                return;
 
+            var rect = new Rectangle(
+                Width - Padding.Right - 16,
+                (Height - 16) / 2,
+                16,
+                16
+            );
 
+            g.DrawImage(Properties.Resources.error, rect);
+        }
 
         protected void ValidateRequired()
         {
-            if (!Required || InnerTextBox == null)
+            if (!Required)
             {
                 ClearError();
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(InnerTextBox.Text))
-                ShowError(RequiredMessage);
+            if (_touched && string.IsNullOrWhiteSpace(Text))
+                ShowError();
             else
                 ClearError();
         }
 
-        protected void ShowError(string message)
+        protected void ShowError()
         {
-            errorLabel?.ShowError(message);
+            _hasError = true;
+            UpdateLayout();
             Invalidate();
         }
 
         protected void ClearError()
         {
-            errorLabel?.ClearError();
+            _hasError = false;
+            UpdateLayout();
             Invalidate();
         }
 
         public virtual void ApplyTheme(GsTheme theme)
         {
             Font = theme.DefaultFont;
+
+            BackColor = theme.InputBackground;
 
             if (InnerTextBox != null)
             {
@@ -212,7 +182,11 @@ namespace GS.Core.UI.Controls.Base
         public override string Text
         {
             get => InnerTextBox?.Text ?? string.Empty;
-            set { if (InnerTextBox != null) InnerTextBox.Text = value; }
+            set
+            {
+                if (InnerTextBox != null)
+                    InnerTextBox.Text = value;
+            }
         }
 
         public string Placeholder
@@ -224,6 +198,5 @@ namespace GS.Core.UI.Controls.Base
                     InnerTextBox.PlaceholderText = value;
             }
         }
-
     }
 }
