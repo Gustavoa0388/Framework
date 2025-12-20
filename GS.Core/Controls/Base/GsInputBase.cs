@@ -1,56 +1,54 @@
-﻿using GS.Core.UI.Theming;
-using System;
+﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Base
 {
     /// <summary>
-    /// Classe base para TODOS os inputs GS
-    /// Centraliza:
-    /// - Layout
-    /// - Borda
+    /// Classe base para todos os inputs do GS Core.
+    /// Responsável por:
+    /// - Renderização da borda
     /// - Validação Required
-    /// - Mensagem de erro
-    /// - Animações sutis (foco / erro)
+    /// - Placeholder
+    /// - Integração com tema
+    /// 
+    /// IMPORTANTE:
+    /// - NÃO conhece ícones
+    /// - NÃO conhece Password / Date / Masked
+    /// Cada input especializado resolve isso sozinho.
     /// </summary>
-    public abstract class GsInputBase : UserControl, IThemedControl, IGsRequiredAware
+    public abstract class GsInputBase : UserControl, IThemedControl
     {
-        // ===============================
-        // CONTROLE INTERNO (TextBox real)
-        // ===============================
+        // TextBox interno real
         protected TextBox InnerTextBox;
 
-        // ===============================
-        // ESTADOS VISUAIS
-        // ===============================
-        protected bool IsHovered;
+        // Estados visuais
         protected bool IsFocused;
-        private bool _touched;
+        protected bool IsHovered;
 
-        // ===============================
-        // VALIDAÇÃO
-        // ===============================
+        // Controle de validação
         public bool Required { get; set; }
         public string RequiredMessage { get; set; } = "Campo obrigatório";
 
-        protected GsErrorLabel errorLabel;
+        private GsErrorLabel errorLabel;
 
-        // ===============================
-        // ANIMAÇÃO DE BORDA
-        // ===============================
-        private readonly System.Windows.Forms.Timer _animTimer;
-        private float _animProgress;
-        private Color _fromBorder;
-        private Color _toBorder;
+        /// <summary>
+        /// Indica se o controle está em estado de erro
+        /// </summary>
+        /// <summary>
+        /// Indica se o input está atualmente em estado de erro.
+        /// Esse estado é controlado internamente pelo próprio controle.
+        /// </summary>
+        public bool HasError { get; private set; }
 
-        // ===============================
+
+
+        // ======================================================
         // CONSTRUTOR
-        // ===============================
+        // ======================================================
         protected GsInputBase()
         {
-            // Ativa pintura manual e evita flicker
             SetStyle(
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint |
@@ -59,20 +57,21 @@ namespace GS.Core.UI.Controls.Base
             );
 
             Height = 36;
-            Padding = new Padding(8, 6, 8, 6);
-            BackColor = Color.Transparent;
 
-            // Timer da animação (leve, ~60fps)
-            _animTimer = new System.Windows.Forms.Timer { Interval = 15 };
-            _animTimer.Tick += AnimateTick;
+            // Padding DEFINITIVO (não mexer sem critério)
+            Padding = new Padding(8, 6, 8, 6);
+
+            BackColor = Color.Transparent;
         }
 
-        // ===============================
-        // CRIAÇÃO DO TEXTBOX INTERNO
-        // (cada filho define o tipo)
-        // ===============================
+        // ======================================================
+        // MÉTODO OBRIGATÓRIO PARA DERIVADOS
+        // ======================================================
         protected abstract TextBox CreateInnerTextBox();
 
+        // ======================================================
+        // INICIALIZAÇÃO
+        // ======================================================
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
@@ -83,33 +82,27 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox = CreateInnerTextBox();
             InnerTextBox.BorderStyle = BorderStyle.None;
 
-            // Posicionamento ECturbo (pixel perfeito)
+            // Posicionamento seguro
             InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
             InnerTextBox.Width = Width - Padding.Horizontal;
-            InnerTextBox.Height = Height - Padding.Vertical;
+            InnerTextBox.Height = 20; // FIXO → evita borda dupla
 
-            // ===============================
-            // EVENTOS DE FOCO
-            // ===============================
             InnerTextBox.GotFocus += (_, _) =>
             {
                 IsFocused = true;
-                _touched = true;
-                StartBorderAnimation(ThemeManager.Current.InputFocus);
+                Invalidate();
             };
 
             InnerTextBox.LostFocus += (_, _) =>
             {
                 IsFocused = false;
                 ValidateRequired();
-                StartBorderAnimation(ThemeManager.Current.InputBorder);
+                Invalidate();
             };
 
             Controls.Add(InnerTextBox);
 
-            // ===============================
-            // LABEL DE ERRO (fora do input)
-            // ===============================
+            // Label de erro (externo ao input)
             errorLabel = new GsErrorLabel { Visible = false };
 
             ParentChanged += (_, _) =>
@@ -124,116 +117,75 @@ namespace GS.Core.UI.Controls.Base
             UpdateLayout();
         }
 
-        // ===============================
-        // LAYOUT INTERNO
-        // ===============================
+        // ======================================================
+        // LAYOUT
+        // ======================================================
         protected virtual void UpdateLayout()
         {
             if (InnerTextBox == null)
                 return;
 
-            int rightPadding = Padding.Right + GetRightPadding();
+            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
+            InnerTextBox.Width = Width - Padding.Horizontal;
 
-            InnerTextBox.Location = new Point(
-                Padding.Left,
-                Padding.Top
-            );
-
-            InnerTextBox.Width = Width - Padding.Left - rightPadding;
-            InnerTextBox.Height = Height - Padding.Vertical;
+            UpdateErrorPosition();
         }
 
         private void UpdateErrorPosition()
         {
-            if (errorLabel == null) return;
+            if (errorLabel == null)
+                return;
 
             errorLabel.Location = new Point(Left, Bottom + 4);
             errorLabel.Width = Width;
         }
 
-        // ===============================
-        // ANIMAÇÃO
-        // ===============================
-        private void StartBorderAnimation(Color target)
-        {
-            _fromBorder = _toBorder.IsEmpty
-                ? ThemeManager.Current.InputBorder
-                : _toBorder;
-
-            _toBorder = target;
-            _animProgress = 0f;
-            _animTimer.Start();
-        }
-
-        private void AnimateTick(object sender, EventArgs e)
-        {
-            _animProgress += 0.15f;
-
-            if (_animProgress >= 1f)
-            {
-                _animProgress = 1f;
-                _animTimer.Stop();
-            }
-
-            Invalidate();
-        }
-
-        private static Color Lerp(Color a, Color b, float t)
-        {
-            t = Math.Clamp(t, 0f, 1f);
-
-            return Color.FromArgb(
-                (int)(a.A + (b.A - a.A) * t),
-                (int)(a.R + (b.R - a.R) * t),
-                (int)(a.G + (b.G - a.G) * t),
-                (int)(a.B + (b.B - a.B) * t)
-            );
-        }
-
-        // ===============================
+        // ======================================================
         // PINTURA
-        // ===============================
+        // ======================================================
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.None; // borda nítida
+            var g = e.Graphics;
+
+            // ⚠️ REGRA DE OURO
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
             var theme = ThemeManager.Current;
 
-            Color baseBorder =
+            // Fundo do input (ESSENCIAL)
+            using (var bg = new SolidBrush(theme.InputBackground))
+            {
+                g.FillRectangle(bg, ClientRectangle);
+            }
+
+            // Cor da borda conforme estado
+            Color borderColor =
                 errorLabel?.Visible == true ? theme.Error :
                 IsFocused ? theme.InputFocus :
                 IsHovered ? theme.InputHover :
                 theme.InputBorder;
 
-            if (_animTimer.Enabled)
-            {
-                baseBorder = Lerp(_fromBorder, _toBorder, _animProgress);
-            }
+            using var pen = new Pen(borderColor, 1f);
 
-            using var pen = new Pen(baseBorder, 1f);
-            g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-
-            if (HasErrorIcon)
-            {
-                int x = Width - ErrorIconSize - ErrorIconPadding;
-                int y = (Height - ErrorIconSize) / 2;
-
-                g.DrawImage(
-                    Properties.Resources.error, // sua imagem
-                    new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
-                );
-            }
+            // Retângulo exato (sem borrar)
+            g.DrawRectangle(
+                pen,
+                0,
+                0,
+                Width - 1,
+                Height - 1
+            );
         }
 
-        // ===============================
-        // VALIDAÇÃO REQUIRED
-        // ===============================
+        // ======================================================
+        // VALIDAÇÃO
+        // ======================================================
         protected void ValidateRequired()
         {
-            if (!Required || !_touched)
+            if (!Required || InnerTextBox == null)
             {
                 ClearError();
                 return;
@@ -245,26 +197,48 @@ namespace GS.Core.UI.Controls.Base
                 ClearError();
         }
 
+        /// <summary>
+        /// Ativa o estado de erro do input e exibe a mensagem.
+        /// </summary>
         protected void ShowError(string message)
         {
-            HasErrorIcon = true;
+            HasError = true;
+
             errorLabel?.ShowError(message);
-            UpdateLayout();
+
+            // Repaint do controle e dos filhos
             Invalidate();
+            OnErrorStateChanged();
         }
 
-
+        /// <summary>
+        /// Limpa o estado de erro do input.
+        /// </summary>
         protected void ClearError()
         {
-            HasErrorIcon = false;
+            HasError = false;
+
             errorLabel?.ClearError();
-            UpdateLayout();
+
             Invalidate();
+            OnErrorStateChanged();
         }
 
-        // ===============================
-        // TEMA
-        // ===============================
+   
+        /// <summary>
+        /// Notifica controles derivados que o estado de erro mudou
+        /// </summary>
+        protected virtual void OnErrorStateChanged()
+        {
+            // Força repaint dos filhos (GsTextBox, GsPasswordTextBox etc.)
+            foreach (Control c in Controls)
+                c.Invalidate();
+        }
+
+
+        // ======================================================
+        // THEME
+        // ======================================================
         public virtual void ApplyTheme(GsTheme theme)
         {
             Font = theme.DefaultFont;
@@ -278,9 +252,10 @@ namespace GS.Core.UI.Controls.Base
             Invalidate();
         }
 
-        // ===============================
-        // TEXTO
-        // ===============================
+
+        // ======================================================
+        // TEXTO / PLACEHOLDER
+        // ======================================================
         public override string Text
         {
             get => InnerTextBox?.Text ?? string.Empty;
@@ -291,9 +266,6 @@ namespace GS.Core.UI.Controls.Base
             }
         }
 
-        // ===============================
-        // PLACEHOLDER
-        // ===============================
         public string Placeholder
         {
             get => InnerTextBox?.PlaceholderText ?? string.Empty;
@@ -303,15 +275,5 @@ namespace GS.Core.UI.Controls.Base
                     InnerTextBox.PlaceholderText = value;
             }
         }
-
-        // Espaço reservado à direita para ícones (erro, botão, etc.)
-        protected virtual int GetRightPadding()
-        {
-            return HasErrorIcon ? (ErrorIconSize + ErrorIconPadding) : 0;
-        }
-        protected bool HasErrorIcon = false;
-        protected const int ErrorIconSize = 16;
-        protected const int ErrorIconPadding = 6;
-
     }
 }
