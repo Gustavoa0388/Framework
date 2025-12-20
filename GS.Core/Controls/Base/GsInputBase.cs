@@ -7,6 +7,7 @@ namespace GS.Core.UI.Controls.Base
 {
     public abstract class GsInputBase : UserControl, IThemedControl, IGsRequiredAware
 
+
     {
         protected TextBox InnerTextBox;
         protected bool IsHovered;

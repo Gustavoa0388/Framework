@@ -1,4 +1,4 @@
-using GS.Core.UI.Controls;
+Ôªøusing GS.Core.UI.Controls;
 using System.Drawing;
 using GS.Core.UI.Theming;
 using GS.Core.UI.Forms;
@@ -37,11 +37,11 @@ namespace GS.Core.UI.Demo
 
         private void ApplyTooltips()
         {
-            _tip.SetToolTip(txt, "GsTextBox: input padr„o com estilo GS");
-            _tip.SetToolTip(pwd, "GsPasswordTextBox: senha com bot„o de visibilidade");
-            _tip.SetToolTip(mask, "GsMaskedTextBox: campo com m·scara");
-            _tip.SetToolTip(num, "GsNumericBox: aceita apenas n˙meros");
-            _tip.SetToolTip(date, "GsDateSelector: seleÁ„o de data");
+            _tip.SetToolTip(txt, "GsTextBox: input padr√£o com estilo GS");
+            _tip.SetToolTip(pwd, "GsPasswordTextBox: senha com bot√£o de visibilidade");
+            _tip.SetToolTip(mask, "GsMaskedTextBox: campo com m√°scara");
+            _tip.SetToolTip(num, "GsNumericBox: aceita apenas n√∫meros");
+            _tip.SetToolTip(date, "GsDateSelector: sele√ß√£o de data");
         }
 
 
@@ -53,15 +53,23 @@ namespace GS.Core.UI.Demo
             int y,
             int width = 220)
         {
-            var lbl = new GsLabel 
-
+            var lbl = new GsLabel
             {
                 Text = labelText,
                 Location = new Point(x, y),
-                AutoSize = true
+                AutoSize = false,
+                TargetControl = control,   // üî• ESSENCIAL
+                TextAlign = ContentAlignment.MiddleRight
+
             };
 
-            control.Location = new Point(x, y + 22);
+
+            int labelWidth = 120;
+
+            control.Location = new Point(
+                x + labelWidth + 8,
+                y
+            );
             control.Width = width;
 
             if (lbl is GsLabel gsLabel)
@@ -78,7 +86,7 @@ namespace GS.Core.UI.Demo
             var page = tabMain.TabPages[0];
             var title = new GsTitleLabel
             {
-                Text = "ConfiguraÁ„o de Conex„o",
+                Text = "Configura√ß√£o de Conex√£o",
                 TitleSize = GsTitleSize.Title,
                 Location = new Point(20, 20)
             };
@@ -98,7 +106,7 @@ namespace GS.Core.UI.Demo
 
             //var hint = new GsHintLabel
             // {
-            //    Text = "Informe o endereÁo do servidor MySQL",
+            //    Text = "Informe o endere√ßo do servidor MySQL",
             //Location = new Point(20, 120)
             // };
 
@@ -108,7 +116,7 @@ namespace GS.Core.UI.Demo
             {
                 Placeholder = "Digite o texto",
                 Required = true,
-                RequiredMessage = "Campo obrigatÛrio"
+                RequiredMessage = "Campo obrigat√≥rio"
             };
 
             AddLabeledControl(page, "TextBox", txt, 20, 100);
@@ -158,8 +166,8 @@ namespace GS.Core.UI.Demo
             chk.Location = new Point(20, 150);
             page.Controls.Add(chk);
 
-            var radioA = new GsRadioButton { Text = "OpÁ„o A", Location = new Point(20, 190) };
-            var radioB = new GsRadioButton { Text = "OpÁ„o B", Location = new Point(20, 220) };
+            var radioA = new GsRadioButton { Text = "Op√ß√£o A", Location = new Point(20, 190) };
+            var radioB = new GsRadioButton { Text = "Op√ß√£o B", Location = new Point(20, 220) };
 
             page.Controls.Add(radioA);
             page.Controls.Add(radioB);
@@ -203,7 +211,7 @@ namespace GS.Core.UI.Demo
 
             var innerLabel = new GsLabel
             {
-                Text = "Conte˙do dentro do painel",
+                Text = "Conte√∫do dentro do painel",
                 Location = new Point(10, 10)
             };
 
@@ -263,15 +271,15 @@ namespace GS.Core.UI.Demo
             if (!ValidateForm())
             {
                 MessageBox.Show(
-                    "Existem campos obrigatÛrios n„o preenchidos.",
-                    "ValidaÁ„o",
+                    "Existem campos obrigat√≥rios n√£o preenchidos.",
+                    "Valida√ß√£o",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
                 return;
             }
 
-            // Aqui entra a lÛgica real (salvar, conectar, etc.)
+            // Aqui entra a l√≥gica real (salvar, conectar, etc.)
         }
 
 

@@ -14,6 +14,8 @@ namespace GS.Core.UI.Controls
             AutoSize = true;
             TextAlign = ContentAlignment.MiddleLeft;
             BackColor = Color.Transparent;
+            TextAlign = ContentAlignment.MiddleRight;
+
         }
 
         // ===============================
@@ -79,15 +81,7 @@ namespace GS.Core.UI.Controls
 
             if (TargetControl is IGsRequiredAware req)
                 isRequired = req.Required;
-            
-            string labelText = Text;
-
-            if (isRequired)
-                labelText += " *";
-
-            using var brush = new SolidBrush(ForeColor);
-            g.DrawString(labelText, Font, brush, new PointF(0, 0));
-
+                      
             // ===============================
             // SOMBRA (APENAS SE GRADIENTE)
             // ===============================
@@ -140,7 +134,24 @@ namespace GS.Core.UI.Controls
                 g.DrawString(Text, Font, textBrush, textX, textY);
             }
 
-            textBrush.Dispose();
+            if (isRequired)
+            {
+                SizeF baseSize = g.MeasureString(Text, Font);
+
+                using var starBrush = new SolidBrush(
+                ThemeManager.Current.Error
+                );
+                using var starFont = new Font(Font.FontFamily, Font.Size, FontStyle.Bold);
+
+                g.DrawString(
+                    "*",
+                    starFont,
+                    starBrush,
+                    textX + baseSize.Width + 2,
+                    textY
+                );
+            }
+
         }
 
         // ===============================
