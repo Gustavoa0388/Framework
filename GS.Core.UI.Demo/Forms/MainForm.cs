@@ -30,7 +30,7 @@ namespace GS.Core.UI.Demo
         private GsTextBox txt;
         private GsPasswordTextBox pwd;
         private GsMaskedInput mask;
-        private GsNumericBox num;
+        private GsNumericInput num;
         private GsDateSelector date;
 
         private readonly ToolTip _tip = new ToolTip();
@@ -128,8 +128,24 @@ namespace GS.Core.UI.Demo
             };
             AddLabeledControl(page, "CPF", mask, 20, 240);
 
-            num = new GsNumericBox();
-            AddLabeledControl(page, "Numeric", num, 20, 300);
+            //num = new GsNumericInput
+            //{
+            //    Required = true,
+            //    MinValue = 1,
+            //    MaxValue = 100,
+            //    AllowDecimal = false
+            //};
+            //
+            //AddLabeledControl(page, "Quantidade", num, 20, 300);
+
+            num = new GsNumericInput
+            {
+                AllowDecimal = true,
+                DecimalPlaces = 2,
+                MinValue = 0
+            };
+            AddLabeledControl(page, "Quantidade", num, 20, 300);
+
 
             date = new GsDateSelector();
             AddLabeledControl(page, "Date Selector", date, 20, 360);
