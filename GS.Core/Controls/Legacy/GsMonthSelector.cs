@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace GS.Core.UI.Controls.Legacy
 {
     [ToolboxItem(false)]
-    public class GsMonthSelector : GsComboBox
+    public class GsMonthSelector : GsComboBoxLegacy
     {
 		private bool vMesAbreviado = false;
 		[DisplayName("_Mês Abreviado")]

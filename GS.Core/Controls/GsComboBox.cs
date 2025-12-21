@@ -1,181 +1,184 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
+using GS.Core.UI.Controls.Base;
+using System.Collections;
 
 
 namespace GS.Core.UI.Controls
 {
-    public class GsComboBox : ComboBox
+    /// <summary>
+    /// ComboBox padrão do GS Core.
+    /// Suporta Required, placeholder fake e validação automática.
+    /// </summary>
+    public partial class GsComboBox : GsInputBase
     {
-        public GsComboBox()
-        {
-            Tag = "";
-            AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            AutoCompleteSource = AutoCompleteSource.ListItems;
-        }
+        private ComboBox _combo;
 
-        private bool vLimpeza = true;
-        [DisplayName("_Limpeza Automática")]
-        public bool Limpeza
+        private string _placeholderText = "Selecione...";
+        private bool _placeholderActive = true;
+        private readonly List<object> _pendingItems = new();
+
+
+        // ============================
+        // PROPRIEDADES PÚBLICAS
+        // ============================
+
+        [Category("GS Core")]
+        public string Placeholder
         {
-            get { return vLimpeza; }
+            get => _placeholderText;
             set
             {
-
-                vLimpeza = value;
-
-                if (value == true)
-                    Tag = Tag.ToString().Replace("|nao_limpar", "");
-                else
-                    Tag += "|nao_limpar";
-
+                _placeholderText = value;
+                ApplyPlaceholder();
             }
         }
 
-        private string vColuna = "";
-        [DisplayName("(DB.1 Coluna Tabela)")]
-        public string Coluna
+        [Browsable(false)]
+        public IList Items => _pendingItems;
+
+        [Category("GS Core")]
+        public object SelectedValue
         {
-            get { return vColuna; }
-            set
+            get => _combo.SelectedValue;
+            set => _combo.SelectedValue = value;
+        }
+
+        [Category("GS Core")]
+        public int SelectedIndex
+        {
+            get => _combo.SelectedIndex;
+            set => _combo.SelectedIndex = value;
+        }
+
+        // ============================
+        // CRIAÇÃO DO INNER CONTROL
+        // ============================
+
+        protected override TextBoxBase CreateInnerTextBox()
+        {
+            // ComboBox não herda de TextBoxBase, então usamos um "dummy"
+            // e ignoramos o TextBox interno do GsInputBase
+            _combo = new ComboBox
             {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FlatStyle = FlatStyle.Flat
+            };
+            SyncItems();
+            ApplyPlaceholder();
 
-                vColuna = value;
-
-                string valor = Funcoes.PegarTag(this, "col");
-
-                Tag = Tag.ToString().Replace("col=" + valor, "");
-
-                if (string.IsNullOrEmpty(value) == false)
-                    Tag = "col=" + value + Tag.ToString();
-
-            }
-        }
-
-        private bool vObgt = false;
-        [DisplayName("(DB.2 Campo Obrigatório)")]
-        public bool Obgt
-        {
-            get { return vObgt; }
-            set
+            _combo.GotFocus += (_, _) =>
             {
+                RemovePlaceholder();
+            };
 
-                vObgt = value;
-
-                if (value == false)
-                    Tag = Tag.ToString().Replace("|obgt", "");
-                else
-                    Tag += "|obgt";
-            }
-        }
-
-        private string vUnico = "";
-        [DisplayName("(DB.3 Msg para Duplicidade)")]
-        public string Unico
-        {
-            get { return vUnico; }
-            set
+            _combo.LostFocus += (_, _) =>
             {
+                ValidateCombo();
+            };
 
-                vUnico = value;
+            Controls.Add(_combo);
+            _combo.BringToFront();
 
-                string valor = Funcoes.PegarTag(this, "unico");
+            ApplyPlaceholder();
+            UpdateLayout();
 
-                Tag = Tag.ToString().Replace("|unico=" + valor, "");
-
-                if (string.IsNullOrEmpty(value) == false)
-                    Tag += "|unico=" + value;
-
-            }
+            return new TextBox(); // dummy, não utilizado
         }
 
-        private bool vItensLista = true;
+        // ============================
+        // LAYOUT
+        // ============================
 
-        [DisplayName("_Apenas Itens da Lista")]
-        [Category("_ECTurbo")]
-        [Description("")]
-        public bool ApenasItensLista
+        protected override void UpdateLayout()
         {
-            get { return vItensLista; }
-            set { vItensLista = value; }
-        }
-
-
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-
-            //ForeColor = Config.CorPrimaria;
-            //Font = Config.FontePadrao;
-        }
-
-        protected override void OnEnter(EventArgs e)
-        {
-            base.OnEnter(e);
-            BackColor = Config.CorEntrada;
-        }
-
-
-        protected override void OnLeave(EventArgs e)
-        {
-            base.OnLeave(e);
-            BackColor = Config.CorSaida;
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            if (e.KeyCode == Keys.Enter)
-            {
-                SendKeys.Send("{TAB}");
-                e.SuppressKeyPress = true;
-            }
-
-            if (e.KeyCode == Keys.Escape)
-            {
-                Text = string.Empty;
-                SelectedIndex = -1;
-                e.SuppressKeyPress = true;
-            }
-
-        }
-
-
-        protected override void OnValidating(CancelEventArgs e)
-        {
-            base.OnValidating(e);
-
-            Funcoes.RemoverLabel(this);
-
-            if (Text == string.Empty)
+            if (_combo == null)
                 return;
 
-            if(SelectedIndex == -1 && ApenasItensLista == true)
-            {
-                Funcoes.CriarLabel(this, "Item inválido", descricao: "Permitido apenas o uso das opções presentes na lista");
-                e.Cancel = true;
-            }
-
+            _combo.Location = new Point(Padding.Left, Padding.Top);
+            _combo.Width = Width - Padding.Horizontal;
+            _combo.Height = Height - Padding.Vertical;
         }
 
-        protected override void OnTextChanged(EventArgs e)
+        // ============================
+        // PLACEHOLDER FAKE
+        // ============================
+
+        private void ApplyPlaceholder()
         {
-            base.OnTextChanged(e);
-
-            if (Text == string.Empty)
-            {
-                Funcoes.RemoverLabel(this);
+            if (_combo == null)
                 return;
-            }
 
-            if(SelectedIndex > -1)
-            {
-                Funcoes.RemoverLabel(this);
+            if (_pendingItems.Count > 0)
                 return;
-            }
 
+            _placeholderActive = true;
+            _combo.ForeColor = SystemColors.GrayText;
+            _combo.Items.Clear();
+            _combo.Items.Add(_placeholderText);
+            _combo.SelectedIndex = 0;
         }
 
+
+        private void RemovePlaceholder()
+        {
+            if (!_placeholderActive)
+                return;
+
+            _placeholderActive = false;
+            _combo.ForeColor = SystemColors.WindowText;
+
+            SyncItems();
+        }
+
+
+        // ============================
+        // VALIDAÇÃO
+        // ============================
+
+        private void ValidateCombo()
+        {
+            if (Required && (_placeholderActive || _combo.SelectedIndex < 0))
+            {
+                ShowError(RequiredMessage);
+            }
+            else
+            {
+                ClearError();
+            }
+        }
+
+        // ============================
+        // SINCRONIZAÇÃO DE ITENS
+        // ============================
+
+        private void SyncItems()
+        {
+            if (_combo == null)
+                return;
+
+            _combo.Items.Clear();
+
+            foreach (var item in _pendingItems)
+                _combo.Items.Add(item);
+        }
+
+
+
+        // ============================
+        // TEXTO (override)
+        // ============================
+
+        public override string Text
+        {
+            get => _combo?.Text ?? string.Empty;
+            set
+            {
+                if (_combo != null)
+                    _combo.Text = value;
+            }
+        }
     }
 }

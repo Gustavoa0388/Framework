@@ -199,6 +199,18 @@ namespace GS.Core.UI.Demo
 
             page.Controls.Add(btnTheme);
 
+            var combo = new GsComboBox
+            {
+                Required = true,
+                Placeholder = "Selecione o estado"
+            };
+            combo.Items.Add("SP");
+            combo.Items.Add("RJ");
+            combo.Items.Add("MG");
+
+            AddLabeledControl(page, "Estado", combo, 20, 320);
+
+
         }
 
 
