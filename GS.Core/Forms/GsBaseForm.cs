@@ -9,30 +9,40 @@ namespace GS.Core.UI.Forms
 {
     /// <summary>
     /// Form base do GS Core.
-    /// Centraliza tema, validação e comportamento padrão dos formulários.
-    /// TODOS os forms do sistema devem herdar deste.
+    /// Centraliza aplicação de tema, validação global e comportamento padrão.
+    /// NÃO utiliza Designer.
     /// </summary>
-    public partial class GsBaseForm : Form
+    public class GsBaseForm : Form
     {
+        // ============================
+        // CONFIGURAÇÕES DE TEMA
+        // ============================
+
         /// <summary>
         /// Define se o tema será aplicado automaticamente ao carregar o Form.
         /// </summary>
         protected bool AutoApplyTheme { get; set; } = true;
 
         /// <summary>
-        /// Permite sobrescrever o tema padrão para este Form.
+        /// Permite sobrescrever o tema padrão apenas neste Form.
         /// Se null, usa o tema atual do ThemeManager.
         /// </summary>
         protected GsTheme CustomTheme { get; set; }
 
+        // ============================
+        // CONSTRUTOR
+        // ============================
+
         protected GsBaseForm()
         {
-            InitializeComponent();
-
             // Boas práticas padrão
             StartPosition = FormStartPosition.CenterScreen;
             Font = SystemFonts.DefaultFont;
         }
+
+        // ============================
+        // CICLO DE VIDA
+        // ============================
 
         protected override void OnLoad(EventArgs e)
         {
@@ -46,9 +56,10 @@ namespace GS.Core.UI.Forms
             // Gancho futuro: animações, logging, métricas
         }
 
-        /// <summary>
-        /// Aplica o tema automaticamente, se habilitado.
-        /// </summary>
+        // ============================
+        // TEMA
+        // ============================
+
         protected virtual void ApplyThemeIfNeeded()
         {
             if (!AutoApplyTheme)
@@ -61,34 +72,43 @@ namespace GS.Core.UI.Forms
             ThemeManager.ApplyTheme(this, theme);
         }
 
-        /// <summary>
-        /// Valida todos os inputs do formulário.
-        /// Retorna true se todos estiverem válidos.
-        /// </summary>
-        public virtual bool ValidarFormulario()
-        {
-            var inputs = ObterTodosInputs(this);
+        // ============================
+        // VALIDAÇÃO GLOBAL
+        // ============================
 
-            bool allValid = true;
+        /// <summary>
+        /// Valida todos os inputs que implementam IGsValidatable.
+        /// Retorna true se todos estiverem válidos.
+        /// Pode ser sobrescrito por formulários especializados.
+        /// </summary>
+        public virtual bool ValidateForm()
+        {
+            var inputs = GetAllValidatableControls(this);
+
+            IGsValidatable firstInvalid = null;
 
             foreach (var input in inputs)
             {
                 input.Validate();
 
-                if (!input.IsValid)
-                {
-                    allValid = false;
-                }
+                if (!input.IsValid && firstInvalid == null)
+                    firstInvalid = input;
             }
 
-            return allValid;
+            // Foca no primeiro erro (UX profissional)
+            if (firstInvalid is Control ctrl && ctrl.CanFocus)
+            {
+                ctrl.Focus();
+            }
+
+            return firstInvalid == null;
         }
 
         /// <summary>
-        /// Obtém todos os controles que implementam IGsValidatable,
-        /// incluindo os que estão dentro de Panels, TabPages, GroupBox etc.
+        /// Obtém recursivamente todos os controles que implementam IGsValidatable.
+        /// Inclui Panels, GroupBox, TabPages, etc.
         /// </summary>
-        protected virtual List<IGsValidatable> ObterTodosInputs(Control parent)
+        protected virtual List<IGsValidatable> GetAllValidatableControls(Control parent)
         {
             var list = new List<IGsValidatable>();
 
@@ -98,10 +118,24 @@ namespace GS.Core.UI.Forms
                     list.Add(validatable);
 
                 if (ctrl.HasChildren)
-                    list.AddRange(ObterTodosInputs(ctrl));
+                    list.AddRange(GetAllValidatableControls(ctrl));
             }
 
             return list;
+        }
+
+        // ============================
+        // LEGADO / COMPATIBILIDADE (OPCIONAL)
+        // ============================
+
+        /// <summary>
+        /// Método legado em PT-BR para compatibilidade temporária.
+        /// Use ValidateForm().
+        /// </summary>
+        [Obsolete("Use ValidateForm()")]
+        public bool ValidarFormulario()
+        {
+            return ValidateForm();
         }
     }
 }

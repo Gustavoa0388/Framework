@@ -5,149 +5,217 @@ using System.Windows.Forms;
 namespace GS.Core.UI.Forms
 {
     /// <summary>
-    /// Form base para cadastros do GS Core.
-    /// Centraliza botões, validação e fluxo de ações.
+    /// Base padrão para formulários de cadastro.
+    /// Fornece layout consistente, validação automática e fluxo de salvamento.
     /// </summary>
-    public class FormBaseCadastro : GsBaseForm
-
+    public partial class FormBaseCadastro : GsBaseForm
     {
         // ============================
-        // BOTÕES PADRÃO
+        // CONFIGURAÇÕES PÚBLICAS
         // ============================
+
+        public bool ShowCancelButton { get; set; } = true;
+        public bool CloseOnSave { get; set; } = true;
+        public bool ConfirmCancel { get; set; } = true;
+
+        // ============================
+        // CONTROLES BASE
+        // ============================
+
+        protected Panel ContentPanel;
+        protected Panel ActionPanel;
 
         protected Button BtnSalvar;
         protected Button BtnCancelar;
 
-        protected FormBaseCadastro()
+        // ============================
+        // CONSTRUTOR
+        // ============================
+
+        public FormBaseCadastro()
         {
-            CriarBotoesPadrao();
+            InitializeComponent(); // esse é do próprio FormBaseCadastro
+            InitializeLayout();
         }
 
-        /// <summary>
-        /// Cria os botões Salvar e Cancelar com layout padrão.
-        /// </summary>
-        private void CriarBotoesPadrao()
+
+        // ============================
+        // LAYOUT BASE
+        // ============================
+
+        private void InitializeLayout()
         {
+            SuspendLayout();
+
+            // Painel principal (conteúdo)
+            ContentPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(16),
+                BackColor = Color.Transparent
+            };
+
+            // Painel inferior (ações)
+            ActionPanel = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 60,
+                Padding = new Padding(10),
+                BackColor = Color.Transparent
+            };
+
+            // Botão Salvar
             BtnSalvar = new Button
             {
                 Text = "Salvar",
-                Width = 120,
-                Height = 35,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                Width = 100,
+                Height = 32,
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom
             };
+            BtnSalvar.Click += (_, _) => OnSalvarClick();
 
+            // Botão Cancelar
             BtnCancelar = new Button
             {
                 Text = "Cancelar",
-                Width = 120,
-                Height = 35,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                Width = 100,
+                Height = 32,
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom
             };
+            BtnCancelar.Click += (_, _) => OnCancelarClick();
 
-            // Eventos
-            BtnSalvar.Click += (_, _) => ExecutarSalvar();
-            BtnCancelar.Click += (_, _) => ExecutarCancelar();
+            ActionPanel.Controls.Add(BtnSalvar);
+            ActionPanel.Controls.Add(BtnCancelar);
 
-            Controls.Add(BtnSalvar);
-            Controls.Add(BtnCancelar);
+            Controls.Add(ContentPanel);
+            Controls.Add(ActionPanel);
+
+            ResumeLayout();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            PosicionarBotoes();
-        }
+        // ============================
+        // POSICIONAMENTO DOS BOTÕES
+        // ============================
 
-        /// <summary>
-        /// Posiciona os botões no canto inferior direito.
-        /// </summary>
-        protected virtual void PosicionarBotoes()
+        protected virtual void PositionButtons()
         {
-            if (BtnSalvar == null || BtnCancelar == null)
+            if (BtnSalvar == null || ActionPanel == null)
                 return;
 
-            int margin = 15;
+            BtnCancelar.Visible = ShowCancelButton;
 
-            BtnCancelar.Location = new Point(
-                ClientSize.Width - BtnCancelar.Width - margin,
-                ClientSize.Height - BtnCancelar.Height - margin
-            );
+            int right = ActionPanel.Width - 10;
+            int top = (ActionPanel.Height - BtnSalvar.Height) / 2;
+
+            if (BtnCancelar.Visible)
+            {
+                BtnCancelar.Location = new Point(
+                    right - BtnCancelar.Width,
+                    top
+                );
+
+                right -= BtnCancelar.Width + 10;
+            }
 
             BtnSalvar.Location = new Point(
-                BtnCancelar.Left - BtnSalvar.Width - 10,
-                BtnCancelar.Top
+                right - BtnSalvar.Width,
+                top
             );
         }
-
-
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            PositionButtons();
+        }
 
-            if (DesignMode)
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            PositionButtons();
+        }
+
+        // ============================
+        // FLUXO DE SALVAR
+        // ============================
+
+        private void OnSalvarClick()
+        {
+            if (!ValidateForm())
                 return;
 
-            PosicionarBotoes();
-        }
-
-
-        // ============================
-        // FLUXO DE AÇÃO
-        // ============================
-
-        private void ExecutarSalvar()
-        {
-            // 1️⃣ Validação global
-            if (!ValidarFormulario())
+            try
             {
-                OnFalhaValidacao();
-                return;
+                bool sucesso = OnSalvar();
+
+                if (sucesso)
+                {
+                    OnSalvarSuccess();
+
+                    if (CloseOnSave)
+                        Close();
+                }
             }
-
-            // 2️⃣ Hook de negócio
-            OnSalvar();
-        }
-
-        private void ExecutarCancelar()
-        {
-            if (OnCancelar())
+            catch (Exception ex)
             {
-                Close();
+                OnSalvarError(ex);
             }
         }
 
         // ============================
-        // MÉTODOS PARA SOBRESCRITA
+        // FLUXO DE CANCELAR
+        // ============================
+
+        private void OnCancelarClick()
+        {
+            if (ConfirmCancel)
+            {
+                var result = MessageBox.Show(
+                    "Deseja cancelar as alterações?",
+                    "Confirmação",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result != DialogResult.Yes)
+                    return;
+            }
+
+            Close();
+        }
+
+        // ============================
+        // GANCHOS PARA OVERRIDE
         // ============================
 
         /// <summary>
-        /// Implementação obrigatória da lógica de salvar.
+        /// Executa a lógica de salvamento.
+        /// Retorne true para indicar sucesso.
         /// </summary>
-        protected virtual void OnSalvar()
-        {
-            throw new NotImplementedException(
-                "Implemente o método OnSalvar no formulário derivado."
-            );
-        }
-
-
-        /// <summary>
-        /// Executado quando a validação falha.
-        /// Pode ser sobrescrito para exibir mensagens customizadas.
-        /// </summary>
-        protected virtual void OnFalhaValidacao()
-        {
-            // Gancho para FormMsg, toast, log, etc.
-        }
-
-        /// <summary>
-        /// Executado ao clicar em cancelar.
-        /// Retorne false para impedir o fechamento.
-        /// </summary>
-        protected virtual bool OnCancelar()
+        protected virtual bool OnSalvar()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Executado após salvar com sucesso.
+        /// </summary>
+        protected virtual void OnSalvarSuccess()
+        {
+            // Hook para toast, log, eventos, etc.
+        }
+
+        /// <summary>
+        /// Executado quando ocorre erro no salvamento.
+        /// </summary>
+        protected virtual void OnSalvarError(Exception ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "Erro ao salvar",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
         }
     }
 }
