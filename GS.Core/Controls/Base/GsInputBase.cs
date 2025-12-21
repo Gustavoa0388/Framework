@@ -20,7 +20,7 @@ namespace GS.Core.UI.Controls.Base
         // CAMPOS BASE
         // ======================================================
 
-        protected TextBox InnerTextBox;
+        protected TextBoxBase InnerTextBox;
 
         protected bool IsFocused;
         protected bool IsHovered;
@@ -63,7 +63,8 @@ namespace GS.Core.UI.Controls.Base
         // ======================================================
         // CONTRATO PARA FILHOS
         // ======================================================
-        protected abstract TextBox CreateInnerTextBox();
+        protected abstract TextBoxBase CreateInnerTextBox();
+
 
         // ======================================================
         // INICIALIZAÇÃO
@@ -247,12 +248,20 @@ namespace GS.Core.UI.Controls.Base
 
         public string Placeholder
         {
-            get => InnerTextBox?.PlaceholderText ?? string.Empty;
+            get
+            {
+                if (InnerTextBox is TextBox tb)
+                    return tb.PlaceholderText;
+
+                return string.Empty;
+            }
             set
             {
-                if (InnerTextBox != null)
-                    InnerTextBox.PlaceholderText = value;
+                if (InnerTextBox is TextBox tb)
+                    tb.PlaceholderText = value;
             }
         }
+
     }
 }
+

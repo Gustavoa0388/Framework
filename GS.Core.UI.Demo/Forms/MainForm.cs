@@ -29,7 +29,7 @@ namespace GS.Core.UI.Demo
         private const int GAP = 60;
         private GsTextBox txt;
         private GsPasswordTextBox pwd;
-        private GsMaskedTextBox mask;
+        private GsMaskedInput mask;
         private GsNumericBox num;
         private GsDateSelector date;
 
@@ -104,14 +104,6 @@ namespace GS.Core.UI.Demo
             page.Controls.Add(subtitle);
 
 
-            //var hint = new GsHintLabel
-            // {
-            //    Text = "Informe o endereço do servidor MySQL",
-            //Location = new Point(20, 120)
-            // };
-
-            // page.Controls.Add(hint);
-
             txt = new GsTextBox
             {
                 Placeholder = "Digite o texto",
@@ -129,11 +121,12 @@ namespace GS.Core.UI.Demo
             };
             AddLabeledControl(page, "Password", pwd, 20, 160);
                        
-            mask = new GsMaskedTextBox
+            mask = new GsMaskedInput
             {
-                Mask = "000.000.000-00"
+                Mask = "000.000.000-00",
+                Required = true
             };
-            AddLabeledControl(page, "Masked Text", mask, 20, 240);
+            AddLabeledControl(page, "CPF", mask, 20, 240);
 
             num = new GsNumericBox();
             AddLabeledControl(page, "Numeric", num, 20, 300);

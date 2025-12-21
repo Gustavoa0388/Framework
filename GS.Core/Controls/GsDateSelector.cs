@@ -38,9 +38,9 @@ namespace GS.Core.UI.Controls
         {
             base.OnCreateControl();
 
-            if (InnerTextBox != null)
+            if (InnerTextBox is TextBox tb)
             {
-                InnerTextBox.TextAlign = HorizontalAlignment.Center;
+                tb.TextAlign = HorizontalAlignment.Center;
             }
         }
 

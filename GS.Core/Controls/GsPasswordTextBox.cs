@@ -17,13 +17,14 @@ namespace GS.Core.UI.Controls
         private const int EyeIconSize = 20;
         private const int EyeIconSpacing = 6;
 
-        protected override TextBox CreateInnerTextBox()
+        protected override TextBoxBase CreateInnerTextBox()
         {
             return new TextBox
             {
                 UseSystemPasswordChar = true
             };
         }
+
 
         protected override void OnCreateControl()
         {
@@ -69,10 +70,14 @@ namespace GS.Core.UI.Controls
         {
             _showPassword = !_showPassword;
 
-            InnerTextBox.UseSystemPasswordChar = !_showPassword;
+            if (InnerTextBox is TextBox tb)
+                tb.UseSystemPasswordChar = !_showPassword;
+
             _eyeIcon.Image = _showPassword
                 ? Properties.Resources.eye_open
                 : Properties.Resources.eye_closed;
         }
+
     }
 }
+
