@@ -1,7 +1,13 @@
-﻿using System.ComponentModel;
+﻿// LEGACY CONTROL
+// Originado do ECTurbo
+// Mantido apenas para compatibilidade
+// NÃO segue o padrão GS Core
 
-namespace GS.Core.UI.Controls
+using System.ComponentModel;
+
+namespace GS.Core.UI.Controls.Legacy
 {
+    [ToolboxItem(false)]
     public class GsMonthSelector : GsComboBox
     {
 		private bool vMesAbreviado = false;

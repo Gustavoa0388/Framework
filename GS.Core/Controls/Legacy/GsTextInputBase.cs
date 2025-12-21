@@ -1,10 +1,17 @@
-﻿using System;
+﻿// LEGACY CONTROL
+// Originado do ECTurbo
+// Mantido apenas para compatibilidade
+// NÃO segue o padrão GS Core
+
+using GS.Core.UI.Theming;
+using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using GS.Core.UI.Theming;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
+    [ToolboxItem(false)]
     public abstract class GsTextInputBase : TextBox, IThemedControl
     {
         protected GsTheme Theme;

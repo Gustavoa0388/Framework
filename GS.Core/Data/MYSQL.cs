@@ -1,12 +1,11 @@
 ﻿using System.Data;
 using System.Globalization;
 
-using GS.Core.UI.Controls;
-
 using MySql.Data.MySqlClient;
 
 using GS.Core.UI.Properties;
 using GS.Core.UI;
+using GS.Core.UI.Controls.Legacy;
 
 namespace GS.Core.UI.Data
 {

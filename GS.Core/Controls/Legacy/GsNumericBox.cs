@@ -1,10 +1,16 @@
-﻿using System.ComponentModel;
+﻿// LEGACY CONTROL
+// Originado do ECTurbo
+// Mantido apenas para compatibilidade
+// NÃO segue o padrão GS Core
+
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
+    [ToolboxItem(false)]
     public class GsNumericBox : GsTextBox
     {
         public GsNumericBox() {
@@ -156,7 +162,7 @@ namespace GS.Core.UI.Controls
             if (InnerTextBox.ReadOnly)
                 return;
 
-            if (Text.Length > 0 && InnerTextBox.SelectionStart == Text.Length && (e.KeyChar == '+' == false && e.KeyChar == '-' == false))
+            if (Text.Length > 0 && InnerTextBox.SelectionStart == Text.Length && e.KeyChar == '+' == false && e.KeyChar == '-' == false)
             {
                 Text = string.Empty;
                 return;
@@ -221,7 +227,7 @@ namespace GS.Core.UI.Controls
                     if (vTxtBox == string.Empty)
                         vTxtBox = "0";
 
-                    Text = string.Format("{0:#,##0.00}", Double.Parse(vTxtBox) / 100);
+                    Text = string.Format("{0:#,##0.00}", double.Parse(vTxtBox) / 100);
                     Text = Text;
 
                     if (FormatarAutoRS)
@@ -330,7 +336,7 @@ namespace GS.Core.UI.Controls
 
                 
 
-                if(valor.ToString("N" + CasasDecimais) == (0).ToString("N" + CasasDecimais) && PermitirZerado == false)
+                if(valor.ToString("N" + CasasDecimais) == 0.ToString("N" + CasasDecimais) && PermitirZerado == false)
                 {
                     Funcoes.CriarLabel(this, "Valor Inválido", descricao: "Este campo não pode permanecer com valores zerados");
                     e.Cancel = true;

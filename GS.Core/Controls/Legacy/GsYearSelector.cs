@@ -1,9 +1,13 @@
-﻿using System.ComponentModel;
+﻿// LEGACY CONTROL
+// Originado do ECTurbo
+// Mantido apenas para compatibilidade
+// NÃO segue o padrão GS Core
 
+using System.ComponentModel;
 
-
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
+    [ToolboxItem(false)]
     public class GsYearSelector : GsTextBox
     {
 		private int vAnoMin = 1582;
