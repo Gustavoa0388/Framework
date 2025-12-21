@@ -144,6 +144,7 @@ namespace GS.Core.UI.Demo
                 DecimalPlaces = 2,
                 MinValue = 0
             };
+
             AddLabeledControl(page, "Quantidade", num, 20, 300);
 
 
