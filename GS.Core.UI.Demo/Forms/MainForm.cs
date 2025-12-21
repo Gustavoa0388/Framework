@@ -290,7 +290,7 @@ namespace GS.Core.UI.Demo
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            if (!ValidateForm())
+            if (!ValidarFormulario())
             {
                 MessageBox.Show(
                     "Existem campos obrigatórios não preenchidos.",
