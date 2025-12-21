@@ -7,8 +7,9 @@ namespace GS.Core.UI.Forms
     /// <summary>
     /// Base padrão para formulários de cadastro.
     /// Fornece layout consistente, validação automática e fluxo de salvamento.
+    /// NÃO utiliza Designer.
     /// </summary>
-    public partial class FormBaseCadastro : GsBaseForm
+    public class FormBaseCadastro : GsBaseForm
     {
         // ============================
         // CONFIGURAÇÕES PÚBLICAS
@@ -32,12 +33,10 @@ namespace GS.Core.UI.Forms
         // CONSTRUTOR
         // ============================
 
-        public FormBaseCadastro()
+        protected FormBaseCadastro()
         {
-            InitializeComponent(); // esse é do próprio FormBaseCadastro
             InitializeLayout();
         }
-
 
         // ============================
         // LAYOUT BASE
@@ -47,7 +46,7 @@ namespace GS.Core.UI.Forms
         {
             SuspendLayout();
 
-            // Painel principal (conteúdo)
+            // Painel de conteúdo (inputs)
             ContentPanel = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -141,6 +140,7 @@ namespace GS.Core.UI.Forms
 
         private void OnSalvarClick()
         {
+            // 🔹 validação global vem do GsBaseForm
             if (!ValidateForm())
                 return;
 
@@ -202,7 +202,7 @@ namespace GS.Core.UI.Forms
         /// </summary>
         protected virtual void OnSalvarSuccess()
         {
-            // Hook para toast, log, eventos, etc.
+            // Hook para toast, log, eventos etc.
         }
 
         /// <summary>
