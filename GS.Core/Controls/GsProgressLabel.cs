@@ -221,7 +221,7 @@ namespace GS.Core.UI.Controls
 
                     Pincel.Color = Cor;
 
-                    using (GraphicsPath path = Funcoes.CriarPath(Barra, 6))
+                    using (GraphicsPath path = FuncoesLegacy.CriarPath(Barra, 6))
                     {
                         g.FillPath(Pincel, path);
                     }

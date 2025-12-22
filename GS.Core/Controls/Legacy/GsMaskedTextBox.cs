@@ -44,7 +44,7 @@ namespace GS.Core.UI.Controls.Legacy
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -81,7 +81,7 @@ namespace GS.Core.UI.Controls.Legacy
 
                 vUnico = value;
 
-                string valor = Funcoes.PegarTag(this, "unico");
+                string valor = FuncoesLegacy.PegarTag(this, "unico");
 
                 Tag = Tag.ToString().Replace("|unico=" + valor, "");
 
@@ -105,7 +105,7 @@ namespace GS.Core.UI.Controls.Legacy
 
         protected override void OnTextChanged(EventArgs e)
         {
-            Funcoes.RemoverLabel(this);
+            FuncoesLegacy.RemoverLabel(this);
 
             base.OnTextChanged(e);
         }
@@ -154,7 +154,7 @@ namespace GS.Core.UI.Controls.Legacy
         {
             base.OnValidating(e);
 
-            Funcoes.RemoverLabel(this);
+            FuncoesLegacy.RemoverLabel(this);
 
             TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
 
@@ -171,7 +171,7 @@ namespace GS.Core.UI.Controls.Legacy
 
             if (Text.Replace(" ", "").Length != t)
             {
-                Funcoes.CriarLabel(this, "Incompleto", descricao:"Por favor digite a informação por completo");
+                FuncoesLegacy.CriarLabel(this, "Incompleto", descricao:"Por favor digite a informação por completo");
                 e.Cancel = true;
                 return;
             }
@@ -187,7 +187,7 @@ namespace GS.Core.UI.Controls.Legacy
 
             if (Text == string.Empty)
             {
-                Funcoes.RemoverLabel(this);
+                FuncoesLegacy.RemoverLabel(this);
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace GS.Core.UI.Controls.Legacy
 
             if (Text.Replace(" ", "").Length == t)
             {
-                Funcoes.RemoverLabel(this);
+                FuncoesLegacy.RemoverLabel(this);
             }
 
         }

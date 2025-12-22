@@ -42,7 +42,7 @@ namespace GS.Core.UI.Controls
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -79,7 +79,7 @@ namespace GS.Core.UI.Controls
 
                 vUnico = value;
 
-                string valor = Funcoes.PegarTag(this, "unico");
+                string valor = FuncoesLegacy.PegarTag(this, "unico");
 
                 Tag = Tag.ToString().Replace("|unico=" + valor, "");
 
@@ -146,14 +146,14 @@ namespace GS.Core.UI.Controls
         {
             base.OnValidating(e);
 
-            Funcoes.RemoverLabel(this);
+            FuncoesLegacy.RemoverLabel(this);
 
             if (Text == string.Empty)
                 return;
 
             if(SelectedIndex == -1 && ApenasItensLista == true)
             {
-                Funcoes.CriarLabel(this, "Item inválido", descricao: "Permitido apenas o uso das opções presentes na lista");
+                FuncoesLegacy.CriarLabel(this, "Item inválido", descricao: "Permitido apenas o uso das opções presentes na lista");
                 e.Cancel = true;
             }
 
@@ -165,13 +165,13 @@ namespace GS.Core.UI.Controls
 
             if (Text == string.Empty)
             {
-                Funcoes.RemoverLabel(this);
+                FuncoesLegacy.RemoverLabel(this);
                 return;
             }
 
             if(SelectedIndex > -1)
             {
-                Funcoes.RemoverLabel(this);
+                FuncoesLegacy.RemoverLabel(this);
                 return;
             }
 

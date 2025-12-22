@@ -59,7 +59,7 @@ namespace GS.Core.UI.Controls.Legacy
 
 			if(Text.Length < 4)
 			{
-				Funcoes.CriarLabel(this, "Digite um ano de 4 digitos");
+				FuncoesLegacy.CriarLabel(this, "Digite um ano de 4 digitos");
 				e.Cancel = true;
 				return;
 			}
@@ -68,14 +68,14 @@ namespace GS.Core.UI.Controls.Legacy
 
 			if(ano < AnoMin)
             {
-                Funcoes.CriarLabel(this, "Ano inválido!", descricao:$"Ano mínimo permitido: {AnoMin}");
+                FuncoesLegacy.CriarLabel(this, "Ano inválido!", descricao:$"Ano mínimo permitido: {AnoMin}");
                 e.Cancel = true;
                 return;
             }
 
             if (ano > AnoMax && AnoMax > 0)
             {
-                Funcoes.CriarLabel(this, "Ano inválido!", descricao: $"Ano máximo permitido: {AnoMax}");
+                FuncoesLegacy.CriarLabel(this, "Ano inválido!", descricao: $"Ano máximo permitido: {AnoMax}");
                 e.Cancel = true;
                 return;
             }

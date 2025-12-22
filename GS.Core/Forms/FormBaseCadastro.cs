@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GS.Core.UI.Formularios;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -170,20 +171,14 @@ namespace GS.Core.UI.Forms
         {
             if (ConfirmCancel)
             {
-                var result = MessageBox.Show(
-                    "Deseja cancelar as alterações?",
-                    "Confirmação",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (result != DialogResult.Yes)
+                if (ConfirmCancel && !FormMsg.Confirm("Deseja cancelar as alterações?"))
                     return;
-            }
 
-            Close();
+                Close();
+            }
         }
 
+              
         // ============================
         // GANCHOS PARA OVERRIDE
         // ============================
@@ -210,12 +205,8 @@ namespace GS.Core.UI.Forms
         /// </summary>
         protected virtual void OnSalvarError(Exception ex)
         {
-            MessageBox.Show(
-                ex.Message,
-                "Erro ao salvar",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
+            FormMsg.Error(ex.Message);
+
         }
     }
 }

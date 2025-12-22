@@ -314,12 +314,12 @@ namespace GS.Core.UI.Controls.Legacy
         {
             
 
-            Funcoes.RemoverLabel(this);
+            FuncoesLegacy.RemoverLabel(this);
 
             if (Text == string.Empty)
                 return;
 
-            string v = Funcoes.NormalizarNumero(Text);
+            string v = FuncoesLegacy.NormalizarNumero(Text);
 
             try
             {
@@ -338,7 +338,7 @@ namespace GS.Core.UI.Controls.Legacy
 
                 if(valor.ToString("N" + CasasDecimais) == 0.ToString("N" + CasasDecimais) && PermitirZerado == false)
                 {
-                    Funcoes.CriarLabel(this, "Valor Inválido", descricao: "Este campo não pode permanecer com valores zerados");
+                    FuncoesLegacy.CriarLabel(this, "Valor Inválido", descricao: "Este campo não pode permanecer com valores zerados");
                     e.Cancel = true;
                     InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                     return;
@@ -354,7 +354,7 @@ namespace GS.Core.UI.Controls.Legacy
             return;
 
         Continuar:
-            Funcoes.CriarLabel(this, "Valor inválido");
+            FuncoesLegacy.CriarLabel(this, "Valor inválido");
             e.Cancel = true;
             InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
 

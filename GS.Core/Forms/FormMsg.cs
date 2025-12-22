@@ -1,50 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-
-
-namespace GS.Core.UI.Formularios
+namespace GS.Core.UI.Forms
 {
-    public partial class FormMsg : Form
+    /// <summary>
+    /// Centraliza a exibição de mensagens do GS Core.
+    /// Evita uso direto de MessageBox espalhado pelo sistema.
+    /// </summary>
+    public static class FormMsg
     {
-        public FormMsg()
+        // ============================
+        // SUCESSO
+        // ============================
+
+        public static void Success(string message, string title = "Sucesso")
         {
-            InitializeComponent();
+            MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
         }
 
-        private void BtOkSucesso_Click(object sender, EventArgs e)
+        // ============================
+        // ERRO
+        // ============================
+
+        public static void Error(string message, string title = "Erro")
         {
-            this.Close();
+            MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
         }
 
-        private void MpConteudo_KeyDown(object sender, KeyEventArgs e)
+        // ============================
+        // ALERTA / WARNING
+        // ============================
+
+        public static void Warning(string message, string title = "Atenção")
         {
-            if (e.KeyCode == Keys.Escape)
-                this.Close();
+            MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
         }
 
-        private void FormMsg_Load(object sender, EventArgs e)
+        // ============================
+        // INFORMAÇÃO
+        // ============================
+
+        public static void Info(string message, string title = "Informação")
         {
-            Funcoes.Resposta = false;
+            MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
         }
 
-        private void BtSim_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Yes;
-            this.Close();
-        }
+        // ============================
+        // CONFIRMAÇÃO
+        // ============================
 
-        private void BtNao_Click(object sender, EventArgs e)
+        public static bool Confirm(
+            string message,
+            string title = "Confirmação",
+            MessageBoxIcon icon = MessageBoxIcon.Question)
         {
-            this.DialogResult = DialogResult.No;
-            this.Close();
+            return MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.YesNo,
+                icon
+            ) == DialogResult.Yes;
         }
     }
 }

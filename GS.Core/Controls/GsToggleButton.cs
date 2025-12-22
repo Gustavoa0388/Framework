@@ -48,7 +48,7 @@ namespace GS.Core.UI.Controls
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -68,7 +68,7 @@ namespace GS.Core.UI.Controls
 
                 vValorV = value;
 
-                string vAntigo = Funcoes.PegarTag(this, "valor");
+                string vAntigo = FuncoesLegacy.PegarTag(this, "valor");
 
                 Tag = Tag.ToString().Replace("|valor=" + vAntigo, "");
 
@@ -89,7 +89,7 @@ namespace GS.Core.UI.Controls
 
                 vValorF = value;
 
-                string vAntigo = Funcoes.PegarTag(this, "valorF");
+                string vAntigo = FuncoesLegacy.PegarTag(this, "valorF");
 
                 Tag = Tag.ToString().Replace("|valorF=" + vAntigo, "");
 
@@ -290,7 +290,7 @@ namespace GS.Core.UI.Controls
 
             SizeF TamanhoTexto = g.MeasureString(Text, Font);
 
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorFundo))
             {
                 g.FillPath(Pincel, path);
@@ -314,7 +314,7 @@ namespace GS.Core.UI.Controls
                                : endX - (endX - startX) * animationProgress;
 
             // Desenha a bolinha animada
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorMarcador))
             {
                 g.FillPath(Pincel, path);
@@ -335,7 +335,7 @@ namespace GS.Core.UI.Controls
 
             SizeF TamanhoTexto = g.MeasureString(Text, Font);
 
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorFundo))
             {
                 g.FillPath(Pincel, path);
@@ -360,7 +360,7 @@ namespace GS.Core.UI.Controls
             bFundo.X = Checked ? startX + (endX - startX) * animationProgress
                                : endX - (endX - startX) * animationProgress;
 
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorMarcador))
             {
                 // Desenha a bolinha animada
@@ -382,7 +382,7 @@ namespace GS.Core.UI.Controls
 
             SizeF TamanhoTexto = g.MeasureString(Text, Font);
 
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorTextoD))
             using (Pen Caneta = new Pen(CorFundo, 1))
             {
@@ -406,7 +406,7 @@ namespace GS.Core.UI.Controls
             bFundo.X = Checked ? startX + (endX - startX) * animationProgress
                                : endX - (endX - startX) * animationProgress;
 
-            using (GraphicsPath path = Funcoes.CriarPath(bFundo, 50))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(bFundo, 50))
             using (SolidBrush Pincel = new SolidBrush(CorMarcador))
             {
                 g.FillPath(Pincel, path);

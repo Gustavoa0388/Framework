@@ -15,7 +15,7 @@ namespace GS.Core.UI.Formularios
             if (Validar() == false)
                 return;
 
-            Funcoes.CriarLabel(BtSalvar, "Aguarde, salvando e testando a conexão", "info");
+            FuncoesLegacy.CriarLabel(BtSalvar, "Aguarde, salvando e testando a conexão", "info");
 
             Application.DoEvents();
 
@@ -31,21 +31,21 @@ namespace GS.Core.UI.Formularios
 
             if (Resposta == string.Empty)
             {
-                Funcoes.MsgOk("Conexão Realizada com Sucesso.");
+                FuncoesLegacy.MsgOk("Conexão Realizada com Sucesso.");
                 Application.Restart();
             }
             else if (Resposta.Contains("Unknown database"))
-                Funcoes.MsgErro($"O Banco de Dados {TxtBanco.Text} não existe.");
+                FuncoesLegacy.MsgErro($"O Banco de Dados {TxtBanco.Text} não existe.");
             else if (Resposta == "Unable to connect to any of the specified MySQL hosts.")
-                Funcoes.MsgErro("Servidor não iniciado ou então Servidor ou Porta inválidos");
+                FuncoesLegacy.MsgErro("Servidor não iniciado ou então Servidor ou Porta inválidos");
             else if (Resposta == $"Value '{TxtPorta.Text}' is not of the correct type.")
-                Funcoes.MsgErro("Porta inválida");
+                FuncoesLegacy.MsgErro("Porta inválida");
             else if (Resposta.Contains("Access denied for user"))
-                Funcoes.MsgErro("Usuário ou senha incorretos");
+                FuncoesLegacy.MsgErro("Usuário ou senha incorretos");
             else
-                Funcoes.MsgErro(Resposta);
+                FuncoesLegacy.MsgErro(Resposta);
 
-            Funcoes.RemoverLabel(BtSalvar);
+            FuncoesLegacy.RemoverLabel(BtSalvar);
 
         }
 
@@ -57,25 +57,25 @@ namespace GS.Core.UI.Formularios
             if (TxtBanco.Text == string.Empty)
             {
                 Validado = false;
-                Funcoes.CriarLabel(TxtBanco, "Obrigatório!");
+                FuncoesLegacy.CriarLabel(TxtBanco, "Obrigatório!");
             }
 
             if (TxtServidor.Text == string.Empty)
             {
                 Validado = false;
-                Funcoes.CriarLabel(TxtServidor, "Obrigatório!");
+                FuncoesLegacy.CriarLabel(TxtServidor, "Obrigatório!");
             }
 
             if (TxtPorta.Text == string.Empty)
             {
                 Validado = false;
-                Funcoes.CriarLabel(TxtPorta, "Obrigatório!");
+                FuncoesLegacy.CriarLabel(TxtPorta, "Obrigatório!");
             }
 
             if (TxtUsuario.Text == string.Empty)
             {
                 Validado = false;
-                Funcoes.CriarLabel(TxtUsuario, "Obrigatório!");
+                FuncoesLegacy.CriarLabel(TxtUsuario, "Obrigatório!");
             }
 
             return Validado;

@@ -57,7 +57,7 @@ namespace GS.Core.UI.Controls
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -111,7 +111,7 @@ namespace GS.Core.UI.Controls
 
                 vValorV = value;
 
-                string vAntigo = Funcoes.PegarTag(this, "valor");
+                string vAntigo = FuncoesLegacy.PegarTag(this, "valor");
 
                 Tag = Tag.ToString().Replace("|valor=" + vAntigo, "");
 
@@ -162,8 +162,8 @@ namespace GS.Core.UI.Controls
                         {
                             if (Ctr.Tag.ToString().Contains("|x"))
                             {
-                                if (Funcoes.PegarTag(Ctr, "col") == Funcoes.PegarTag(this, "col"))
-                                    Funcoes.RemoverLabel(Ctr);
+                                if (FuncoesLegacy.PegarTag(Ctr, "col") == FuncoesLegacy.PegarTag(this, "col"))
+                                    FuncoesLegacy.RemoverLabel(Ctr);
                             }
                         }
                     }
@@ -344,7 +344,7 @@ namespace GS.Core.UI.Controls
             Color CorT = Checked ? ForeColor : CorTextoDesmarcado;
 
             using (Pen Caneta = new Pen(CorB, 1))
-            using (GraphicsPath path = Funcoes.CriarPath(Base, Arredondamento))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arredondamento))
             using (SolidBrush Pincel = new SolidBrush(CorT))
             {
                 g.DrawPath(Caneta, path);
@@ -361,7 +361,7 @@ namespace GS.Core.UI.Controls
 
                 if (Base.Width > 0)
                 {
-                    using (GraphicsPath path = Funcoes.CriarPath(Base, Arredondamento / 2))
+                    using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arredondamento / 2))
                     using (LinearGradientBrush Pincel = new LinearGradientBrush(Base, CorFundo, CorFundo2, 90))
                     {
                         g.FillPath(Pincel, path);

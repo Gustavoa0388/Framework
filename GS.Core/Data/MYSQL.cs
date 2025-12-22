@@ -118,7 +118,7 @@ namespace GS.Core.UI.Data
 
             try
             {
-                v = Funcoes.NormalizarNumero(v);
+                v = FuncoesLegacy.NormalizarNumero(v);
 
                 string NomeParametro = "P" + Param.Count;
                 Param.Add(NomeParametro, Convert.ToDouble(v));
@@ -540,7 +540,7 @@ namespace GS.Core.UI.Data
                 if (Ctr.Tag != null)
                 {
 
-                    if (Funcoes.PegarTag(Ctr, "col") == "id")
+                    if (FuncoesLegacy.PegarTag(Ctr, "col") == "id")
                         continue;
 
                     if (Ctr.Tag.ToString().ToLower().Contains("col="))
@@ -580,7 +580,7 @@ namespace GS.Core.UI.Data
 
             if (Controles.Count == 0)
             {
-                Funcoes.MsgErro("Configure a propriedade\r\n(DB.1 Coluna Tabela)\r\nPara um controle pelo menos.");
+                FuncoesLegacy.MsgErro("Configure a propriedade\r\n(DB.1 Coluna Tabela)\r\nPara um controle pelo menos.");
                 return false;
             }
 
@@ -620,7 +620,7 @@ namespace GS.Core.UI.Data
                                 {
                                     if (Coluna == item.Split(':')[1])
                                     {
-                                        Funcoes.MsgErro($"Coluna '{Coluna}' foi usada duas vezes, controles:\r\n'{item.Split(':')[0]}' e '{Ctr.Name}'");
+                                        FuncoesLegacy.MsgErro($"Coluna '{Coluna}' foi usada duas vezes, controles:\r\n'{item.Split(':')[0]}' e '{Ctr.Name}'");
                                     }
                                 }
                             }
@@ -636,9 +636,9 @@ namespace GS.Core.UI.Data
 
                             Image ImgPadrao = (Image)Resources.ResourceManager.GetObject(resource);
 
-                            if (Funcoes.CompararImagens(pc.Image, ImgPadrao) == false)
+                            if (FuncoesLegacy.CompararImagens(pc.Image, ImgPadrao) == false)
                             {
-                                byte[] img = File.ReadAllBytes(Funcoes.MiniaturaImagem(pc));
+                                byte[] img = File.ReadAllBytes(FuncoesLegacy.MiniaturaImagem(pc));
                                 cmd.Parameters.AddWithValue("@" + Coluna, img);
                             }
                             else
@@ -684,7 +684,7 @@ namespace GS.Core.UI.Data
                         //Para quando for numerico
                         if (Ctr.Tag.ToString().ToLower().Contains("|numero"))
                         {
-                            string v = Funcoes.NormalizarNumero(Ctr.Text);
+                            string v = FuncoesLegacy.NormalizarNumero(Ctr.Text);
 
                             if (v == string.Empty)
                                 cmd.Parameters.AddWithValue("@" + Coluna, DBNull.Value);
@@ -772,7 +772,7 @@ namespace GS.Core.UI.Data
                         }
                         else
                         {
-                            Funcoes.MsgErro(erro);
+                            FuncoesLegacy.MsgErro(erro);
                         }
 
                         string[] f = ListaColunas.Split('|');
@@ -783,7 +783,7 @@ namespace GS.Core.UI.Data
                             {
                                 if (erro.ToUpper() == item.Split(':')[1].ToUpper())
                                 {
-                                    Funcoes.MsgErro($"Nome de Coluna Errado ({erro}):\r\n\r\nConfira o controle: {item.Split(':')[0]}");
+                                    FuncoesLegacy.MsgErro($"Nome de Coluna Errado ({erro}):\r\n\r\nConfira o controle: {item.Split(':')[0]}");
                                 }
                             }
                         }
@@ -802,20 +802,20 @@ namespace GS.Core.UI.Data
 
                     if (Msg != "")
                     {
-                        Funcoes.MsgOk(Msg);
+                        FuncoesLegacy.MsgOk(Msg);
                     }
                     else
                     {
                         if (Novo == true)
-                            Funcoes.MsgOk(MsgPadrao + " Salvo com sucesso!");
+                            FuncoesLegacy.MsgOk(MsgPadrao + " Salvo com sucesso!");
                         else
-                            Funcoes.MsgOk(MsgPadrao + " Alterado com sucesso!");
+                            FuncoesLegacy.MsgOk(MsgPadrao + " Alterado com sucesso!");
                     }
                 }
             }
 
             if (DeuCerto && Limpar)
-                Funcoes.LimparControles(CtrPai, false);
+                FuncoesLegacy.LimparControles(CtrPai, false);
 
 
             return DeuCerto;
@@ -860,9 +860,9 @@ namespace GS.Core.UI.Data
             if (dt.Rows.Count == 0)
             {
                 if (ValorBusca == "")
-                    Funcoes.MsgErro($"O id '{CtrId.Text}' não existe na tabela {Tabela}");
+                    FuncoesLegacy.MsgErro($"O id '{CtrId.Text}' não existe na tabela {Tabela}");
 
-                Funcoes.LimparControles(CtrPai, false);
+                FuncoesLegacy.LimparControles(CtrPai, false);
 
                 return 0;
             }
@@ -877,9 +877,9 @@ namespace GS.Core.UI.Data
                 if (Ctr is PictureBox pc)
                 {
                     if (dt.Rows.Count > 0)
-                        Funcoes.PegarFotoBanco(pc, dt.Rows[0][Coluna]);
+                        FuncoesLegacy.PegarFotoBanco(pc, dt.Rows[0][Coluna]);
                     else
-                        Funcoes.PegarFotoBanco(pc, null);
+                        FuncoesLegacy.PegarFotoBanco(pc, null);
 
                     continue;
                 }
@@ -985,7 +985,7 @@ namespace GS.Core.UI.Data
             foreach (Control Ctr in Controles)
             {
 
-                Funcoes.RemoverLabel(Ctr);
+                FuncoesLegacy.RemoverLabel(Ctr);
 
                 string tag = Ctr.Tag.ToString().ToLower();
 
@@ -999,7 +999,7 @@ namespace GS.Core.UI.Data
                         {
                             if (cb.SelectedIndex == -1)
                             {
-                                Funcoes.CriarLabel(Ctr, "Item inválido",
+                                FuncoesLegacy.CriarLabel(Ctr, "Item inválido",
                                                   descricao: "Por favor selecione apenas itens da lista.");
                                 DeuErro = true;
                                 continue;
@@ -1020,7 +1020,7 @@ namespace GS.Core.UI.Data
 
                             if (mk.Text == string.Empty)
                             {
-                                Funcoes.CriarLabel(mk, "Obrigatório", descricao: "Por favor preencha este campo para prosseguir.");
+                                FuncoesLegacy.CriarLabel(mk, "Obrigatório", descricao: "Por favor preencha este campo para prosseguir.");
                                 DeuErro = true;
                                 continue;
                             }
@@ -1033,7 +1033,7 @@ namespace GS.Core.UI.Data
 
                     if (Ctr.Text == string.Empty)
                     {
-                        Funcoes.CriarLabel(Ctr, "Obrigatório", descricao: "Por favor preencha este campo para prosseguir.");
+                        FuncoesLegacy.CriarLabel(Ctr, "Obrigatório", descricao: "Por favor preencha este campo para prosseguir.");
                         DeuErro = true;
                         continue;
                     }
@@ -1045,7 +1045,7 @@ namespace GS.Core.UI.Data
                     if (Ctr.Text == string.Empty)
                         continue;
 
-                    string v = Funcoes.NormalizarNumero(Ctr.Text);
+                    string v = FuncoesLegacy.NormalizarNumero(Ctr.Text);
 
                     try
                     {
@@ -1053,7 +1053,7 @@ namespace GS.Core.UI.Data
 
                         if (valor == 0 && tag.Contains("|zerado") == false)
                         {
-                            Funcoes.CriarLabel(Ctr, "Valor Inválido", descricao: "Este campo não pode permanecer zerado.");
+                            FuncoesLegacy.CriarLabel(Ctr, "Valor Inválido", descricao: "Este campo não pode permanecer zerado.");
                             DeuErro = true;
                             continue;
                         }
@@ -1061,14 +1061,14 @@ namespace GS.Core.UI.Data
 
                         if (valor < 0 && tag.Contains("|negativo") == false)
                         {
-                            Funcoes.CriarLabel(Ctr, "Valor Inválido", descricao: "Este campo não pode permanecer negativo.");
+                            FuncoesLegacy.CriarLabel(Ctr, "Valor Inválido", descricao: "Este campo não pode permanecer negativo.");
                             DeuErro = true;
                             continue;
                         }
                     }
                     catch
                     {
-                        Funcoes.CriarLabel(Ctr, "Valor Inválido", descricao: "Este valor não é um número válido.");
+                        FuncoesLegacy.CriarLabel(Ctr, "Valor Inválido", descricao: "Este valor não é um número válido.");
                         DeuErro = true;
                         continue;
                     }
@@ -1087,7 +1087,7 @@ namespace GS.Core.UI.Data
                     }
                     catch
                     {
-                        Funcoes.CriarLabel(Ctr, "Data Inválida", descricao: "Esta data não é válida.");
+                        FuncoesLegacy.CriarLabel(Ctr, "Data Inválida", descricao: "Esta data não é válida.");
                         DeuErro = true;
                         continue;
                     }
@@ -1138,11 +1138,11 @@ namespace GS.Core.UI.Data
 
                 if (rbGrupos[grupo] == false)
                 {
-                    Funcoes.CriarLabel(rbMostrarErro[item.Key], "Marque uma Opção.", descricao: "É necessário selecionar uma das opções acima");
+                    FuncoesLegacy.CriarLabel(rbMostrarErro[item.Key], "Marque uma Opção.", descricao: "É necessário selecionar uma das opções acima");
                     DeuErro = true;
                 }
                 else
-                    Funcoes.RemoverLabel(rbMostrarErro[item.Key]);
+                    FuncoesLegacy.RemoverLabel(rbMostrarErro[item.Key]);
 
             }
 
@@ -1170,7 +1170,7 @@ namespace GS.Core.UI.Data
 
             if (dt.Rows.Count > 0)
             {
-                Funcoes.CriarLabel(Ctr, msg + " já cadastrado(a)");
+                FuncoesLegacy.CriarLabel(Ctr, msg + " já cadastrado(a)");
                 return true;
             }
 
@@ -1186,7 +1186,7 @@ namespace GS.Core.UI.Data
                     Msg = "Deseja excluir este registro?\r\n\r\n* " +
                                      "Esta ação não poderá ser desfeita.";
 
-                if (Funcoes.Pergunta(Msg) == false)
+                if (FuncoesLegacy.Pergunta(Msg) == false)
                     return false;
             }
 
@@ -1270,7 +1270,7 @@ namespace GS.Core.UI.Data
                             da.Fill(dt);
                         }
                     }
-                    catch (Exception ex) { Funcoes.MsgErro(ex.Message); }
+                    catch (Exception ex) { FuncoesLegacy.MsgErro(ex.Message); }
 
                 }
 

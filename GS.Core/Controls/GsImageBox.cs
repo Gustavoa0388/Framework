@@ -26,7 +26,7 @@ namespace GS.Core.UI.Controls
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -46,7 +46,7 @@ namespace GS.Core.UI.Controls
 
                 vPadrao = value;
 
-                string valor = Funcoes.PegarTag(this, "padrao");
+                string valor = FuncoesLegacy.PegarTag(this, "padrao");
 
                 Tag = Tag.ToString().Replace("|padrao=" + valor, "");
 
@@ -137,7 +137,7 @@ namespace GS.Core.UI.Controls
             if (Base.Width < 1) Base.Width = 1;
             if (Base.Height < 1) Base.Height = 1;
 
-            using (GraphicsPath path = Funcoes.CriarPath(Base, 1, Raio1, Raio2, Raio3, Raio4))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, 1, Raio1, Raio2, Raio3, Raio4))
             using (LinearGradientBrush Pincel = 
                 new LinearGradientBrush(ClientRectangle, Cor1, Cor2, 135))
             using (Pen Caneta = new Pen(Pincel, TamanhoBorda))

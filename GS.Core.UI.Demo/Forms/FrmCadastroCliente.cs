@@ -22,13 +22,7 @@ namespace GS.Core.UI.Demo.Forms
             // var idade = numericIdade.Value;
             // Salvar no banco...
 
-            MessageBox.Show(
-                "Cliente salvo com sucesso!",
-                "GS Core",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-
+            FormMsg.Success("Salvo com sucesso");                     
             return true;
         }
     }

@@ -129,7 +129,7 @@ namespace GS.Core.UI.Controls
 
             EfeitoSombra(g, Base);
 
-            using (GraphicsPath path = Funcoes.CriarPath(Base, 1, Raio1, Raio2, Raio3, Raio4))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, 1, Raio1, Raio2, Raio3, Raio4))
             using (Pen Caneta = new Pen(CorBorda, TamanhoBorda))
             using (SolidBrush Pincel = new SolidBrush(BackColor))
             {
@@ -238,7 +238,7 @@ namespace GS.Core.UI.Controls
 
             RectangleF shadowRect = new RectangleF(r.X - shadowBlur, r.Y - shadowBlur, r.Width + 2 * shadowBlur, r.Height + 2 * shadowBlur);
 
-            using (GraphicsPath shadowPath = Funcoes.CriarPath(shadowRect, 1, Raio1, Raio2, Raio3, Raio4))
+            using (GraphicsPath shadowPath = FuncoesLegacy.CriarPath(shadowRect, 1, Raio1, Raio2, Raio3, Raio4))
             using (PathGradientBrush shadowBrush = new PathGradientBrush(shadowPath))
             {
                 shadowBrush.CenterColor = shadowColor;

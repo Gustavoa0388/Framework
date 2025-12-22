@@ -52,7 +52,7 @@ namespace GS.Core.UI.Controls.Legacy
 
         protected override void OnValidating(CancelEventArgs e)
         {
-            Funcoes.RemoverLabel(this);
+            FuncoesLegacy.RemoverLabel(this);
 
             if (Text == string.Empty)
                 return;
@@ -63,7 +63,7 @@ namespace GS.Core.UI.Controls.Legacy
             }
             catch (Exception)
             {
-                Funcoes.CriarLabel(this, "Data inválida");
+                FuncoesLegacy.CriarLabel(this, "Data inválida");
                 e.Cancel = true;
                 return;
             }
@@ -72,7 +72,7 @@ namespace GS.Core.UI.Controls.Legacy
 
             if(Convert.ToInt32(q[2]) < 1582)
             {
-                Funcoes.CriarLabel(this, "Ano inválido", descricao: "O Ano aceito deve ser acima de 1582");
+                FuncoesLegacy.CriarLabel(this, "Ano inválido", descricao: "O Ano aceito deve ser acima de 1582");
                 InnerTextBox.SelectionStart = InnerTextBox.Text.Length;
                 e.Cancel = true;
             }
@@ -188,15 +188,15 @@ namespace GS.Core.UI.Controls.Legacy
 
             try
             {
-                Funcoes.RemoverLabel(this);
+                FuncoesLegacy.RemoverLabel(this);
 
                 if (Convert.ToInt32(q[0]) > 31)
                 {
-                    Funcoes.CriarLabel(this, "Dia inválido", "alerta", descricao:"O dia válido deve ser menor ou igual a  31");
+                    FuncoesLegacy.CriarLabel(this, "Dia inválido", "alerta", descricao:"O dia válido deve ser menor ou igual a  31");
                 }
                 else if (Convert.ToInt32(q[1]) > 12)
                 {
-                    Funcoes.CriarLabel(this, "Mês inválido", "alerta");
+                    FuncoesLegacy.CriarLabel(this, "Mês inválido", "alerta");
                 }
             }
             catch (Exception) { }

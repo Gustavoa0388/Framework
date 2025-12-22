@@ -27,7 +27,7 @@
 
             if(Cep.Length != 8)
             {
-                Funcoes.MsgErro("O CEP informado deve ter 8 números");
+                FuncoesLegacy.MsgErro("O CEP informado deve ter 8 números");
                 return;
             }
 
@@ -37,13 +37,13 @@
 
             if(Retorno == null)
             {
-                Funcoes.MsgErro("Erro no site ou na sua conexão");
+                FuncoesLegacy.MsgErro("Erro no site ou na sua conexão");
                 return;
             }
 
             if(Retorno.erro != null)
             {
-                Funcoes.MsgErro("O CEP informado não existe");
+                FuncoesLegacy.MsgErro("O CEP informado não existe");
                 return;
             }
 
@@ -59,7 +59,7 @@
             GIA = Retorno.gia.ToString();
             SIAFI = Retorno.siafi.ToString();
 
-            Estado = Funcoes.PegarEstadoUF(UF);
+            Estado = FuncoesLegacy.PegarEstadoUF(UF);
         }
     }
 }

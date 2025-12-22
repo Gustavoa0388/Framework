@@ -18,13 +18,8 @@ namespace GS.Core.UI.Demo.Forms
         /// </summary>
         protected override bool OnSalvar()
         {
-            MessageBox.Show(
-                "Salvo com sucesso (teste)",
-                "GS Core",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
 
+            FormMsg.Success("Salvo com sucesso");
             return true;
         }
     }

@@ -217,9 +217,9 @@ namespace GS.Core.UI.Controls
             float AreaM = Base.X + Base.Width - M.Width;
             M.X = AreaM * (Percentual / 100);
 
-            using (GraphicsPath path = Funcoes.CriarPath(Base, ArredBorda))
-            using (GraphicsPath pathBarra = Funcoes.CriarPath(Barra, ArredBorda))
-            using (GraphicsPath pathM = Funcoes.CriarPath(M, ArredMarcador))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, ArredBorda))
+            using (GraphicsPath pathBarra = FuncoesLegacy.CriarPath(Barra, ArredBorda))
+            using (GraphicsPath pathM = FuncoesLegacy.CriarPath(M, ArredMarcador))
             using (SolidBrush Pincel = new SolidBrush(CorFundo))
             using (Pen Caneta = new Pen(CorBorda, 1))
             using (LinearGradientBrush Gradiente = new LinearGradientBrush(Barra, CorBarra1, CorBarra2, 1))

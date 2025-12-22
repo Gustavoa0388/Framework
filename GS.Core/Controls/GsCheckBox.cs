@@ -31,7 +31,7 @@ namespace GS.Core.UI.Controls
 
                 vColuna = value;
 
-                string valor = Funcoes.PegarTag(this, "col");
+                string valor = FuncoesLegacy.PegarTag(this, "col");
 
                 Tag = Tag.ToString().Replace("col=" + valor, "");
 
@@ -51,7 +51,7 @@ namespace GS.Core.UI.Controls
 
                 vValorV = value;
 
-                string vAntigo = Funcoes.PegarTag(this, "valor");
+                string vAntigo = FuncoesLegacy.PegarTag(this, "valor");
 
                 Tag = Tag.ToString().Replace("|valor=" + vAntigo, "");
 
@@ -72,7 +72,7 @@ namespace GS.Core.UI.Controls
 
                 vValorF = value;
 
-                string vAntigo = Funcoes.PegarTag(this, "valorF");
+                string vAntigo = FuncoesLegacy.PegarTag(this, "valorF");
 
                 Tag = Tag.ToString().Replace("|valorF=" + vAntigo, "");
 
@@ -303,7 +303,7 @@ namespace GS.Core.UI.Controls
             //Color CorI = Checked ? CorIcone : CorIconeDesmarcado;
             Color CorI = CorIcone;
 
-            using (GraphicsPath path = Funcoes.CriarPath(Base, Arredondamento))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arredondamento))
             using (Pen Caneta = new Pen(CorI, 2))
             using (SolidBrush Pincel = new SolidBrush(Checked ? ForeColor : CorTextoDesmarcado))
             using (LinearGradientBrush PincelFundo = new LinearGradientBrush(Base, CorFundo, CorFundo2, 90))

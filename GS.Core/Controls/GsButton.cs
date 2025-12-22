@@ -169,7 +169,7 @@ namespace GS.Core.UI.Controls
 
             if (AtivarSombra == true)
             {
-                using (GraphicsPath path = Funcoes.CriarPath(Base, Arred))
+                using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arred))
                 using (SolidBrush Pincel = new SolidBrush(CorSombra))
                 {
                     g.FillPath(Pincel, path);
@@ -179,7 +179,7 @@ namespace GS.Core.UI.Controls
             }
 
 
-            using (GraphicsPath path = Funcoes.CriarPath(Base, Arred))
+            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arred))
             using (LinearGradientBrush PincelFundo =
             new LinearGradientBrush(ClientRectangle, Cor1, Cor2, Angulo))
             using (Pen Caneta = new Pen(CorBorda, TamBorda))
@@ -267,8 +267,8 @@ namespace GS.Core.UI.Controls
                 Cor2Original = Cor2;
             }
 
-            Cor1 = Funcoes.CorTransparente(Cor1, 40);
-            Cor2 = Funcoes.CorTransparente(Cor2, 40);
+            Cor1 = FuncoesLegacy.CorTransparente(Cor1, 40);
+            Cor2 = FuncoesLegacy.CorTransparente(Cor2, 40);
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -291,8 +291,8 @@ namespace GS.Core.UI.Controls
                 Cor2Original = Cor2;
             }
 
-            Cor1 = Funcoes.CorTransparente(Cor1, 20);
-            Cor2 = Funcoes.CorTransparente(Cor2, 20);
+            Cor1 = FuncoesLegacy.CorTransparente(Cor1, 20);
+            Cor2 = FuncoesLegacy.CorTransparente(Cor2, 20);
         }
 
 
@@ -315,8 +315,8 @@ namespace GS.Core.UI.Controls
                 Cor2Original = Cor2;
             }
 
-            Cor1 = Funcoes.CorTransparente(Cor1, 90);
-            Cor2 = Funcoes.CorTransparente(Cor2, 90);
+            Cor1 = FuncoesLegacy.CorTransparente(Cor1, 90);
+            Cor2 = FuncoesLegacy.CorTransparente(Cor2, 90);
         }
 
         protected override void OnLeave(EventArgs e)

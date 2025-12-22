@@ -40,7 +40,7 @@ namespace GS.Core.UI.Services.Api
 
             if (c.Length != 14)
             {
-                Funcoes.MsgErro("O CNPJ informado precisa conter 14 números.");
+                FuncoesLegacy.MsgErro("O CNPJ informado precisa conter 14 números.");
                 return false;
             }
 
@@ -50,7 +50,7 @@ namespace GS.Core.UI.Services.Api
 
             if (Resposta == null)
             {
-                Funcoes.MsgErro("Não foi possível consultar o CNPJ.");
+                FuncoesLegacy.MsgErro("Não foi possível consultar o CNPJ.");
                 return false;
             }
 
@@ -64,13 +64,13 @@ namespace GS.Core.UI.Services.Api
 
                 if (msg == "CNPJ" + Cnpj + "inválido")
                 {
-                    Funcoes.MsgErro("O CNPJ " + Cnpj + " é inválido");
+                    FuncoesLegacy.MsgErro("O CNPJ " + Cnpj + " é inválido");
                     return false;
                 }
 
                 if (msg == "CNPJ" + Cnpj + "nãoencontrado")
                 {
-                    Funcoes.MsgErro("O CNPJ " + Cnpj + " não foi localizado");
+                    FuncoesLegacy.MsgErro("O CNPJ " + Cnpj + " não foi localizado");
                     return false;
                 }
 
@@ -92,7 +92,7 @@ namespace GS.Core.UI.Services.Api
             Municipio = Resposta.municipio.ToString();
             UF = Resposta.uf.ToString();
 
-            Estado = Funcoes.PegarEstadoUF(UF);
+            Estado = FuncoesLegacy.PegarEstadoUF(UF);
 
             Email = Resposta.email.ToString();
             Telefone = Resposta.ddd_fax.ToString();
