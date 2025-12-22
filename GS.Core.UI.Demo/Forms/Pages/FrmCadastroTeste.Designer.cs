@@ -1,4 +1,5 @@
-﻿namespace GS.Core.UI.Demo.Forms
+﻿namespace GS.Core.UI.Demo.Forms.Pages
+
 {
     partial class FrmCadastroTeste
     {

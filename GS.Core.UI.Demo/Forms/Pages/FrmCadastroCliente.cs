@@ -7,9 +7,9 @@ namespace GS.Core.UI.Demo.Forms.Pages
     {
         public FrmCadastroCliente()
         {
-            InitializeComponent();
+           InitializeComponent();       
 
-            Text = "Cadastro de Cliente";
+        Text = "Cadastro de Cliente";
         }
 
         /// <summary>
