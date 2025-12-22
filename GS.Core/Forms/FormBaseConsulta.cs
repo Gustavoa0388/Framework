@@ -10,7 +10,8 @@ namespace GS.Core.UI.Forms
     {
         private System.Windows.Forms.Timer _debounceTimer;
         private const int DebounceDelay = 300; // ms
-
+        protected GsPaginator<object> _paginator;
+        protected Label lblPagina;
 
         // =============================
         // CONTROLES BASE
@@ -105,12 +106,33 @@ namespace GS.Core.UI.Forms
         btnNovo, btnEditar, btnExcluir, btnFechar
             });
 
+
+            // =============================
+            // PAGINAÇÃO
+            // =============================
+
+            _paginator = new GsPaginator<object>
+            {
+                PageSize = 10
+            };
+
+            lblPagina = new Label
+            {
+                AutoSize = true,
+                Text = "Página 1 / 1",
+                Left = 12,
+                Top = pnlAcoes.Top - 22
+            };
+
+            Controls.Add(lblPagina);
+
             // =============================
             // ADD NA TELA (ORDEM IMPORTA)
             // =============================
+            Controls.Add(pnlFiltro);
             Controls.Add(Grid);
             Controls.Add(pnlAcoes);
-            Controls.Add(pnlFiltro);
+            
 
             PositionarBotoes();
         }
@@ -121,6 +143,14 @@ namespace GS.Core.UI.Forms
             base.OnLoad(e);
 
             Grid?.ApplyTheme(ThemeManager.Current);
+        }
+        protected void AtualizarPaginacao(IEnumerable<object> dados)
+        {
+            _paginator.SetSource(dados);
+
+            Grid.DataSource = _paginator.GetCurrentPage().ToList();
+
+            lblPagina.Text = $"Página {_paginator.CurrentPage} / {_paginator.TotalPages}";
         }
 
         private GsButton CriarBotao(string texto, EventHandler click)
@@ -159,6 +189,26 @@ namespace GS.Core.UI.Forms
 
             btnNovo.Location = new Point(right - btnNovo.Width, top);
         }
+
+        protected void PaginaAnterior()
+        {
+            _paginator.Previous();
+            Grid.DataSource = _paginator.GetCurrentPage().ToList();
+            AtualizarLabelPagina();
+        }
+
+        protected void ProximaPagina()
+        {
+            _paginator.Next();
+            Grid.DataSource = _paginator.GetCurrentPage().ToList();
+            AtualizarLabelPagina();
+        }
+
+        private void AtualizarLabelPagina()
+        {
+            lblPagina.Text = $"Página {_paginator.CurrentPage} / {_paginator.TotalPages}";
+        }
+
 
         // =============================
         // CONTRATO PARA OS FILHOS

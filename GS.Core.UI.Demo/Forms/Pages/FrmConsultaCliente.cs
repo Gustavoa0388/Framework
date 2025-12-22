@@ -10,13 +10,18 @@ namespace GS.Core.UI.Demo.Forms.Pages
     /// </summary>
     public partial class FrmConsultaCliente : FormBaseConsulta
     {
+
         public FrmConsultaCliente()
         {
+
             Text = "Consulta de Clientes";
 
             ConfigurarGrid();
             CarregarDados();
         }
+
+        private List<object> _clientes;
+
 
         // ==========================================================
         // GRID
@@ -36,15 +41,17 @@ namespace GS.Core.UI.Demo.Forms.Pages
         // ==========================================================
         protected override void CarregarDados()
         {
-            var lista = new[]
-            {
-                new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
-                new { Id = 2, Nome = "Maria Souza", Email = "maria@email.com" },
-                new { Id = 3, Nome = "Carlos Pereira", Email = "carlos@email.com" }
-            };
+            _clientes = new List<object>
+    {
+        new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
+        new { Id = 2, Nome = "Maria Souza", Email = "maria@email.com" },
+        new { Id = 3, Nome = "Carlos Pereira", Email = "carlos@email.com" },
+        // simule mais dados aqui
+    };
 
-            Grid.DataSource = lista;
+            AtualizarPaginacao(_clientes);
         }
+
 
         // ==========================================================
         // AÇÕES
