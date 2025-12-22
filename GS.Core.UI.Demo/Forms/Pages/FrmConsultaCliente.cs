@@ -6,10 +6,9 @@ namespace GS.Core.UI.Demo.Forms.Pages
 {
     /// <summary>
     /// Tela de consulta de clientes.
-    /// Implementa FormBaseConsulta do GS Core.
+    /// Exemplo funcional usando GS Core.
     /// </summary>
     public partial class FrmConsultaCliente : FormBaseConsulta
-
     {
         public FrmConsultaCliente()
         {
@@ -24,6 +23,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
         // ==========================================================
         private void ConfigurarGrid()
         {
+            Grid.AutoGenerateColumns = false;
             Grid.Columns.Clear();
 
             Grid.Columns.Add(GsGridColumn.Id("Id").Build());
@@ -31,13 +31,11 @@ namespace GS.Core.UI.Demo.Forms.Pages
             Grid.Columns.Add(GsGridColumn.Email("Email").Build());
         }
 
-
         // ==========================================================
-        // DADOS
+        // DADOS (mock local)
         // ==========================================================
         protected override void CarregarDados()
         {
-            // Mock local (sem banco)
             var lista = new[]
             {
                 new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
@@ -46,6 +44,33 @@ namespace GS.Core.UI.Demo.Forms.Pages
             };
 
             Grid.DataSource = lista;
+        }
+
+        // ==========================================================
+        // AÇÕES
+        // ==========================================================
+        protected override void OnNovoClick(object sender, EventArgs e)
+        {
+            FormMsg.Info("Novo cliente (exemplo)");
+        }
+
+        protected override void OnEditarClick(object sender, EventArgs e)
+        {
+            if (Grid.CurrentRow == null)
+                return;
+
+            FormMsg.Info("Editar cliente selecionado");
+        }
+
+        protected override void OnExcluirClick(object sender, EventArgs e)
+        {
+            base.OnExcluirClick(sender, e);
+
+            if (Grid.CurrentRow == null)
+                return;
+
+            // Exclusão mock
+            FormMsg.Success("Cliente excluído (exemplo)");
         }
     }
 }

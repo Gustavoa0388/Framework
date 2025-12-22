@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using GS.Core.UI.Forms;
 
-namespace GS.Core.UI.Demo.Forms
+namespace GS.Core.UI.Demo.Forms.Pages
 {
     public partial class FrmCadastroTeste : FormBaseCadastro
     {
