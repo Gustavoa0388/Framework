@@ -8,43 +8,22 @@ namespace GS.Core.UI.Controls
 {
     /// <summary>
     /// Input numérico padrão do GS Core.
-    /// Suporta validação de valor mínimo, máximo e decimais.
     /// </summary>
     public partial class GsNumericInput : GsInputBase
-
     {
         private TextBox _textBox;
 
-        private decimal? _minValue;
-        private decimal? _maxValue;
-
-        // ============================
-        // PROPRIEDADES PÚBLICAS
-        // ============================
-
         [Category("GS Core")]
-        public bool AllowDecimal { get; set; } = false;
+        public bool AllowDecimal { get; set; }
 
         [Category("GS Core")]
         public int DecimalPlaces { get; set; } = 2;
 
         [Category("GS Core")]
-        public decimal? MinValue
-        {
-            get => _minValue;
-            set => _minValue = value;
-        }
+        public decimal? MinValue { get; set; }
 
         [Category("GS Core")]
-        public decimal? MaxValue
-        {
-            get => _maxValue;
-            set => _maxValue = value;
-        }
-
-        // ============================
-        // CRIAÇÃO DO INNER CONTROL
-        // ============================
+        public decimal? MaxValue { get; set; }
 
         protected override TextBoxBase CreateInnerTextBox()
         {
@@ -54,47 +33,40 @@ namespace GS.Core.UI.Controls
             };
 
             _textBox.KeyPress += OnKeyPress;
-            _textBox.Leave += (_, _) => ValidateNumeric();
+            _textBox.Leave += (_, _) => Validate();
 
             return _textBox;
         }
-
-        // ============================
-        // RESTRIÇÃO DE DIGITAÇÃO
-        // ============================
 
         private void OnKeyPress(object sender, KeyPressEventArgs e)
         {
             char decimalSeparator = '.';
 
-            // Permite controle (backspace, etc.)
             if (char.IsControl(e.KeyChar))
                 return;
 
-            // Permite dígitos
             if (char.IsDigit(e.KeyChar))
                 return;
 
-            // Permite separador decimal (se habilitado)
             if (AllowDecimal && e.KeyChar == decimalSeparator)
             {
                 if (_textBox.Text.Contains(decimalSeparator))
                     e.Handled = true;
-
                 return;
             }
 
-            // Bloqueia qualquer outra coisa
             e.Handled = true;
         }
 
-        // ============================
-        // VALIDAÇÃO NUMÉRICA
-        // ============================
-
-        private void ValidateNumeric()
+        /// <summary>
+        /// Validação completa (Required + Numérica)
+        /// </summary>
+        public override void Validate()
         {
-            ValidateRequired();
+            base.Validate();
+
+            if (HasError)
+                return;
 
             if (string.IsNullOrWhiteSpace(Text))
                 return;
@@ -121,19 +93,12 @@ namespace GS.Core.UI.Controls
                 return;
             }
 
-            // Ajusta casas decimais
             if (AllowDecimal)
             {
                 value = Math.Round(value, DecimalPlaces);
                 Text = value.ToString(CultureInfo.InvariantCulture);
             }
-
-            ClearError();
         }
-
-        // ============================
-        // TEXTO
-        // ============================
 
         public override string Text
         {

@@ -7,19 +7,12 @@ namespace GS.Core.UI.Controls
 {
     /// <summary>
     /// Input com máscara seguindo o padrão GS Core.
-    /// - Herda layout, foco, erro e tema do GsInputBase
-    /// - Usa MaskedTextBox internamente
-    /// - Suporta Required
-    /// - Valida preenchimento completo da máscara
     /// </summary>
     public partial class GsMaskedInput : GsInputBase
     {
         private MaskedTextBox _masked;
         private string _mask;
 
-        /// <summary>
-        /// Define a máscara do campo (ex: 000.000.000-00)
-        /// </summary>
         [Category("GS Core")]
         public string Mask
         {
@@ -27,16 +20,11 @@ namespace GS.Core.UI.Controls
             set
             {
                 _mask = value;
-
                 if (_masked != null)
                     _masked.Mask = value;
             }
         }
 
-
-        /// <summary>
-        /// Define se o texto retornado inclui os literais da máscara
-        /// </summary>
         [Category("GS Core")]
         public bool SalvarMascara
         {
@@ -50,17 +38,12 @@ namespace GS.Core.UI.Controls
             }
         }
 
-        // ======================================================
-        // CRIAÇÃO DO INNER CONTROL
-        // ======================================================
         protected override TextBoxBase CreateInnerTextBox()
         {
             _masked = new MaskedTextBox
             {
                 BorderStyle = BorderStyle.None,
                 TextMaskFormat = MaskFormat.ExcludePromptAndLiterals,
-
-                // 🔒 TRAVAS DE COMPORTAMENTO
                 Culture = System.Globalization.CultureInfo.InvariantCulture,
                 PromptChar = '_',
                 ResetOnPrompt = false,
@@ -71,18 +54,20 @@ namespace GS.Core.UI.Controls
             if (!string.IsNullOrEmpty(_mask))
                 _masked.Mask = _mask;
 
-            _masked.Leave += (_, _) => ValidateMask();
+            _masked.Leave += (_, _) => Validate();
 
             return _masked;
         }
 
-        // ======================================================
-        // VALIDAÇÃO DE MÁSCARA
-        // ======================================================
-        private void ValidateMask()
+        /// <summary>
+        /// Validação completa do campo (Required + Máscara)
+        /// </summary>
+        public override void Validate()
         {
-            // Primeiro valida Required (regra base)
-            ValidateRequired();
+            base.Validate();
+
+            if (HasError)
+                return;
 
             if (_masked == null || string.IsNullOrEmpty(_masked.Mask))
                 return;
@@ -94,15 +79,8 @@ namespace GS.Core.UI.Controls
             {
                 ShowError("Preenchimento incompleto");
             }
-            else
-            {
-                ClearError();
-            }
         }
 
-        // ======================================================
-        // TEXTO (override para garantir retorno correto)
-        // ======================================================
         public override string Text
         {
             get => _masked?.Text ?? string.Empty;
