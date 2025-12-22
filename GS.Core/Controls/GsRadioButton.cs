@@ -6,6 +6,28 @@ using GS.Core.UI.Utils.Legacy;
 
 namespace GS.Core.UI.Controls
 {
+    /// <summary>
+    /// GsRadioButton
+    /// 
+    /// Controle LEGACY herdado do ECTurbo.
+    /// 
+    /// STATUS:
+    /// - NÃO é GS Core
+    /// - NÃO consome GsTheme
+    /// - NÃO implementa IThemedControl
+    /// - Usa FuncoesLegacy
+    /// - Usa Tag como metadado de banco
+    /// 
+    /// MOTIVO PARA MANUTENÇÃO:
+    /// - Visual custom complexo
+    /// - Animação própria
+    /// - Muito código acoplado a regras antigas
+    /// 
+    /// PLANO FUTURO (FASE EXTRA):
+    /// - Criar GsRadioButtonCore
+    /// - Desacoplar banco
+    /// - Aplicar tokens de theme
+    /// </summary>
     public class GsRadioButton : RadioButton
     {
         private System.Windows.Forms.Timer animationTimer;

@@ -6,6 +6,26 @@ using GS.Core.UI.Utils.Legacy;
 
 namespace GS.Core.UI.Controls
 {
+    /// <summary>
+    /// GsToggleButton
+    /// 
+    /// Controle de alternância (on/off) LEGACY do ECTurbo.
+    /// 
+    /// STATUS:
+    /// - NÃO é GS Core
+    /// - NÃO implementa Theme
+    /// - NÃO implementa validação
+    /// - Usa cores hardcoded
+    /// - Usa animações customizadas
+    /// 
+    /// USO ATUAL:
+    /// - Compatibilidade com sistemas antigos
+    /// 
+    /// PLANO FUTURO (FASE EXTRA):
+    /// - Criar ToggleButton baseado em GsInputBase ou GsControlBase
+    /// - Integrar Theme
+    /// - Padronizar estados
+    /// </summary>
     public class GsToggleButton : CheckBox
     {
         private float animationProgress = 1f;

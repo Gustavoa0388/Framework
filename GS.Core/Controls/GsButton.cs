@@ -1,12 +1,33 @@
 ﻿using GS.Core.UI.Theming;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 using GS.Core.UI.Utils.Legacy;
-
-
 
 namespace GS.Core.UI.Controls
 {
+    /// <summary>
+    /// GsButton
+    /// 
+    /// Botão customizado com visual rico (gradiente, borda, sombra, ícone).
+    /// 
+    /// STATUS ARQUITETURAL:
+    /// - GS Core (HÍBRIDO)
+    /// 
+    /// Motivo:
+    /// - Implementa IThemedControl
+    /// - Participa do ThemeManager
+    /// - Porém ainda possui:
+    ///   - Cores hardcoded
+    ///   - Gradiente custom
+    ///   - Uso de FuncoesLegacy
+    /// 
+    /// PLANO FUTURO (FASE EXTRA):
+    /// - Separar botão primário / secundário
+    /// - Migrar cores para tokens do GsTheme
+    /// - Padronizar estados (hover, pressed, disabled)
+    /// </summary>
     public class GsButton : Button, IThemedControl
     {
         public GsButton()
@@ -15,18 +36,21 @@ namespace GS.Core.UI.Controls
             Cursor = Cursors.Hand;
         }
 
+        // =========================
+        // PROPRIEDADES VISUAIS
+        // =========================
+
         private int vTamBorda = 1;
         [DisplayName("_Largura da Borda")]
         public int TamBorda
         {
-            get { return vTamBorda; }
+            get => vTamBorda;
             set
             {
-
                 if (value < 0) value = 0;
                 if (value > 3) value = 3;
-
-                vTamBorda = value; Invalidate();
+                vTamBorda = value;
+                Invalidate();
             }
         }
 
@@ -34,28 +58,27 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Distancia do Icone")]
         public int DistIcone
         {
-            get { return vDistIcone; }
-            set
-            {
-
-                if (value < 0) value = 0;
-                vDistIcone = value; Invalidate();
-            }
+            get => vDistIcone;
+            set { vDistIcone = value; Invalidate(); }
         }
 
         private int vArred = 20;
         [DisplayName("_Arredondamento")]
         public int Arred
         {
-            get { return vArred; }
+            get => vArred;
             set { vArred = value; Invalidate(); }
         }
+
+        // =========================
+        // CORES (LEGACY / HARDCORE)
+        // =========================
 
         private Color vCorBorda = Color.Gray;
         [DisplayName("_Cor da Borda")]
         public Color CorBorda
         {
-            get { return vCorBorda; }
+            get => vCorBorda;
             set { vCorBorda = value; Invalidate(); }
         }
 
@@ -63,33 +86,34 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Cor de Fundo 1")]
         public Color Cor1
         {
-            get { return vCor1; }
+            get => vCor1;
             set { vCor1 = value; Invalidate(); }
+        }
+
+        private Color vCor2 = Color.Pink;
+        [DisplayName("_Cor de Fundo 2")]
+        public Color Cor2
+        {
+            get => vCor2;
+            set { vCor2 = value; Invalidate(); }
         }
 
         private int vAngulo = 1;
         [DisplayName("_Angulo do Gradiente")]
         public int Angulo
         {
-            get { return vAngulo; }
+            get => vAngulo;
             set
             {
-
                 if (value < 1) value = 1;
-
                 vAngulo = value;
                 Invalidate();
             }
         }
 
-
-        private Color vCor2 = Color.Pink;
-        [DisplayName("_Cor de Fundo 2")]
-        public Color Cor2
-        {
-            get { return vCor2; }
-            set { vCor2 = value; Invalidate(); }
-        }
+        // =========================
+        // IMAGEM
+        // =========================
 
         public enum Posicoes
         {
@@ -103,7 +127,7 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Posição da Imagem")]
         public Posicoes PosicaoImagem
         {
-            get { return vPosicaoImagem; }
+            get => vPosicaoImagem;
             set { vPosicaoImagem = value; Invalidate(); }
         }
 
@@ -111,17 +135,19 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Tamanho Icone")]
         public int TamanhoIcone
         {
-            get { return vTamanhoIcone; }
+            get => vTamanhoIcone;
             set { vTamanhoIcone = value; Invalidate(); }
         }
 
+        // =========================
+        // SOMBRA
+        // =========================
 
-
-        private bool vAtivarSombra = false;
+        private bool vAtivarSombra;
         [DisplayName("_Sombra Inferior - Ativar")]
         public bool AtivarSombra
         {
-            get { return vAtivarSombra; }
+            get => vAtivarSombra;
             set { vAtivarSombra = value; Invalidate(); }
         }
 
@@ -129,146 +155,92 @@ namespace GS.Core.UI.Controls
         [DisplayName("_Sombra Inferior - Cor")]
         public Color CorSombra
         {
-            get { return vCorSombra; }
+            get => vCorSombra;
             set { vCorSombra = value; Invalidate(); }
         }
 
-
         private int vTamanhoSombra = 3;
-        [DisplayName("_Sombra Inferior - Cor")]
+        [DisplayName("_Sombra Inferior - Tamanho")]
         public int TamanhoSombra
         {
-            get { return vTamanhoSombra; }
+            get => vTamanhoSombra;
             set
             {
-
                 if (value < 1) value = 1;
                 if (value > 5) value = 5;
-
                 vTamanhoSombra = value;
                 Invalidate();
-
             }
         }
 
+        // =========================
+        // RENDERIZAÇÃO
+        // =========================
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
             base.OnPaint(pevent);
 
             Graphics g = pevent.Graphics;
-
             g.SmoothingMode = SmoothingMode.AntiAlias;
-
             g.Clear(BackColor);
 
-            RectangleF Base = ClientRectangle;
+            RectangleF area = ClientRectangle;
+
             if (TamBorda > 1)
-                Base.Inflate(-(TamBorda / 2), -(TamBorda / 2));
+                area.Inflate(-(TamBorda / 2), -(TamBorda / 2));
 
-            Base.Width--;
-            Base.Height--;
+            area.Width--;
+            area.Height--;
 
-            if (AtivarSombra == true)
+            // Sombra inferior (LEGACY)
+            if (AtivarSombra)
             {
-                using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arred))
-                using (SolidBrush Pincel = new SolidBrush(CorSombra))
-                {
-                    g.FillPath(Pincel, path);
-                }
+                using var shadowPath = FuncoesLegacy.CriarPath(area, Arred);
+                using var shadowBrush = new SolidBrush(CorSombra);
+                g.FillPath(shadowBrush, shadowPath);
 
-                Base.Height = Base.Height - TamanhoSombra;
+                area.Height -= TamanhoSombra;
             }
 
+            using var path = FuncoesLegacy.CriarPath(area, Arred);
+            using var bgBrush = new LinearGradientBrush(ClientRectangle, Cor1, Cor2, Angulo);
+            using var borderPen = new Pen(CorBorda, TamBorda);
+            using var textBrush = new SolidBrush(ForeColor);
 
-            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, Arred))
-            using (LinearGradientBrush PincelFundo =
-            new LinearGradientBrush(ClientRectangle, Cor1, Cor2, Angulo))
-            using (Pen Caneta = new Pen(CorBorda, TamBorda))
-            using (SolidBrush PincelTexto = new SolidBrush(ForeColor))
-            {
+            g.FillPath(bgBrush, path);
 
-                g.FillPath(PincelFundo, path);
+            if (TamBorda > 0)
+                g.DrawPath(borderPen, path);
 
-                if (TamBorda > 0)
-                    g.DrawPath(Caneta, path);
-
-                SizeF TamanhoTexto = g.MeasureString(Text, Font);
-                SizeF TamanhoImagem = new SizeF(0, 0);
-
-                if (Image != null)
-                {
-                    TamanhoImagem = new SizeF(TamanhoIcone, TamanhoIcone); // Supondo que a imagem tenha tamanho 32x32
-                }
-
-                // Calculando a posição do texto e da imagem
-                float tX = 0, tY = 0, iX = 0, iY = 0;
-
-                switch (PosicaoImagem)
-                {
-                    case Posicoes.Esquerda:
-                        tX = Base.X + (Base.Width - TamanhoTexto.Width - TamanhoImagem.Width) / 2 + TamanhoImagem.Width;
-                        tY = Base.Y + (Base.Height - TamanhoTexto.Height) / 2;
-                        iX = tX - TamanhoImagem.Width;
-                        iY = Base.Y + (Base.Height - TamanhoImagem.Height) / 2;
-                        break;
-                    case Posicoes.Direita:
-                        tX = Base.X + (Base.Width - TamanhoTexto.Width - TamanhoImagem.Width) / 2;
-                        tY = Base.Y + (Base.Height - TamanhoTexto.Height) / 2;
-                        iX = tX + TamanhoTexto.Width;
-                        iY = Base.Y + (Base.Height - TamanhoImagem.Height) / 2;
-                        break;
-                    case Posicoes.Inferior:
-                        tX = Base.X + (Base.Width - TamanhoTexto.Width) / 2;
-                        tY = Base.Y + (Base.Height - TamanhoTexto.Height - TamanhoImagem.Height) / 2;
-                        iX = Base.X + (Base.Width - TamanhoImagem.Width) / 2;
-                        iY = tY + TamanhoTexto.Height;
-                        break;
-                    case Posicoes.Superior:
-                        tX = Base.X + (Base.Width - TamanhoTexto.Width) / 2;
-                        tY = Base.Y + (Base.Height - TamanhoTexto.Height - TamanhoImagem.Height) / 2 + TamanhoImagem.Height;
-                        iX = Base.X + (Base.Width - TamanhoImagem.Width) / 2;
-                        iY = tY - TamanhoImagem.Height;
-                        break;
-                }
-
-                if (TextAlign == ContentAlignment.MiddleLeft)
-                {
-                    int d = Arred > 10 ? 10 : Arred / 2;
-                    iX = Base.Left + d;
-                    iY = Base.Top + (Base.Height - TamanhoImagem.Height) / 2;
-
-                    tX = Base.X + TamanhoImagem.Width + d + 5;
-                    tY = Base.Y + (Base.Height - TamanhoTexto.Height) / 2;
-                }
-
-                int di = 0;
-                if (Image != null)
-                    di = DistIcone;
-
-                g.DrawString(Text, Font, PincelTexto, tX + di, tY);
-
-                if (Image != null)
-                {
-                    g.DrawImage(Image, iX + di, iY, TamanhoIcone, TamanhoIcone);
-                }
-            }
-
+            DrawTextAndImage(g, area, textBrush);
         }
 
-        private Color Cor1Original = default;
-        private Color Cor2Original = default;
+        private void DrawTextAndImage(Graphics g, RectangleF area, Brush textBrush)
+        {
+            SizeF textSize = g.MeasureString(Text, Font);
+            SizeF imageSize = Image != null ? new SizeF(TamanhoIcone, TamanhoIcone) : SizeF.Empty;
+
+            float tx = area.X + (area.Width - textSize.Width) / 2;
+            float ty = area.Y + (area.Height - textSize.Height) / 2;
+
+            g.DrawString(Text, Font, textBrush, tx + DistIcone, ty);
+
+            if (Image != null)
+                g.DrawImage(Image, tx - imageSize.Width, ty, TamanhoIcone, TamanhoIcone);
+        }
+
+        // =========================
+        // INTERAÇÃO
+        // =========================
+
+        private Color Cor1Original;
+        private Color Cor2Original;
 
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
-
-            if (Cor1Original == default)
-            {
-                Cor1Original = Cor1;
-                Cor2Original = Cor2;
-            }
-
+            CacheCores();
             Cor1 = FuncoesLegacy.CorTransparente(Cor1, 40);
             Cor2 = FuncoesLegacy.CorTransparente(Cor2, 40);
         }
@@ -276,65 +248,49 @@ namespace GS.Core.UI.Controls
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
-
-            Cor1 = Cor1Original;
-            Cor2 = Cor2Original;
+            RestaurarCores();
         }
 
-
-
-        protected override void OnMouseDown(MouseEventArgs mevent)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
-            base.OnMouseDown(mevent);
-
-            if (Cor1Original == default)
-            {
-                Cor1Original = Cor1;
-                Cor2Original = Cor2;
-            }
-
+            base.OnMouseDown(e);
+            CacheCores();
             Cor1 = FuncoesLegacy.CorTransparente(Cor1, 20);
             Cor2 = FuncoesLegacy.CorTransparente(Cor2, 20);
         }
 
-
-        protected override void OnMouseUp(MouseEventArgs mevent)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
-            base.OnMouseUp(mevent);
-
-            Cor1 = Cor1Original;
-            Cor2 = Cor2Original;
-
+            base.OnMouseUp(e);
+            RestaurarCores();
         }
 
-        protected override void OnEnter(EventArgs e)
+        private void CacheCores()
         {
-            base.OnEnter(e);
-
             if (Cor1Original == default)
             {
                 Cor1Original = Cor1;
                 Cor2Original = Cor2;
             }
-
-            Cor1 = FuncoesLegacy.CorTransparente(Cor1, 90);
-            Cor2 = FuncoesLegacy.CorTransparente(Cor2, 90);
         }
 
-        protected override void OnLeave(EventArgs e)
+        private void RestaurarCores()
         {
-            base.OnLeave(e);
-            OnMouseLeave(e);
+            Cor1 = Cor1Original;
+            Cor2 = Cor2Original;
         }
+
+        // =========================
+        // THEME (APLICAÇÃO BÁSICA)
+        // =========================
 
         public void ApplyTheme(GsTheme theme)
         {
             BackColor = theme.Primary;
-            ForeColor = Color.White;
+            ForeColor = theme.TextOnPrimary;
             Font = theme.DefaultFont;
             FlatStyle = FlatStyle.Flat;
             FlatAppearance.BorderColor = theme.Border;
         }
-
     }
 }
