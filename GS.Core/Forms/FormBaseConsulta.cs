@@ -29,27 +29,47 @@ namespace GS.Core.UI.Forms
         // =============================
         private void InicializarBase()
         {
-            // 🔹 Filtro
+            // =============================
+            // PAINEL DE FILTRO
+            // =============================
+            var pnlFiltro = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 45,
+                Padding = new Padding(10)
+            };
+
+            // =============================
+            // FILTRO
+            // =============================
             txtFiltro = new TextBox
             {
-                Left = 12,
-                Top = 12,
+                Dock = DockStyle.Left,
                 Width = 300
             };
+
             txtFiltro.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
                     OnPesquisarClick();
             };
 
-            // 🔹 Grid
+            pnlFiltro.Controls.Add(txtFiltro);
+
+            // =============================
+            // GRID
+            // =============================
             Grid = new GsDataGridView
             {
                 Dock = DockStyle.Fill
             };
-            Grid.EditarSolicitado += (_, _) => OnEditarClick(this, EventArgs.Empty);
 
-            // 🔹 Painel de ações
+            Grid.EditarSolicitado += (_, _) =>
+                OnEditarClick(this, EventArgs.Empty);
+
+            // =============================
+            // PAINEL DE AÇÕES
+            // =============================
             pnlAcoes = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -64,15 +84,19 @@ namespace GS.Core.UI.Forms
 
             pnlAcoes.Controls.AddRange(new Control[]
             {
-                btnNovo, btnEditar, btnExcluir, btnFechar
+        btnNovo, btnEditar, btnExcluir, btnFechar
             });
 
-            Controls.Add(txtFiltro);
+            // =============================
+            // ADD NA TELA (ORDEM IMPORTA)
+            // =============================
             Controls.Add(Grid);
             Controls.Add(pnlAcoes);
+            Controls.Add(pnlFiltro);
 
             PositionarBotoes();
         }
+
 
         protected override void OnLoad(EventArgs e)
         {

@@ -55,14 +55,17 @@ namespace GS.Core.UI.Controls
 
             // Seleção (usa ForeColor para manter contraste)
             DefaultCellStyle.SelectionBackColor =
-                ControlPaint.Dark(theme.BackColor, 0.15f);
+            ControlPaint.Light(theme.BackColor, 0.2f);
             DefaultCellStyle.SelectionForeColor = theme.ForeColor;
 
             // Cabeçalho
-            ColumnHeadersDefaultCellStyle.BackColor = theme.BackColor;
+            ColumnHeadersDefaultCellStyle.BackColor =
+            ControlPaint.Light(theme.BackColor, 0.05f);
             ColumnHeadersDefaultCellStyle.ForeColor = theme.ForeColor;
+            ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            ColumnHeadersHeight = 32;
             ColumnHeadersDefaultCellStyle.Font =
-                new Font(theme.DefaultFont, FontStyle.Bold);
+            new Font(theme.DefaultFont, FontStyle.Bold);
         }
     }
 }
