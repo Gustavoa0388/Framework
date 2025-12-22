@@ -1,4 +1,8 @@
-﻿namespace GS.Core.UI.Services.Api
+﻿using GS.Core.UI.Utils.Legacy;
+
+
+namespace GS.Core.UI.Services.Api
+
 {
     public class BuscaCEP
     {

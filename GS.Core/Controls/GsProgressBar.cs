@@ -1,5 +1,5 @@
 ﻿using System.Drawing.Drawing2D;
-
+using GS.Core.UI.Utils.Legacy;
 using System.ComponentModel;
 
 namespace GS.Core.UI.Controls

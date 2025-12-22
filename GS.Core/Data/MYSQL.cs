@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Globalization;
+using GS.Core.UI.Utils.Legacy;
 
 using MySql.Data.MySqlClient;
 

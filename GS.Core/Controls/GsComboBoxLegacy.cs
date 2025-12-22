@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using GS.Core.UI.Utils.Legacy;
+
 
 
 namespace GS.Core.UI.Controls

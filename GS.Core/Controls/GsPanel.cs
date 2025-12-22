@@ -1,6 +1,8 @@
 ﻿using GS.Core.UI.Theming;
 using System.ComponentModel;
 using System.Drawing.Drawing2D;
+using GS.Core.UI.Utils.Legacy;
+
 
 
 namespace GS.Core.UI.Controls

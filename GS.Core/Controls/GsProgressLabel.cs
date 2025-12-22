@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using GS.Core.UI.Utils.Legacy;
+
 
 
 namespace GS.Core.UI.Controls

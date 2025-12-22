@@ -1,5 +1,6 @@
 ﻿using GS.Core.UI.Data;
 using GS.Core.UI.Properties;
+using GS.Core.UI.Utils.Legacy;
 
 namespace GS.Core.UI.Formularios
 {

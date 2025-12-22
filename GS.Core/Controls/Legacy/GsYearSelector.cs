@@ -4,6 +4,8 @@
 // NÃO segue o padrão GS Core
 
 using System.ComponentModel;
+using GS.Core.UI.Utils.Legacy;
+
 
 namespace GS.Core.UI.Controls.Legacy
 {
