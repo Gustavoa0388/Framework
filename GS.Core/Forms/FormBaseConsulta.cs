@@ -1,7 +1,8 @@
-﻿using System;
+﻿using GS.Core.UI.Controls;
+using GS.Core.UI.Theming;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using GS.Core.UI.Controls;
 
 namespace GS.Core.UI.Forms
 {
@@ -11,8 +12,7 @@ namespace GS.Core.UI.Forms
         // CONTROLES BASE
         // =============================
         protected TextBox txtFiltro;
-        protected DataGridView Grid;
-
+        protected GsDataGridView Grid;
         protected Panel pnlAcoes;
         protected GsButton btnNovo;
         protected GsButton btnEditar;
@@ -21,7 +21,6 @@ namespace GS.Core.UI.Forms
 
         public FormBaseConsulta()
         {
-            InitializeComponent();
             InicializarBase();
         }
 
@@ -44,17 +43,11 @@ namespace GS.Core.UI.Forms
             };
 
             // 🔹 Grid
-            Grid = new DataGridView
+            Grid = new GsDataGridView
             {
-                Left = 12,
-                Top = txtFiltro.Bottom + 8,
-                Width = ClientSize.Width - 24,
-                Height = ClientSize.Height - 120,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                ReadOnly = true,
-                AllowUserToAddRows = false,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                Dock = DockStyle.Fill
             };
+            Grid.EditarSolicitado += (_, _) => OnEditarClick(this, EventArgs.Empty);
 
             // 🔹 Painel de ações
             pnlAcoes = new Panel
@@ -81,6 +74,13 @@ namespace GS.Core.UI.Forms
             PositionarBotoes();
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            Grid?.ApplyTheme(ThemeManager.Current);
+        }
+
         private GsButton CriarBotao(string texto, EventHandler click)
         {
             var btn = new GsButton
@@ -97,16 +97,12 @@ namespace GS.Core.UI.Forms
         {
             base.OnResize(e);
 
-            if (IsHandleCreated)
+            if (pnlAcoes != null && pnlAcoes.IsHandleCreated)
                 PositionarBotoes();
         }
 
-
         private void PositionarBotoes()
         {
-            if (pnlAcoes == null)
-                return;
-
             int right = pnlAcoes.Width - 10;
             int top = 10;
 
@@ -122,7 +118,6 @@ namespace GS.Core.UI.Forms
             btnNovo.Location = new Point(right - btnNovo.Width, top);
         }
 
-
         // =============================
         // CONTRATO PARA OS FILHOS
         // =============================
@@ -131,10 +126,7 @@ namespace GS.Core.UI.Forms
             CarregarDados();
         }
 
-        protected virtual void CarregarDados()
-        {
-            // Implementado no form filho
-        }
+        protected virtual void CarregarDados() { }
 
         protected virtual void OnNovoClick(object sender, EventArgs e) { }
         protected virtual void OnEditarClick(object sender, EventArgs e) { }
@@ -146,8 +138,6 @@ namespace GS.Core.UI.Forms
 
             if (!FormMsg.Confirm("Deseja realmente excluir o registro selecionado?"))
                 return;
-
-            // lógica no form filho
         }
     }
 }
