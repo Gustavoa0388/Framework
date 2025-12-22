@@ -106,7 +106,7 @@ namespace GS.Core.UI.Demo
 
             txt = new GsTextBox
             {
-                Placeholder = "Digite o texto",
+                //Placeholder = "Digite o texto",
                 Required = true,
                 RequiredMessage = "Campo obrigatório"
             };
@@ -116,7 +116,7 @@ namespace GS.Core.UI.Demo
 
             pwd = new GsPasswordTextBox
             {
-                Placeholder = "Digite a senha",
+                //Placeholder = "Digite a senha",
                 Required = true
             };
             AddLabeledControl(page, "Password", pwd, 20, 160);

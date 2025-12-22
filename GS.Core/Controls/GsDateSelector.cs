@@ -8,15 +8,11 @@ namespace GS.Core.UI.Controls
 {
     /// <summary>
     /// Seletor de data padrão do GS Core.
-    /// Valida data real, mínima e máxima.
+    /// Valida formato, limites e obrigatoriedade.
     /// </summary>
     public partial class GsDateSelector : GsInputBase
     {
         private TextBox _textBox;
-
-        // ============================
-        // PROPRIEDADES
-        // ============================
 
         [Category("GS Core")]
         public bool AllowEmpty { get; set; } = true;
@@ -28,11 +24,7 @@ namespace GS.Core.UI.Controls
         public DateTime? MaxDate { get; set; }
 
         [Category("GS Core")]
-        public bool StartWithToday { get; set; } = false;
-
-        // ============================
-        // CRIAÇÃO DO INNER CONTROL
-        // ============================
+        public bool StartWithToday { get; set; }
 
         protected override TextBoxBase CreateInnerTextBox()
         {
@@ -46,24 +38,25 @@ namespace GS.Core.UI.Controls
             if (StartWithToday)
                 _textBox.Text = DateTime.Today.ToString("dd/MM/yyyy");
 
-            _textBox.Leave += (_, _) => ValidateDate();
+            _textBox.Leave += (_, _) => Validate();
 
             return _textBox;
         }
 
-        // ============================
-        // VALIDAÇÃO DE DATA
-        // ============================
-
-        private void ValidateDate()
+        /// <summary>
+        /// Validação completa (Required + Data)
+        /// </summary>
+        public override void Validate()
         {
-            ValidateRequired();
+            base.Validate();
+
+            if (HasError)
+                return;
 
             if (string.IsNullOrWhiteSpace(Text))
             {
                 if (!AllowEmpty)
                     ShowError("Data obrigatória");
-
                 return;
             }
 
@@ -89,13 +82,7 @@ namespace GS.Core.UI.Controls
                 ShowError($"Data máxima: {MaxDate:dd/MM/yyyy}");
                 return;
             }
-
-            ClearError();
         }
-
-        // ============================
-        // TEXTO
-        // ============================
 
         public override string Text
         {
