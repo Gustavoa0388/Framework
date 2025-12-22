@@ -6,49 +6,57 @@ using System.Reflection;
 namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// Filtro genérico para listas exibidas em GsDataGridView.
+    /// Filtro genérico para uma propriedade específica de um item.
     /// </summary>
     public class GsGridFilter<T>
     {
         public string PropertyName { get; }
         public GsGridFilterType FilterType { get; }
-
         public bool IgnoreCase { get; set; } = true;
+
+        private readonly PropertyInfo _property;
 
         public GsGridFilter(string propertyName, GsGridFilterType filterType)
         {
             PropertyName = propertyName;
             FilterType = filterType;
+
+            _property = typeof(T).GetProperty(propertyName)
+                ?? throw new InvalidOperationException(
+                    $"Propriedade '{propertyName}' não encontrada em {typeof(T).Name}");
         }
 
-        /// <summary>
-        /// Aplica o filtro sobre a lista informada.
-        /// </summary>
+        // =============================
+        // USO INDIVIDUAL (filtro simples)
+        // =============================
         public IEnumerable<T> Apply(IEnumerable<T> source, string filterText)
         {
             if (string.IsNullOrWhiteSpace(filterText))
                 return source;
 
-            var prop = typeof(T).GetProperty(PropertyName, BindingFlags.Public | BindingFlags.Instance);
-
-            if (prop == null)
-                throw new InvalidOperationException($"Propriedade '{PropertyName}' não encontrada em {typeof(T).Name}");
-
-            return source.Where(item =>
-            {
-                var value = prop.GetValue(item);
-                if (value == null)
-                    return false;
-
-                var text = value.ToString();
-                return Match(text, filterText);
-            });
+            return source.Where(item => Match(item, filterText));
         }
 
         // =============================
-        // COMPARAÇÃO
+        // MATCH USADO PELO GRUPO
         // =============================
-        private bool Match(string source, string filter)
+        public bool Match(T item, string filterText)
+        {
+            if (item == null || string.IsNullOrWhiteSpace(filterText))
+                return false;
+
+            var value = _property.GetValue(item);
+            if (value == null)
+                return false;
+
+            var text = value.ToString();
+            return MatchText(text, filterText);
+        }
+
+        // =============================
+        // COMPARAÇÃO DE TEXTO
+        // =============================
+        private bool MatchText(string source, string filter)
         {
             if (IgnoreCase)
             {
