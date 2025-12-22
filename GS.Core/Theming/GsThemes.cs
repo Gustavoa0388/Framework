@@ -2,80 +2,95 @@
 
 namespace GS.Core.UI.Theming
 {
+    /// <summary>
+    /// Temas oficiais do GS Core UI.
+    /// </summary>
     public static class GsThemes
     {
-        public static readonly GsTheme Light = new GsTheme
+        // ==========================================================
+        // LIGHT THEME — PADRÃO GAS
+        // ==========================================================
+        public static GsTheme Light => new GsTheme
         {
-            // Base
-            BackColor = Color.White,
-            ForeColor = Color.Black,
-            DefaultFont = SystemFonts.MessageBoxFont,
+            // Identidade
+            Primary = Color.FromArgb(30, 90, 168),
+            PrimaryDark = Color.FromArgb(22, 63, 115),
+            PrimaryLight = Color.FromArgb(58, 123, 213),
+            Secondary = Color.FromArgb(123, 63, 228),
 
-            // Branding
-            Primary = Color.FromArgb(130, 40, 140),
-            Secondary = Color.FromArgb(220, 170, 230),
-            Border = Color.Gainsboro,
-            Error = Color.Firebrick,
+            // Superfícies
+            Surface = Color.White,
+            SurfaceAlt = Color.FromArgb(243, 246, 250),
+            Border = Color.FromArgb(208, 215, 226),
 
-            // Textos
-            TextPrimary = Color.Black,
-            TextSecondary = Color.DimGray,
-            TextPlaceholder = Color.Gray,
+            // Texto
+            TextPrimary = Color.FromArgb(26, 26, 26),
+            TextSecondary = Color.FromArgb(95, 107, 122),
+            TextOnPrimary = Color.White,
 
             // Inputs
             InputBackground = Color.White,
-            InputBorder = Color.Gainsboro,
-            InputHover = Color.FromArgb(240, 240, 240),
-            InputFocus = Color.FromArgb(130, 40, 140),
-            InputError = Color.Firebrick,
+            InputBorder = Color.FromArgb(208, 215, 226),
+            InputHover = Color.FromArgb(230, 236, 245),
+            InputFocus = Color.FromArgb(58, 123, 213),
+            InputError = Color.FromArgb(211, 47, 47),
+            TextPlaceholder = Color.FromArgb(160, 160, 160),
 
-            // GRID ⭐
-            GridBackground = Color.White,
-            GridSurface = Color.White,
-            GridSurfaceAlt = Color.FromArgb(245, 245, 245),
-            GridHeaderBackground = Color.FromArgb(240, 240, 240),
-            GridHeaderText = Color.Black,
-            GridRowSelected = Color.FromArgb(130, 40, 140),
-            GridRowSelectedText = Color.White,
-            GridBorder = Color.Gainsboro,
+            // Grid
+            GridHeaderBackground = Color.FromArgb(22, 63, 115),
+            GridHeaderText = Color.White,
+            // Grid utiliza a identidade primária como seleção
+            GridSelection = Color.FromArgb(30, 90, 168),
+            GridSelectionText = Color.White,
+
+            // Estados
+            Error = Color.FromArgb(211, 47, 47),
+            Warning = Color.FromArgb(249, 168, 37),
+            Success = Color.FromArgb(46, 125, 50),
+            Info = Color.FromArgb(30, 136, 229),
+
+            // Fonte
+            DefaultFont = new Font("Segoe UI", 9F),
 
             IsDark = false
         };
 
-        public static readonly GsTheme Dark = new GsTheme
+        // ==========================================================
+        // DARK THEME — PREPARADO PARA FUTURO
+        // ==========================================================
+        public static GsTheme Dark => new GsTheme
         {
-            // Base
-            BackColor = Color.FromArgb(30, 30, 30),
-            ForeColor = Color.White,
-            DefaultFont = SystemFonts.MessageBoxFont,
+            Primary = Color.FromArgb(58, 123, 213),
+            PrimaryDark = Color.FromArgb(18, 32, 52),
+            PrimaryLight = Color.FromArgb(90, 155, 245),
+            Secondary = Color.FromArgb(155, 110, 255),
 
-            // Branding
-            Primary = Color.FromArgb(180, 90, 200),
-            Secondary = Color.FromArgb(110, 60, 120),
+            Surface = Color.FromArgb(24, 26, 27),
+            SurfaceAlt = Color.FromArgb(32, 35, 36),
             Border = Color.FromArgb(60, 60, 60),
-            Error = Color.IndianRed,
 
-            // Textos
             TextPrimary = Color.White,
-            TextSecondary = Color.LightGray,
-            TextPlaceholder = Color.Gray,
+            TextSecondary = Color.FromArgb(180, 180, 180),
+            TextOnPrimary = Color.White,
 
-            // Inputs
-            InputBackground = Color.FromArgb(45, 45, 45),
-            InputBorder = Color.FromArgb(70, 70, 70),
-            InputHover = Color.FromArgb(60, 60, 60),
-            InputFocus = Color.FromArgb(180, 90, 200),
-            InputError = Color.IndianRed,
+            InputBackground = Color.FromArgb(32, 35, 36),
+            InputBorder = Color.FromArgb(60, 60, 60),
+            InputHover = Color.FromArgb(45, 50, 55),
+            InputFocus = Color.FromArgb(90, 155, 245),
+            InputError = Color.FromArgb(229, 57, 53),
+            TextPlaceholder = Color.FromArgb(140, 140, 140),
 
-            // GRID ⭐
-            GridBackground = Color.FromArgb(30, 30, 30),
-            GridSurface = Color.FromArgb(35, 35, 35),
-            GridSurfaceAlt = Color.FromArgb(45, 45, 45),
-            GridHeaderBackground = Color.FromArgb(50, 50, 50),
+            GridHeaderBackground = Color.FromArgb(18, 32, 52),
             GridHeaderText = Color.White,
-            GridRowSelected = Color.FromArgb(180, 90, 200),
-            GridRowSelectedText = Color.White,
-            GridBorder = Color.FromArgb(70, 70, 70),
+            GridSelection = Color.FromArgb(58, 123, 213),
+            GridSelectionText = Color.White,
+
+            Error = Color.FromArgb(229, 57, 53),
+            Warning = Color.FromArgb(255, 202, 40),
+            Success = Color.FromArgb(102, 187, 106),
+            Info = Color.FromArgb(100, 181, 246),
+
+            DefaultFont = new Font("Segoe UI", 9F),
 
             IsDark = true
         };

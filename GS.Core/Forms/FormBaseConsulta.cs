@@ -129,10 +129,10 @@ namespace GS.Core.UI.Forms
             // =============================
             // ADD NA TELA (ORDEM IMPORTA)
             // =============================
-            Controls.Add(pnlFiltro);
             Controls.Add(Grid);
             Controls.Add(pnlAcoes);
-            
+            Controls.Add(pnlFiltro);
+
 
             PositionarBotoes();
         }

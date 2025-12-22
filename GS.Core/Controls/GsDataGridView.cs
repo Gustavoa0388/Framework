@@ -27,23 +27,25 @@ namespace GS.Core.UI.Controls
         // =============================
         private void InicializarComportamento()
         {
-            // Comportamento geral
             AllowUserToAddRows = false;
             AllowUserToDeleteRows = false;
             AllowUserToResizeRows = false;
+
             MultiSelect = false;
             ReadOnly = true;
             SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
             RowHeadersVisible = false;
-            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             EnableHeadersVisualStyles = false;
 
-            // Performance / UX
             DoubleBuffered = true;
 
-            // Evento de duplo clique
-            CellDoubleClick += (_, __) =>
+            CellDoubleClick += (_, e) =>
             {
+                if (e.RowIndex < 0)
+                    return;
+
                 EditarSolicitado?.Invoke(this, EventArgs.Empty);
             };
         }
@@ -59,21 +61,22 @@ namespace GS.Core.UI.Controls
             Font = theme.DefaultFont;
 
             // Fundo geral
-            BackgroundColor = theme.GridBackground;
-            GridColor = theme.GridBorder;
+            BackgroundColor = theme.Surface;
+            GridColor = theme.Border;
+            BorderStyle = BorderStyle.None;
 
             // =============================
             // LINHAS
             // =============================
-            DefaultCellStyle.BackColor = theme.GridSurface;
+            DefaultCellStyle.BackColor = theme.Surface;
             DefaultCellStyle.ForeColor = theme.TextPrimary;
-            DefaultCellStyle.SelectionBackColor = theme.GridRowSelected;
-            DefaultCellStyle.SelectionForeColor = theme.GridRowSelectedText;
+            DefaultCellStyle.SelectionBackColor = theme.GridSelection;
+            DefaultCellStyle.SelectionForeColor = theme.GridSelectionText;
 
-            AlternatingRowsDefaultCellStyle.BackColor = theme.GridSurfaceAlt;
+            AlternatingRowsDefaultCellStyle.BackColor = theme.SurfaceAlt;
             AlternatingRowsDefaultCellStyle.ForeColor = theme.TextPrimary;
-            AlternatingRowsDefaultCellStyle.SelectionBackColor = theme.GridRowSelected;
-            AlternatingRowsDefaultCellStyle.SelectionForeColor = theme.GridRowSelectedText;
+            AlternatingRowsDefaultCellStyle.SelectionBackColor = theme.GridSelection;
+            AlternatingRowsDefaultCellStyle.SelectionForeColor = theme.GridSelectionText;
 
             // =============================
             // CABEÇALHO
@@ -84,6 +87,7 @@ namespace GS.Core.UI.Controls
                 theme.DefaultFont,
                 FontStyle.Bold
             );
+            ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
 
             ColumnHeadersHeight = 36;
             ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
@@ -92,7 +96,6 @@ namespace GS.Core.UI.Controls
             // CÉLULAS
             // =============================
             CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            BorderStyle = BorderStyle.None;
 
             // =============================
             // ROW TEMPLATE

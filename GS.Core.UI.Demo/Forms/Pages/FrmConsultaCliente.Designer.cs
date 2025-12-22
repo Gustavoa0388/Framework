@@ -31,6 +31,13 @@
             pnlAcoes.SuspendLayout();
             SuspendLayout();
             // 
+            // lblPagina
+            // 
+            lblPagina.BackColor = Color.White;
+            lblPagina.Font = new Font("Segoe UI", 9F);
+            lblPagina.ForeColor = Color.Black;
+            lblPagina.Size = new Size(69, 15);
+            // 
             // txtFiltro
             // 
             txtFiltro.BackColor = Color.White;
@@ -43,8 +50,8 @@
             pnlAcoes.BackColor = Color.White;
             pnlAcoes.Font = new Font("Segoe UI", 9F);
             pnlAcoes.ForeColor = Color.Black;
-            pnlAcoes.Location = new Point(0, 400);
-            pnlAcoes.Size = new Size(800, 50);
+            pnlAcoes.Location = new Point(0, 511);
+            pnlAcoes.Size = new Size(1064, 50);
             // 
             // btnNovo
             // 
@@ -86,14 +93,17 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1064, 561);
             Font = new Font("Segoe UI", 9F);
             ForeColor = Color.Black;
             Name = "FrmConsultaCliente";
             Text = "FrmConsultaCliente";
+            WindowState = FormWindowState.Maximized;
+            Controls.SetChildIndex(lblPagina, 0);
             Controls.SetChildIndex(pnlAcoes, 0);
             pnlAcoes.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

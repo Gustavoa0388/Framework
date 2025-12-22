@@ -160,17 +160,15 @@ namespace GS.Core.UI.Controls
 
         public void ApplyTheme(GsTheme theme)
         {
-            BackColor = theme.IsDark
-                ? theme.BackColor
-                : Color.White;
+            BackColor = Color.Transparent;
+
 
             ForeColor = theme.IsDark
-                ? theme.TextSecondary   // branco / cinza claro
-                : theme.Primary;        // azul no light
-
+            ? theme.TextSecondary
+            : theme.TextPrimary;
             Font = theme.DefaultFont;
 
-            // REGRA-CHAVE
+            // Gradiente só no Light
             UsarGradienteTexto = !theme.IsDark;
 
             Invalidate();
