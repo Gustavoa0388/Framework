@@ -1,13 +1,13 @@
 ﻿namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// Define o tipo de comparação usada no GsGridFilter.
+    /// Define o tipo de comparação utilizada em filtros de grid.
     /// </summary>
     public enum GsGridFilterType
     {
-        Contains,     // contém o texto
-        Equals,       // igual
-        StartsWith,   // começa com
-        EndsWith      // termina com
+        Contains,     // Contém o valor informado
+        Equals,       // Igual ao valor
+        StartsWith,   // Começa com
+        EndsWith      // Termina com
     }
 }
