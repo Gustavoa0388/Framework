@@ -1,8 +1,11 @@
 ﻿namespace GS.Core.UI.Controls
 {
+    /// <summary>
+    /// Define como múltiplos filtros são combinados.
+    /// </summary>
     public enum GsGridFilterCombineMode
     {
-        Or,   // qualquer filtro pode bater
-        And   // todos os filtros devem bater
+        Or,   // Qualquer filtro pode bater
+        And   // Todos os filtros devem bater
     }
 }

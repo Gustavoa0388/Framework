@@ -6,7 +6,12 @@ using System.Reflection;
 namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// Filtro genérico para uma propriedade específica de um item.
+    /// Filtro genérico aplicado a uma propriedade específica de um item.
+    /// 
+    /// OBSERVAÇÕES IMPORTANTES:
+    /// - O valor da propriedade é convertido para string para comparação.
+    /// - Não há conversão de tipo (datas, números, enums viram texto).
+    /// - Indicado para grids simples e médios.
     /// </summary>
     public class GsGridFilter<T>
     {
@@ -26,9 +31,9 @@ namespace GS.Core.UI.Controls
                     $"Propriedade '{propertyName}' não encontrada em {typeof(T).Name}");
         }
 
-        // =============================
-        // USO INDIVIDUAL (filtro simples)
-        // =============================
+        /// <summary>
+        /// Aplica o filtro individualmente a uma coleção.
+        /// </summary>
         public IEnumerable<T> Apply(IEnumerable<T> source, string filterText)
         {
             if (string.IsNullOrWhiteSpace(filterText))
@@ -37,9 +42,10 @@ namespace GS.Core.UI.Controls
             return source.Where(item => Match(item, filterText));
         }
 
-        // =============================
-        // MATCH USADO PELO GRUPO
-        // =============================
+        /// <summary>
+        /// Verifica se um item atende ao critério de filtro.
+        /// Usado internamente por grupos de filtro.
+        /// </summary>
         public bool Match(T item, string filterText)
         {
             if (item == null || string.IsNullOrWhiteSpace(filterText))
@@ -53,9 +59,6 @@ namespace GS.Core.UI.Controls
             return MatchText(text, filterText);
         }
 
-        // =============================
-        // COMPARAÇÃO DE TEXTO
-        // =============================
         private bool MatchText(string source, string filter)
         {
             if (IgnoreCase)

@@ -4,7 +4,12 @@ using System.Linq;
 namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// Agrupa múltiplos GsGridFilter e aplica como OR ou AND.
+    /// Agrupa múltiplos filtros de grid e aplica combinação lógica (OR / AND).
+    /// 
+    /// IMPORTANTE:
+    /// - Esta classe não mantém estado de texto.
+    /// - O ciclo de vida do grupo deve ser controlado externamente.
+    /// - Idealmente, um grupo é criado por grid ou contexto de consulta.
     /// </summary>
     public class GsGridFilterGroup<T>
     {
@@ -31,9 +36,6 @@ namespace GS.Core.UI.Controls
                 : ApplyAnd(source, filterText);
         }
 
-        // =============================
-        // OR
-        // =============================
         private IEnumerable<T> ApplyOr(IEnumerable<T> source, string text)
         {
             return source.Where(item =>
@@ -41,9 +43,6 @@ namespace GS.Core.UI.Controls
             );
         }
 
-        // =============================
-        // AND
-        // =============================
         private IEnumerable<T> ApplyAnd(IEnumerable<T> source, string text)
         {
             return source.Where(item =>
