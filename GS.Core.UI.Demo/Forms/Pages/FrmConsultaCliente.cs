@@ -5,18 +5,17 @@ namespace GS.Core.UI.Demo.Forms.Pages
 {
     /// <summary>
     /// Tela de consulta de clientes.
-    /// Compatível com FormBaseConsulta atual.
+    /// Implementa FormBaseConsulta do GS Core.
     /// </summary>
     public partial class FrmConsultaCliente : FormBaseConsulta
+
     {
         public FrmConsultaCliente()
         {
-            InitializeComponent();
-
             Text = "Consulta de Clientes";
 
             ConfigurarGrid();
-            CarregarDadosLocal();
+            CarregarDados();
         }
 
         // ==========================================================
@@ -55,10 +54,11 @@ namespace GS.Core.UI.Demo.Forms.Pages
         }
 
         // ==========================================================
-        // DADOS (LOCAL, SEM OVERRIDE)
+        // DADOS
         // ==========================================================
-        private void CarregarDadosLocal()
+        protected override void CarregarDados()
         {
+            // Mock local (sem banco)
             var lista = new[]
             {
                 new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
@@ -67,46 +67,6 @@ namespace GS.Core.UI.Demo.Forms.Pages
             };
 
             Grid.DataSource = lista;
-        }
-
-        // ==========================================================
-        // AÇÕES
-        // ==========================================================
-        protected override void OnNovoClick(object sender, EventArgs e)
-        {
-            using (var frm = new FrmCadastroCliente())
-            {
-                frm.ShowDialog();
-            }
-
-            CarregarDadosLocal();
-        }
-
-        protected override void OnEditarClick(object sender, EventArgs e)
-        {
-            if (Grid.CurrentRow == null)
-                return;
-
-            // Enquanto não houver construtor com ID
-            using (var frm = new FrmCadastroCliente())
-            {
-                frm.ShowDialog();
-            }
-
-            CarregarDadosLocal();
-        }
-
-        protected override void OnExcluirClick(object sender, EventArgs e)
-        {
-            if (Grid.CurrentRow == null)
-                return;
-
-            if (!FormMsg.Confirm("Deseja excluir o cliente selecionado?"))
-                return;
-
-            // Exclusão futura aqui
-
-            CarregarDadosLocal();
         }
     }
 }
