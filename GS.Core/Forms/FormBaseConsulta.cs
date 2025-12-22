@@ -64,8 +64,9 @@ namespace GS.Core.UI.Forms
                 Dock = DockStyle.Fill
             };
 
-            Grid.EditarSolicitado += (_, _) =>
-                OnEditarClick(this, EventArgs.Empty);
+            Grid.ApplyTheme(ThemeManager.Current);
+            Grid.EditarSolicitado += (_, _) => OnEditarClick(this, EventArgs.Empty);
+
 
             // =============================
             // PAINEL DE AÇÕES

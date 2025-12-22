@@ -6,98 +6,98 @@ using System.Windows.Forms;
 namespace GS.Core.UI.Controls
 {
     /// <summary>
-    /// DataGridView padrão do GS Core.
-    /// Compatível com o ThemeManager atual.
+    /// DataGridView padronizado do GS Core.
+    /// Responsável apenas por comportamento e aparência.
+    /// Não contém regra de negócio.
     /// </summary>
     public class GsDataGridView : DataGridView, IThemedControl
     {
+        // =============================
+        // EVENTOS PADRÃO
+        // =============================
+        public event EventHandler EditarSolicitado;
+
+        public GsDataGridView()
+        {
+            InicializarComportamento();
+        }
+
+        // =============================
+        // CONFIGURAÇÃO BASE
+        // =============================
+        private void InicializarComportamento()
+        {
+            // Comportamento geral
+            AllowUserToAddRows = false;
+            AllowUserToDeleteRows = false;
+            AllowUserToResizeRows = false;
+            MultiSelect = false;
+            ReadOnly = true;
+            SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            RowHeadersVisible = false;
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            EnableHeadersVisualStyles = false;
+
+            // Performance / UX
+            DoubleBuffered = true;
+
+            // Evento de duplo clique
+            CellDoubleClick += (_, __) =>
+            {
+                EditarSolicitado?.Invoke(this, EventArgs.Empty);
+            };
+        }
+
+        // =============================
+        // THEME
+        // =============================
         public void ApplyTheme(GsTheme theme)
         {
             if (theme == null)
                 return;
 
-            ApplyThemeInternal(theme);
-        }
-        public event EventHandler EditarSolicitado;
+            Font = theme.DefaultFont;
 
-        public GsDataGridView()
-        {
-            ReadOnly = true;
-            MultiSelect = false;
-            AllowUserToAddRows = false;
-            AllowUserToDeleteRows = false;
-            AllowUserToResizeRows = false;
-
-            SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            RowHeadersVisible = false;
-            AutoGenerateColumns = false;
-
-            BorderStyle = BorderStyle.None;
-            CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            EnableHeadersVisualStyles = false;
-
-            RowTemplate.Height = 28;
-
-            DoubleClick += (_, _) =>
-            {
-                if (CurrentRow != null)
-                    EditarSolicitado?.Invoke(this, EventArgs.Empty);
-            };
-        }
-
-        private void ApplyThemeInternal(GsTheme theme)
-        {
-            // =============================
-            // COMPORTAMENTO (CRÍTICO)
-            // =============================
-            SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            MultiSelect = false;
-            EnableHeadersVisualStyles = false;
-            ReadOnly = true;
+            // Fundo geral
+            BackgroundColor = theme.GridBackground;
+            GridColor = theme.GridBorder;
 
             // =============================
-            // GRID GERAL
+            // LINHAS
             // =============================
-            BackgroundColor = theme.BackColor;
-            GridColor = theme.Border;
-            BorderStyle = BorderStyle.None;
+            DefaultCellStyle.BackColor = theme.GridSurface;
+            DefaultCellStyle.ForeColor = theme.TextPrimary;
+            DefaultCellStyle.SelectionBackColor = theme.GridRowSelected;
+            DefaultCellStyle.SelectionForeColor = theme.GridRowSelectedText;
+
+            AlternatingRowsDefaultCellStyle.BackColor = theme.GridSurfaceAlt;
+            AlternatingRowsDefaultCellStyle.ForeColor = theme.TextPrimary;
+            AlternatingRowsDefaultCellStyle.SelectionBackColor = theme.GridRowSelected;
+            AlternatingRowsDefaultCellStyle.SelectionForeColor = theme.GridRowSelectedText;
 
             // =============================
-            // HEADER
+            // CABEÇALHO
             // =============================
-            ColumnHeadersDefaultCellStyle.BackColor = theme.Primary;
-            ColumnHeadersDefaultCellStyle.ForeColor = theme.ForeColor;
-            ColumnHeadersDefaultCellStyle.SelectionBackColor = theme.Primary;
-            ColumnHeadersDefaultCellStyle.SelectionForeColor = theme.ForeColor;
+            ColumnHeadersDefaultCellStyle.BackColor = theme.GridHeaderBackground;
+            ColumnHeadersDefaultCellStyle.ForeColor = theme.GridHeaderText;
+            ColumnHeadersDefaultCellStyle.Font = new Font(
+                theme.DefaultFont,
+                FontStyle.Bold
+            );
 
-            ColumnHeadersHeight = 32;
+            ColumnHeadersHeight = 36;
             ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 
             // =============================
-            // LINHAS NORMAIS
+            // CÉLULAS
             // =============================
-            DefaultCellStyle.BackColor = theme.BackColor;
-            DefaultCellStyle.ForeColor = theme.ForeColor;
-            DefaultCellStyle.SelectionBackColor = theme.Primary;
-            DefaultCellStyle.SelectionForeColor = theme.ForeColor;
-
-            // =============================
-            // LINHAS ALTERNADAS
-            // =============================
-            AlternatingRowsDefaultCellStyle.BackColor = theme.InputBackground;
-            AlternatingRowsDefaultCellStyle.ForeColor = theme.ForeColor;
-            AlternatingRowsDefaultCellStyle.SelectionBackColor = theme.Primary;
-            AlternatingRowsDefaultCellStyle.SelectionForeColor = theme.ForeColor;
-
-            // =============================
-            // OUTROS AJUSTES VISUAIS
-            // =============================
-            RowHeadersVisible = false;
             CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            BorderStyle = BorderStyle.None;
+
+            // =============================
+            // ROW TEMPLATE
+            // =============================
+            RowTemplate.Height = 32;
         }
     }
 }
-
-
-    
-
