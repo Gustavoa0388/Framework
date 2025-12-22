@@ -96,11 +96,17 @@ namespace GS.Core.UI.Forms
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            PositionarBotoes();
+
+            if (IsHandleCreated)
+                PositionarBotoes();
         }
+
 
         private void PositionarBotoes()
         {
+            if (pnlAcoes == null)
+                return;
+
             int right = pnlAcoes.Width - 10;
             int top = 10;
 
@@ -115,6 +121,7 @@ namespace GS.Core.UI.Forms
 
             btnNovo.Location = new Point(right - btnNovo.Width, top);
         }
+
 
         // =============================
         // CONTRATO PARA OS FILHOS
