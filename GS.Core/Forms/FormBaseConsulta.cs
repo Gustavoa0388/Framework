@@ -8,6 +8,10 @@ namespace GS.Core.UI.Forms
 {
     public partial class FormBaseConsulta : GsBaseForm
     {
+        private System.Windows.Forms.Timer _debounceTimer;
+        private const int DebounceDelay = 300; // ms
+
+
         // =============================
         // CONTROLES BASE
         // =============================
@@ -48,13 +52,26 @@ namespace GS.Core.UI.Forms
                 Width = 300
             };
 
-            txtFiltro.KeyDown += (s, e) =>
+            txtFiltro.TextChanged += (_, _) =>
             {
-                if (e.KeyCode == Keys.Enter)
-                    OnPesquisarClick();
+                _debounceTimer.Stop();
+                _debounceTimer.Start();
             };
 
+
             pnlFiltro.Controls.Add(txtFiltro);
+
+            _debounceTimer = new System.Windows.Forms.Timer
+            {
+                Interval = DebounceDelay
+            };
+
+            _debounceTimer.Tick += (_, _) =>
+            {
+                _debounceTimer.Stop();
+                OnPesquisarClick();
+            };
+
 
             // =============================
             // GRID
