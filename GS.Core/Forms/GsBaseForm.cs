@@ -37,7 +37,7 @@ namespace GS.Core.UI.Forms
         {
             // Boas práticas padrão
             StartPosition = FormStartPosition.CenterScreen;
-            Font = SystemFonts.DefaultFont;
+            
         }
 
         // ============================

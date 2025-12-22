@@ -2,47 +2,48 @@
 using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Theming;
+using GS.Core.UI.Controls;
 
 namespace GS.Core.UI.Controls.Base
 {
     /// <summary>
     /// Classe base para TODOS os inputs do GS Core.
-    /// Responsável por:
-    /// - Fundo
+    /// Centraliza:
+    /// - Tema
     /// - Borda
-    /// - Estado de foco/hover
-    /// - Validação Required
-    /// - Ícone de erro interno
+    /// - Hover / Focus
+    /// - Required
+    /// - Validação
     /// </summary>
-    public abstract class GsInputBase : UserControl, IThemedControl
+    public abstract class GsInputBase : UserControl,
+        IThemedControl,
+        IGsValidatable,
+        IGsRequiredAware
     {
-        // ======================================================
-        // CAMPOS BASE
-        // ======================================================
-
         protected TextBoxBase InnerTextBox;
 
         protected bool IsFocused;
         protected bool IsHovered;
 
-        // Controle de erro
         private GsErrorLabel errorLabel;
 
+        // =============================
+        // REQUIRED
+        // =============================
         public bool Required { get; set; }
         public string RequiredMessage { get; set; } = "Campo obrigatório";
 
-        /// <summary>
-        /// Indica se o input está atualmente em erro
-        /// </summary>
+        // =============================
+        // VALIDAÇÃO
+        // =============================
+        public bool IsValid => !HasError;
+        public string ErrorMessage { get; private set; }
+
         public bool HasError { get; private set; }
 
-        // Ícone de erro
         protected const int ErrorIconSize = 14;
         protected const int ErrorIconSpacing = 6;
 
-        // ======================================================
-        // CONSTRUTOR
-        // ======================================================
         protected GsInputBase()
         {
             SetStyle(
@@ -53,22 +54,15 @@ namespace GS.Core.UI.Controls.Base
             );
 
             Height = 36;
-
-            // Padding PADRÃO (não mexer sem motivo)
             Padding = new Padding(8, 6, 8, 6);
-
             BackColor = Color.Transparent;
+
+            MouseEnter += (_, _) => { IsHovered = true; Invalidate(); };
+            MouseLeave += (_, _) => { IsHovered = false; Invalidate(); };
         }
 
-        // ======================================================
-        // CONTRATO PARA FILHOS
-        // ======================================================
         protected abstract TextBoxBase CreateInnerTextBox();
 
-
-        // ======================================================
-        // INICIALIZAÇÃO
-        // ======================================================
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
@@ -79,10 +73,6 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox = CreateInnerTextBox();
             InnerTextBox.BorderStyle = BorderStyle.None;
 
-            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
-            InnerTextBox.Width = Width - Padding.Horizontal;
-            InnerTextBox.Height = 20;
-
             InnerTextBox.GotFocus += (_, _) =>
             {
                 IsFocused = true;
@@ -92,13 +82,12 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox.LostFocus += (_, _) =>
             {
                 IsFocused = false;
-                ValidateRequired();
+                Validate();
                 Invalidate();
             };
 
             Controls.Add(InnerTextBox);
 
-            // Label de erro (texto abaixo do input)
             errorLabel = new GsErrorLabel { Visible = false };
 
             ParentChanged += (_, _) =>
@@ -113,20 +102,15 @@ namespace GS.Core.UI.Controls.Base
             UpdateLayout();
         }
 
-        // ======================================================
-        // LAYOUT
-        // ======================================================
         protected virtual void UpdateLayout()
         {
             if (InnerTextBox == null)
                 return;
 
-            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
-
-            // Reserva espaço do ícone de erro à direita
             int rightPadding = Padding.Right +
                                (HasError ? ErrorIconSize + ErrorIconSpacing : 0);
 
+            InnerTextBox.Location = new Point(Padding.Left, Padding.Top);
             InnerTextBox.Width = Width - Padding.Left - rightPadding;
 
             UpdateErrorPosition();
@@ -141,69 +125,44 @@ namespace GS.Core.UI.Controls.Base
             errorLabel.Width = Width;
         }
 
-        // ======================================================
-        // PINTURA
-        // ======================================================
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Graphics g = e.Graphics;
-
-            // REGRA: SEM anti-alias em retângulo
+            var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 
             var theme = ThemeManager.Current;
 
-            // Fundo
             using (var bg = new SolidBrush(theme.InputBackground))
                 g.FillRectangle(bg, ClientRectangle);
 
-            // Cor da borda
             Color borderColor =
-                HasError ? theme.Error :
+                HasError ? theme.InputError :
                 IsFocused ? theme.InputFocus :
                 IsHovered ? theme.InputHover :
                 theme.InputBorder;
 
-            using (var pen = new Pen(borderColor, 1f))
-            {
+            using (var pen = new Pen(borderColor))
                 g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-            }
-
-            // ÍCONE DE ERRO (interno)
-            if (HasError)
-            {
-                int x = Width - Padding.Right - ErrorIconSize;
-                int y = (Height - ErrorIconSize) / 2;
-
-                g.DrawImage(
-                    Properties.Resources.error,
-                    new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
-                );
-            }
         }
 
-        // ======================================================
+        // =============================
         // VALIDAÇÃO
-        // ======================================================
-        protected void ValidateRequired()
+        // =============================
+        public virtual void Validate()
         {
-            if (!Required || InnerTextBox == null)
-            {
-                ClearError();
-                return;
-            }
+            ClearError();
 
-            if (string.IsNullOrWhiteSpace(InnerTextBox.Text))
+            if (Required && string.IsNullOrWhiteSpace(Text))
                 ShowError(RequiredMessage);
-            else
-                ClearError();
         }
 
         protected void ShowError(string message)
         {
             HasError = true;
+            ErrorMessage = message;
+
             errorLabel?.ShowError(message);
             UpdateLayout();
             Invalidate();
@@ -212,14 +171,16 @@ namespace GS.Core.UI.Controls.Base
         protected void ClearError()
         {
             HasError = false;
+            ErrorMessage = null;
+
             errorLabel?.ClearError();
             UpdateLayout();
             Invalidate();
         }
 
-        // ======================================================
-        // TEMA
-        // ======================================================
+        // =============================
+        // THEME
+        // =============================
         public virtual void ApplyTheme(GsTheme theme)
         {
             Font = theme.DefaultFont;
@@ -233,35 +194,10 @@ namespace GS.Core.UI.Controls.Base
             Invalidate();
         }
 
-        // ======================================================
-        // TEXTO / PLACEHOLDER
-        // ======================================================
         public override string Text
         {
             get => InnerTextBox?.Text ?? string.Empty;
-            set
-            {
-                if (InnerTextBox != null)
-                    InnerTextBox.Text = value;
-            }
+            set { if (InnerTextBox != null) InnerTextBox.Text = value; }
         }
-
-        public string Placeholder
-        {
-            get
-            {
-                if (InnerTextBox is TextBox tb)
-                    return tb.PlaceholderText;
-
-                return string.Empty;
-            }
-            set
-            {
-                if (InnerTextBox is TextBox tb)
-                    tb.PlaceholderText = value;
-            }
-        }
-
     }
 }
-
