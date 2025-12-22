@@ -1,5 +1,6 @@
-﻿using System;
+﻿using GS.Core.UI.Controls;
 using GS.Core.UI.Forms;
+using System;
 
 namespace GS.Core.UI.Demo.Forms.Pages
 {
@@ -23,35 +24,13 @@ namespace GS.Core.UI.Demo.Forms.Pages
         // ==========================================================
         private void ConfigurarGrid()
         {
-            Grid.AutoGenerateColumns = false;
-            Grid.AllowUserToAddRows = false;
-            Grid.AllowUserToDeleteRows = false;
             Grid.Columns.Clear();
 
-            Grid.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
-            {
-                Name = "Id",
-                HeaderText = "Código",
-                DataPropertyName = "Id",
-                Width = 80
-            });
-
-            Grid.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
-            {
-                Name = "Nome",
-                HeaderText = "Nome",
-                DataPropertyName = "Nome",
-                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
-            });
-
-            Grid.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
-            {
-                Name = "Email",
-                HeaderText = "E-mail",
-                DataPropertyName = "Email",
-                Width = 220
-            });
+            Grid.Columns.Add(GsGridColumn.Id("Id").Build());
+            Grid.Columns.Add(GsGridColumn.Text("Nome", "Nome", "Nome").Build());
+            Grid.Columns.Add(GsGridColumn.Email("Email").Build());
         }
+
 
         // ==========================================================
         // DADOS
