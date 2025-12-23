@@ -6,19 +6,20 @@ namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
     /// GsErrorLabel
-    /// 
-    /// Label específico para exibição de mensagens de erro.
-    /// 
+    ///
+    /// Label especializado para exibição de mensagens
+    /// de erro de validação LOCAL.
+    ///
     /// RESPONSABILIDADE:
-    /// - Exibir erro de validação
+    /// - Exibir mensagens de erro abaixo de inputs
     /// - Controlar visibilidade do erro
-    /// 
-    /// STATUS:
-    /// - GS Core
-    /// 
-    /// OBSERVAÇÕES:
-    /// - Inicia invisível
-    /// - Exibição controlada via ShowError / ClearError
+    ///
+    /// O QUE ESTE CONTROLE NÃO FAZ:
+    /// - Não valida dados
+    /// - Não decide quando exibir erros
+    /// - Não exibe mensagens globais
+    ///
+    /// Ele apenas REFLETE o estado de erro informado.
     /// </summary>
     public class GsErrorLabel : Label, IThemedControl
     {
@@ -30,6 +31,9 @@ namespace GS.Core.UI.Controls.Data
 
         /// <summary>
         /// Aplica o tema visual ao label de erro.
+        ///
+        /// Regra:
+        /// - Sempre usar a cor Error do tema
         /// </summary>
         public void ApplyTheme(GsTheme theme)
         {
