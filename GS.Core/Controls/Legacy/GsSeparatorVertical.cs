@@ -3,16 +3,20 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
-    public class GsSeparatorHorizontal : Control
+    [Obsolete(
+  "Separadores legados estão obsoletos. Utilize GsSeparator."
+)]
+
+    public class GsSeparatorVertical : Control
     {
-        public GsSeparatorHorizontal()
+        public GsSeparatorVertical()
         {
             DoubleBuffered = true;
-            Size = new Size(150, 1);
-            MinimumSize = new Size(0, 1);
-            MaximumSize = new Size(0, 1);
+            Size = new Size(1, 150);
+            MinimumSize = new Size(1, 0);
+            MaximumSize = new Size(1, 0);
         }
 
         private Color vCor = Color.Gray;
@@ -35,20 +39,21 @@ namespace GS.Core.UI.Controls
             //g.SmoothingMode = SmoothingMode.AntiAlias;
 
             RectangleF Base = ClientRectangle;
-            Base.Width = Base.Width / 2;
+            Base.Height = Base.Height / 2;
 
-            using(LinearGradientBrush Pincel = 
-                new LinearGradientBrush(Base, Color.Transparent, Cor, 1))
+            using (LinearGradientBrush Pincel =
+                new LinearGradientBrush(Base, Color.Transparent, Cor, 90))
             {
                 g.FillRectangle(Pincel, Base);
             }
 
-            Base.X = Base.Width - 1;
+            Base.Y = Base.Height - 1;
             using (LinearGradientBrush Pincel =
-    new LinearGradientBrush(Base, Cor, Color.Transparent, 1))
+    new LinearGradientBrush(Base, Cor, Color.Transparent, 90))
             {
                 g.FillRectangle(Pincel, Base);
             }
         }
     }
 }
+
