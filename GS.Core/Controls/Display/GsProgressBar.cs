@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Theming;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Display
 {
     /// <summary>
     /// Barra de progresso padrão do GS Core.
@@ -164,7 +164,7 @@ namespace GS.Core.UI.Controls
             }
 
             // Percentual
-            float percent = (_maximum - _minimum) == 0
+            float percent = _maximum - _minimum == 0
                 ? 0
                 : (float)(_animatedValue - _minimum) / (_maximum - _minimum);
 

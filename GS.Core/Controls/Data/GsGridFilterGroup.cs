@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
     /// Agrupa múltiplos filtros de grid e aplica combinação lógica (OR / AND).

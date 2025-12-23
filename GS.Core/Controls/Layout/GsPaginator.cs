@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using GS.Core.UI.Theming;
 using GS.Core.UI.Controls.States;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Layout
 {
     /// <summary>
     /// Controle de paginação padrão do GS Core.

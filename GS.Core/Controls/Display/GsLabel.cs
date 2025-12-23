@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Display
 {
     /// <summary>
     /// GsLabel

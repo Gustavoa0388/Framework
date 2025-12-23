@@ -1,4 +1,7 @@
-﻿namespace GS.Core.UI.Formularios
+﻿using GS.Core.UI.Controls.Display;
+using GS.Core.UI.Controls.Inputs;
+
+namespace GS.Core.UI.Formularios
 {
     partial class FrmConexaoMySQL
     {
@@ -232,7 +235,7 @@
             BtSalvar.ForeColor = Color.White;
             BtSalvar.Location = new Point(23, 264);
             BtSalvar.Name = "BtSalvar";
-            BtSalvar.PosicaoImagem = GS.Core.UI.Controls.GsButton.Posicoes.Esquerda;
+            BtSalvar.PosicaoImagem = GsButton.Posicoes.Esquerda;
             BtSalvar.Size = new Size(428, 45);
             BtSalvar.TabIndex = 4;
             BtSalvar.TamanhoIcone = 16;
@@ -278,18 +281,18 @@
         #endregion
 
         private PictureBox pictureBox1;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label1;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label2;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label3;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label4;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label5;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label6;
-        private GS.Core.UI.Controls.GsLabel ecTurbo_Label7;
-        private GS.Core.UI.Controls.GsTextBox TxtBanco;
-        private GS.Core.UI.Controls.GsTextBox TxtServidor;
-        private GS.Core.UI.Controls.GsTextBox TxtPorta;
-        private GS.Core.UI.Controls.GsTextBox TxtUsuario;
-        private GS.Core.UI.Controls.GsTextBox TxtSenha;
-        private GS.Core.UI.Controls.GsButton BtSalvar;
+        private GsLabel ecTurbo_Label1;
+        private GsLabel ecTurbo_Label2;
+        private GsLabel ecTurbo_Label3;
+        private GsLabel ecTurbo_Label4;
+        private GsLabel ecTurbo_Label5;
+        private GsLabel ecTurbo_Label6;
+        private GsLabel ecTurbo_Label7;
+        private GsTextBox TxtBanco;
+        private GsTextBox TxtServidor;
+        private GsTextBox TxtPorta;
+        private GsTextBox TxtUsuario;
+        private GsTextBox TxtSenha;
+        private GsButton BtSalvar;
     }
 }

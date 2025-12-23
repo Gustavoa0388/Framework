@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using GS.Core.UI.Theming;
 using GS.Core.UI.Controls.States;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Display
 {
     /// <summary>
     /// Container visual para exibição de imagens no GS Core.

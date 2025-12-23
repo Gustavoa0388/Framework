@@ -2,7 +2,7 @@
 using System.Drawing;
 
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Layout
 {
     public class GsConfiguration : Component
     {

@@ -1,4 +1,4 @@
-﻿using GS.Core.UI.Controls;
+﻿using GS.Core.UI.Controls.Data;
 using GS.Core.UI.Forms;
 using System;
 using System.Collections.Generic;

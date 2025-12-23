@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using GS.Core.UI.Utils.Legacy;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// GsButton

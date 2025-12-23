@@ -37,7 +37,6 @@ namespace GS.Core.UI.Theming
             SubtitleText = Color.FromArgb(30, 90, 168),  // Primary também
             SectionText = Color.FromArgb(22, 63, 115),  // PrimaryDark
 
-
             // Inputs
             InputBackground = Color.White,
             InputBorder = Color.FromArgb(208, 215, 226),
@@ -45,6 +44,12 @@ namespace GS.Core.UI.Theming
             InputFocus = Color.FromArgb(58, 123, 213),
             InputError = Color.FromArgb(211, 47, 47),
             TextPlaceholder = Color.FromArgb(160, 160, 160),
+
+            // Toggle
+            ToggleOffBackground = Color.FromArgb(210, 215, 220),
+            ToggleOnBackground = Color.FromArgb(30, 90, 168), // Primary
+            ToggleThumb = Color.White,
+            ToggleText = Color.FromArgb(26, 26, 26), // TextPrimary
 
             // ProgressBar
             ProgressBackground = Color.FromArgb(230, 236, 245),
@@ -110,6 +115,13 @@ namespace GS.Core.UI.Theming
             InputFocus = Color.FromArgb(90, 155, 245),
             InputError = Color.FromArgb(229, 57, 53),
             TextPlaceholder = Color.FromArgb(140, 140, 140),
+
+            // Toggle
+            ToggleOffBackground = Color.FromArgb(70, 70, 70),
+            ToggleOnBackground = Color.FromArgb(90, 155, 245), // PrimaryLight
+            ToggleThumb = Color.White,
+            ToggleText = Color.White, // TextPrimary
+
 
             //ProgressBar
             ProgressBackground = Color.FromArgb(45, 50, 55),

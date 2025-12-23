@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Theming;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Display
 {
     /// <summary>
     /// Label de status com barra de progresso opcional.
@@ -155,19 +155,19 @@ namespace GS.Core.UI.Controls
             // CONTEÚDO (ÍCONE + TEXTO)
             // ----------------------------
             int x = Padding.Left;
-            int centerY = rect.Y + (rect.Height / 2);
+            int centerY = rect.Y + rect.Height / 2;
 
             if (Image != null)
             {
                 int iconSize = Math.Min(16, rect.Height - Padding.Vertical);
-                int iconY = centerY - (iconSize / 2);
+                int iconY = centerY - iconSize / 2;
                 g.DrawImage(Image, new Rectangle(x, iconY, iconSize, iconSize));
                 x += iconSize + 6;
             }
 
             using var textBrush = new SolidBrush(ForeColor);
             SizeF textSize = g.MeasureString(Text, Font);
-            float textY = centerY - (textSize.Height / 2);
+            float textY = centerY - textSize.Height / 2;
             g.DrawString(Text, Font, textBrush, x, textY);
         }
     }        

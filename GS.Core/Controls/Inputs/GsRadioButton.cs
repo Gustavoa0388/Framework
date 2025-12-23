@@ -4,7 +4,7 @@ using GS.Core.UI.Utils.Legacy;
 
 
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// GsRadioButton
@@ -382,7 +382,7 @@ namespace GS.Core.UI.Controls
             {
                 // Inflar o marcador baseado no tamanho especificado em TamanhoMarcador
                 Base.Inflate(-TamanhoMarcador, -TamanhoMarcador);
-                Base.Inflate(-((TamanhoIcone - TamanhoMarcador * 2) - currentMarkerSize) / 2, -((TamanhoIcone - TamanhoMarcador * 2) - currentMarkerSize) / 2);
+                Base.Inflate(-(TamanhoIcone - TamanhoMarcador * 2 - currentMarkerSize) / 2, -(TamanhoIcone - TamanhoMarcador * 2 - currentMarkerSize) / 2);
 
                 if (Base.Width > 0)
                 {

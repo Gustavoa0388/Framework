@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Data
 {
     public class GsChart3 : Control
     {

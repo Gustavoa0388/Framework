@@ -5,6 +5,7 @@
 
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Utils.Legacy;
 
 

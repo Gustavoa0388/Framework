@@ -4,7 +4,7 @@ using GS.Core.UI.Utils.Legacy;
 
 
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
     /// <summary>
     /// GsToggleButton
@@ -26,13 +26,18 @@ namespace GS.Core.UI.Controls
     /// - Integrar Theme
     /// - Padronizar estados
     /// </summary>
-    public class GsToggleButton : CheckBox
+    /// 
+     [Obsolete("Controle legado do ECTurbo. Use GsToggleSwitch.")]
+
+    public class GsToggleButtonLegacy : CheckBox
     {
+
         private float animationProgress = 1f;
         private const float animationStep = 0.05f; // Velocidade da animação
         private System.Windows.Forms.Timer animationTimer;
 
-        public GsToggleButton()
+
+        public GsToggleButtonLegacy()
         {
             Tag = "";
             DoubleBuffered = true;

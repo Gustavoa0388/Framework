@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Data
 {
     public class GsChart2 : Control
     {
@@ -151,7 +151,7 @@ namespace GS.Core.UI.Controls
                     if (Percentual == 100)
                         g.DrawArc(Caneta, Base, 270, 360);
                     else
-                        g.DrawArc(Caneta, Base, 270 + (LarguraBarra / 2), (360 - LarguraBarra - 2) * (Percentual / 100));
+                        g.DrawArc(Caneta, Base, 270 + LarguraBarra / 2, (360 - LarguraBarra - 2) * (Percentual / 100));
 
                 }
 

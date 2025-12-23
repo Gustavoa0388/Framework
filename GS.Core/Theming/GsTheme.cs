@@ -150,6 +150,31 @@ namespace GS.Core.UI.Theming
         public Color TextPlaceholder { get; set; }
 
         // =====================================================
+        // TOGGLE SWITCH
+        // =====================================================
+
+        /// <summary>
+        /// Cor de fundo do toggle desligado.
+        /// </summary>
+        public Color ToggleOffBackground { get; set; }
+
+        /// <summary>
+        /// Cor de fundo do toggle ligado.
+        /// </summary>
+        public Color ToggleOnBackground { get; set; }
+
+        /// <summary>
+        /// Cor do marcador (bolinha).
+        /// </summary>
+        public Color ToggleThumb { get; set; }
+
+        /// <summary>
+        /// Cor do texto do toggle.
+        /// </summary>
+        public Color ToggleText { get; set; }
+
+
+        // =====================================================
         // GRID
         // =====================================================
 

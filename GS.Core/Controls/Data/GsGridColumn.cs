@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
     /// Representa uma definição de coluna para o GsDataGridView.

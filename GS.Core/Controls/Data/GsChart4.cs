@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Data
 {
     public class GsChart4 : Control
     {
@@ -200,7 +200,7 @@ namespace GS.Core.UI.Controls
                 Base.Inflate(Espaco - 2, Espaco - 2);
                 Pincel.Color = CorPonteiro;
 
-                g.FillPie(Pincel, Base, 180 + (174 * (Percentual / 100)), 6);
+                g.FillPie(Pincel, Base, 180 + 174 * (Percentual / 100), 6);
 
 
             }

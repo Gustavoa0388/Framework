@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Theming;
-using GS.Core.UI.Controls;
+using GS.Core.UI.Controls.Data;
 
 namespace GS.Core.UI.Controls.Base
 {

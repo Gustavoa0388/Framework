@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Display
 {
     /// <summary>
     /// GsHintLabel

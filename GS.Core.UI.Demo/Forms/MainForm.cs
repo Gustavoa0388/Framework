@@ -1,5 +1,10 @@
-﻿using GS.Core.UI.Controls;
+﻿using GS.Core.UI.Controls.Base;
+using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Controls.Layout;
+using GS.Core.UI.Controls.States;
+using GS.Core.UI.Controls.Data;
+using GS.Core.UI.Controls.Display;
+using GS.Core.UI.Controls.Legacy;
 using GS.Core.UI.Controls.States;
 using GS.Core.UI.Demo.Forms.Pages;
 using GS.Core.UI.Forms;
@@ -359,7 +364,17 @@ namespace GS.Core.UI.Demo
 
             AddLabeledControl(page, "Primary Button", btnSalvar, 20, 20);
 
-            AddLabeledControl(page, "Toggle Button", new GsToggleButton { Text = "Ativo" }, 20, 80);
+            var toggle = new GsToggleSwitch
+            {
+                OnText = "Ativo",
+                OffText = "Inativo",
+                Location = new Point(20, 40)
+            };
+
+            Controls.Add(toggle);
+
+
+            AddLabeledControl(page, "Toggle Button", new GsToggleSwitch { Text = "Ativo" }, 20, 80);
 
             var chk = new GsCheckBox { Text = "Aceito os termos" };
             chk.Location = new Point(20, 150);

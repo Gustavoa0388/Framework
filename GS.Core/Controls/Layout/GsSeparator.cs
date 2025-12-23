@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Theming;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Layout
 {
     /// <summary>
     /// Separador visual padrão do GS Core.
@@ -80,7 +80,7 @@ namespace GS.Core.UI.Controls
                     brush,
                     InnerPadding,
                     y,
-                    Width - (InnerPadding * 2),
+                    Width - InnerPadding * 2,
                     Thickness
                 );
             }
@@ -92,7 +92,7 @@ namespace GS.Core.UI.Controls
                     x,
                     InnerPadding,
                     Thickness,
-                    Height - (InnerPadding * 2)
+                    Height - InnerPadding * 2
                 );
             }
         }
