@@ -52,8 +52,8 @@ namespace GS.Core.UI.Forms
         {
             SuspendLayout();
 
-            CriarFiltro();
             CriarGrid();
+            CriarFiltro();
             CriarPaginacao();
             CriarAcoes();
 
@@ -123,6 +123,8 @@ namespace GS.Core.UI.Forms
             pnlGrid.Controls.Add(Grid);
             Controls.Add(pnlGrid);
         }
+
+
 
         // =============================
         // PAGINAÇÃO

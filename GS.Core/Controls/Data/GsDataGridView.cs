@@ -2,6 +2,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
+
 
 namespace GS.Core.UI.Controls.Data
 {
@@ -19,6 +21,11 @@ namespace GS.Core.UI.Controls.Data
         // ==========================================================
         // EVENTOS
         // ==========================================================
+        /// <summary>
+        /// Definições semânticas das colunas do grid.
+        /// </summary>
+        public IList<GsGridColumn> ColumnsDefinition { get; }
+            = new List<GsGridColumn>();
 
         /// <summary>
         /// Evento legado (mantido por compatibilidade).
@@ -79,6 +86,32 @@ namespace GS.Core.UI.Controls.Data
         // ==========================================================
         // CONFIGURAÇÃO BASE
         // ==========================================================
+        /// <summary>
+        /// Reconstrói as colunas reais do DataGridView
+        /// a partir das definições semânticas.
+        /// </summary>
+        public void BuildColumns()
+        {
+            Columns.Clear();
+
+            foreach (var def in ColumnsDefinition)
+            {
+                var column = new DataGridViewTextBoxColumn
+                {
+                    HeaderText = def.Header,
+                    DataPropertyName = def.PropertyName,
+                    Width = def.Width,
+                    Visible = def.Visible,
+                    ReadOnly = def.ReadOnly,
+                    DefaultCellStyle =
+            {
+                Alignment = def.Alignment
+            }
+                };
+
+                Columns.Add(column);
+            }
+        }
 
         private void InicializarComportamento()
         {

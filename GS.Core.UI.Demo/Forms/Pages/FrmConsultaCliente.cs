@@ -43,6 +43,8 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
             CarregarDados();
             ConfigurarGrid();
+            
+            
             Text = "Consulta de Clientes";
             
         }

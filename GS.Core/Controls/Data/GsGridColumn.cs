@@ -3,97 +3,59 @@
 namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
-    /// Representa uma definição de coluna para o GsDataGridView.
+    /// Representa a definição SEMÂNTICA de uma coluna do grid.
     /// 
-    /// IMPORTANTE:
-    /// - Esta classe NÃO é um Control.
-    /// - Atua apenas como builder/configurador de colunas.
+    /// RESPONSABILIDADE:
+    /// - Descrever a coluna (header, binding, alinhamento, largura).
+    /// - NÃO renderiza.
+    /// - NÃO conhece tema.
+    /// - NÃO conhece DataGridView diretamente.
+    /// 
+    /// O GsDataGridView é responsável por converter
+    /// esta definição em uma coluna real.
     /// </summary>
     public class GsGridColumn
     {
         /// <summary>
-        /// Nome interno da coluna (Name).
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Texto exibido no cabeçalho.
+        /// Texto exibido no cabeçalho da coluna.
         /// </summary>
         public string Header { get; }
 
         /// <summary>
-        /// Propriedade do objeto de dados vinculada à coluna.
+        /// Nome da propriedade usada para binding.
         /// </summary>
-        public string DataProperty { get; }
+        public string PropertyName { get; }
 
-        public int Width { get; set; } = 100;
-        public bool AutoSize { get; set; }
+        /// <summary>
+        /// Largura da coluna em pixels.
+        /// </summary>
+        public int Width { get; set; } = 120;
+
+        /// <summary>
+        /// Alinhamento do conteúdo da célula.
+        /// </summary>
+        public DataGridViewContentAlignment Alignment { get; set; }
+            = DataGridViewContentAlignment.MiddleLeft;
+
+        /// <summary>
+        /// Indica se a coluna está visível.
+        /// </summary>
         public bool Visible { get; set; } = true;
-        public DataGridViewContentAlignment Alignment { get; set; } = DataGridViewContentAlignment.MiddleLeft;
-        public string Format { get; set; }
 
-        public GsGridColumn(string name, string header, string dataProperty)
+        /// <summary>
+        /// Indica se a coluna é somente leitura.
+        /// </summary>
+        public bool ReadOnly { get; set; } = true;
+
+        /// <summary>
+        /// Cria uma nova definição de coluna.
+        /// </summary>
+        /// <param name="header">Texto do cabeçalho.</param>
+        /// <param name="propertyName">Nome da propriedade de binding.</param>
+        public GsGridColumn(string header, string propertyName)
         {
-            Name = name;
             Header = header;
-            DataProperty = dataProperty;
+            PropertyName = propertyName;
         }
-
-        public DataGridViewColumn Build()
-        {
-            var col = new DataGridViewTextBoxColumn
-            {
-                Name = Name,
-                HeaderText = Header,
-                DataPropertyName = DataProperty,
-                Visible = Visible,
-                ReadOnly = true
-            };
-
-            if (AutoSize)
-                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            else
-                col.Width = Width;
-
-            col.DefaultCellStyle.Alignment = Alignment;
-
-            if (!string.IsNullOrWhiteSpace(Format))
-                col.DefaultCellStyle.Format = Format;
-
-            return col;
-        }
-
-        // =============================
-        // FACTORIES PADRÃO
-        // =============================
-
-        public static GsGridColumn Id(string dataProperty) =>
-            new("Id", "Código", dataProperty)
-            {
-                Width = 80,
-                Alignment = DataGridViewContentAlignment.MiddleCenter
-            };
-
-        public static GsGridColumn Text(string name, string header, string dataProperty) =>
-            new(name, header, dataProperty) { AutoSize = true };
-
-        public static GsGridColumn Email(string dataProperty) =>
-            new("Email", "E-mail", dataProperty) { Width = 220 };
-
-        public static GsGridColumn Money(string name, string header, string dataProperty) =>
-            new(name, header, dataProperty)
-            {
-                Width = 120,
-                Alignment = DataGridViewContentAlignment.MiddleRight,
-                Format = "C2"
-            };
-
-        public static GsGridColumn Date(string name, string header, string dataProperty) =>
-            new(name, header, dataProperty)
-            {
-                Width = 110,
-                Alignment = DataGridViewContentAlignment.MiddleCenter,
-                Format = "dd/MM/yyyy"
-            };
     }
 }
