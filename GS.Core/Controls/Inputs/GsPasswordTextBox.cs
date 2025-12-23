@@ -115,9 +115,9 @@ namespace GS.Core.UI.Controls.Inputs
         /// Não adiciona validação própria.
         /// A regra de Required é tratada no GsInputBase.
         /// </summary>
-        public override void Validate()
+        public override void ValidateInput()
         {
-            base.Validate();
+            base.ValidateInput();
         }
     }
 }

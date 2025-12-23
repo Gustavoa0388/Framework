@@ -46,9 +46,9 @@ namespace GS.Core.UI.Controls.Inputs
         /// <summary>
         /// Validação completa (Required + Data)
         /// </summary>
-        public override void Validate()
+        public override void ValidateInput()
         {
-            base.Validate();
+            base.ValidateInput();
 
             if (HasError)
                 return;
