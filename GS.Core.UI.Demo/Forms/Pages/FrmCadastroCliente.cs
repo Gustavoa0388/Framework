@@ -1,4 +1,4 @@
-﻿using GS.Core.UI.Controls;
+﻿using GS.Core.UI.Controls.Display;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Forms;
 using System;
@@ -8,25 +8,18 @@ using System.Windows.Forms;
 namespace GS.Core.UI.Demo.Forms.Pages
 {
     /// <summary>
-    /// FrmCadastroCliente
+    /// FrmCadastroCliente (DEMO)
     /// 
-    /// Formulário de cadastro de cliente (DEMO).
-    /// 
-    /// Objetivo:
-    /// - Demonstrar uso real do FormBaseCadastro
-    /// - Validar inputs GS Core em um cenário concreto
-    /// - Exercitar validação global e feedback visual
-    /// 
-    /// Observações:
-    /// - Utiliza Windows Forms Designer
-    /// - Layout de campos é criado via código (demo)
-    /// - Não persiste dados reais
+    /// Demonstra o uso correto do FormBaseCadastro
+    /// com inputs GS Core e layout local.
     /// </summary>
     public partial class FrmCadastroCliente : FormBaseCadastro
     {
         // =========================
         // CONTROLES
         // =========================
+
+        private Panel pnlConteudo;
 
         private GsTextBox txtNome;
         private GsMaskedInput txtCpf;
@@ -40,7 +33,23 @@ namespace GS.Core.UI.Demo.Forms.Pages
         public FrmCadastroCliente()
         {
             InitializeComponent();
+            BuildLayout();
             BuildForm();
+        }
+
+        // =========================
+        // LAYOUT
+        // =========================
+
+        private void BuildLayout()
+        {
+            pnlConteudo = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20)
+            };
+
+            Controls.Add(pnlConteudo);
         }
 
         // =========================
@@ -74,17 +83,9 @@ namespace GS.Core.UI.Demo.Forms.Pages
         }
 
         // =========================
-        // HELPER LOCAL (APENAS DEMO)
+        // HELPER LOCAL (DEMO)
         // =========================
 
-        /// <summary>
-        /// Adiciona um label alinhado à direita e um controle GS Core.
-        /// 
-        /// Importante:
-        /// - Helper LOCAL do Demo
-        /// - Não faz parte do GS Core
-        /// - Evita duplicação visual neste formulário
-        /// </summary>
         private void AddLabeledControlLocal(
             string labelText,
             Control control,
@@ -93,7 +94,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
         {
             int labelWidth = 120;
 
-            var lbl = new GS.Core.UI.Controls.Display.GsLabel
+            var lbl = new GsLabel
             {
                 Text = labelText,
                 Location = new Point(x, y),
@@ -105,20 +106,33 @@ namespace GS.Core.UI.Demo.Forms.Pages
             control.Location = new Point(x + labelWidth + 10, y);
             control.Width = 220;
 
-            // Usa o painel base do FormBaseCadastro
-            ContentPanel.Controls.Add(lbl);
-            ContentPanel.Controls.Add(control);
+            pnlConteudo.Controls.Add(lbl);
+            pnlConteudo.Controls.Add(control);
         }
 
         // =========================
-        // SALVAR
+        // CONTRATOS OBRIGATÓRIOS
         // =========================
 
-        protected override bool OnSalvar()
+        protected override void OnInitialize()
+        {
+            // DEMO: nada a inicializar
+        }
+
+        protected override void OnLoadData()
+        {
+            // DEMO: não carrega dados reais
+        }
+
+        protected override void OnSave()
         {
             // DEMO: simula sucesso
             FormMsg.Success("Cliente cadastrado com sucesso!");
-            return true;
+        }
+
+        protected override void OnDelete()
+        {
+            // DEMO: não implementado
         }
     }
 }

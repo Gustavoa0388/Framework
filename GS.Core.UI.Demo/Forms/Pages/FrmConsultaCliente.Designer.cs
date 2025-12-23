@@ -31,13 +31,6 @@
             pnlAcoes.SuspendLayout();
             SuspendLayout();
             // 
-            // lblPagina
-            // 
-            lblPagina.BackColor = Color.White;
-            lblPagina.Font = new Font("Segoe UI", 9F);
-            lblPagina.ForeColor = Color.Black;
-            lblPagina.Size = new Size(69, 15);
-            // 
             // txtFiltro
             // 
             txtFiltro.BackColor = Color.White;
@@ -99,8 +92,7 @@
             ForeColor = Color.Black;
             Name = "FrmConsultaCliente";
             Text = "FrmConsultaCliente";
-            WindowState = FormWindowState.Maximized;
-            Controls.SetChildIndex(lblPagina, 0);
+            WindowState = FormWindowState.Maximized;            
             Controls.SetChildIndex(pnlAcoes, 0);
             pnlAcoes.ResumeLayout(false);
             ResumeLayout(false);
