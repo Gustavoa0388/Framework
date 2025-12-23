@@ -364,7 +364,7 @@ namespace GS.Core.UI.Demo
             page.Controls.Add(panelLabel);
             page.Controls.Add(panel);
 
-            page.Controls.Add(new GsSeparatorHorizontal
+            page.Controls.Add(new GsSeparator
             {
                 Location = new Point(20, 220),
                 Width = 300

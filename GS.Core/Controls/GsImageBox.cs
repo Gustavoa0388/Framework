@@ -1,160 +1,136 @@
-﻿using System.Windows.Forms;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using GS.Core.UI.Utils.Legacy;
-
-
-using System.ComponentModel;
+using System.Windows.Forms;
+using GS.Core.UI.Theming;
+using GS.Core.UI.Controls.States;
 
 namespace GS.Core.UI.Controls
 {
-    public class GsImageBox : PictureBox
+    /// <summary>
+    /// Container visual para exibição de imagens no GS Core.
+    /// Suporta escala, borda e estados visuais com tema.
+    /// </summary>
+    public class GsImageBox : Control, IThemedControl
     {
+        private GsTheme _theme;
+
+        // ============================
+        // PROPRIEDADES
+        // ============================
+
+        [Category("GS Core")]
+        public Image Image { get; set; }
+
+        [Category("GS Core")]
+        [DefaultValue(GsImageScaleMode.Fit)]
+        public GsImageScaleMode ScaleMode { get; set; } = GsImageScaleMode.Fit;
+
+        [Category("GS Core")]
+        [DefaultValue(true)]
+        public bool ShowBorder { get; set; } = true;
+
+        [Category("GS Core")]
+        public Padding ImagePadding { get; set; } = new Padding(8);
+
+        [Category("GS Core")]
+        [DefaultValue(ImageBoxState.Normal)]
+        public ImageBoxState State { get; set; } = ImageBoxState.Normal;
+
+        // ============================
+        // CONSTRUTOR
+        // ============================
+
         public GsImageBox()
         {
-            DoubleBuffered = true;
-            Size = new Size(50, 50);
+            SetStyle(
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint,
+                true
+            );
 
-            Tag = "";
+            Size = new Size(120, 120);
         }
 
-        private string vColuna = "";
-        [DisplayName("(DB.1 Coluna Tabela)")]
-        public string Coluna
+        // ============================
+        // THEME
+        // ============================
+
+        public void ApplyTheme(GsTheme theme)
         {
-            get { return vColuna; }
-            set
-            {
-
-                vColuna = value;
-
-                string valor = FuncoesLegacy.PegarTag(this, "col");
-
-                Tag = Tag.ToString().Replace("col=" + valor, "");
-
-                if (string.IsNullOrEmpty(value) == false)
-                    Tag = "col=" + value + Tag.ToString();
-
-            }
+            _theme = theme;
+            BackColor = theme.Surface;
+            Invalidate();
         }
 
+        // ============================
+        // PAINT
+        // ============================
 
-        private string vPadrao;
-        [DisplayName("(DB.2 Foto Padrão)")]
-        public string Padrao
+        protected override void OnPaint(PaintEventArgs e)
         {
-            get { return vPadrao; }
-            set {   
+            base.OnPaint(e);
 
-                vPadrao = value;
+            if (_theme == null)
+                return;
 
-                string valor = FuncoesLegacy.PegarTag(this, "padrao");
-
-                Tag = Tag.ToString().Replace("|padrao=" + valor, "");
-
-                if (string.IsNullOrEmpty(value) == false)
-                    Tag += "|padrao=" + value;
-            }
-        }
-
-
-
-        private int vRaio1 = 10;
-        [DisplayName("_Canto Superior Esquerdo")]
-        public int Raio1
-        {
-            get { return vRaio1; }
-            set { vRaio1 = value; Invalidate(); }
-        }
-
-        private int vRaio2 = 10;
-        [DisplayName("_Canto Superior Direito")]
-        public int Raio2
-        {
-            get { return vRaio2; }
-            set { vRaio2 = value; Invalidate(); }
-        }
-
-
-        private int vRaio3 = 10;
-        [DisplayName("_Canto Inferior Direito")]
-        public int Raio3
-        {
-            get { return vRaio3; }
-            set { vRaio3 = value; Invalidate(); }
-        }
-
-        private int vRaio4 = 10;
-        [DisplayName("_Canto Inferior Esquerdo")]
-        public int Raio4
-        {
-            get { return vRaio4; }
-            set { vRaio4 = value; Invalidate(); }
-        }
-
-        private int vTamanhoBorda = 1;
-        [DisplayName("_Tamanho da Borda")]
-        public int TamanhoBorda
-        {
-            get { return vTamanhoBorda; }
-            set { vTamanhoBorda = value; Invalidate(); }
-        }
-
-        private Color vCor1 = Color.Red;
-        [DisplayName("_Borda Cor 1")]
-        public Color Cor1
-        {
-            get { return vCor1; }
-            set { vCor1 = value; Invalidate(); }
-        }
-
-        private Color vCor2 = Color.Blue;
-        [DisplayName("_Borda Cor 2")]
-        public Color Cor2
-        {
-            get { return vCor2; }
-            set { vCor2 = value; Invalidate(); }
-        }
-
-
-
-        protected override void OnPaint(PaintEventArgs pe)
-        {
-            base.OnPaint(pe);
-
-            Graphics g = pe.Graphics;
-
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
+            Graphics g = e.Graphics;
             g.Clear(BackColor);
 
-            RectangleF Base = ClientRectangle;
+            Rectangle contentRect = new Rectangle(
+                ImagePadding.Left,
+                ImagePadding.Top,
+                Width - ImagePadding.Horizontal,
+                Height - ImagePadding.Vertical
+            );
 
-            int t = TamanhoBorda / 2 == 0 ? 1 : TamanhoBorda / 2;
-
-            Base.Inflate(-t, -t);
-            Base.Width--;
-            Base.Height--;
-
-            if (Base.Width < 1) Base.Width = 1;
-            if (Base.Height < 1) Base.Height = 1;
-
-            using (GraphicsPath path = FuncoesLegacy.CriarPath(Base, 1, Raio1, Raio2, Raio3, Raio4))
-            using (LinearGradientBrush Pincel = 
-                new LinearGradientBrush(ClientRectangle, Cor1, Cor2, 135))
-            using (Pen Caneta = new Pen(Pincel, TamanhoBorda))
+            // ----------------------------
+            // IMAGEM
+            // ----------------------------
+            if (Image != null)
             {
-                if (Image != null)
-                {
-                    g.SetClip(path);
-                    g.DrawImage(Image, Base.X, Base.Y, Base.Width, Base.Height);
-                    g.ResetClip();
-                }
-
-                g.DrawPath(Caneta, path);
+                Rectangle imgRect = CalculateImageRect(Image, contentRect, ScaleMode);
+                g.DrawImage(Image, imgRect);
             }
 
+            // ----------------------------
+            // BORDA
+            // ----------------------------
+            if (ShowBorder)
+            {
+                using var pen = new Pen(_theme.Border);
+                g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+            }
         }
 
+        // ============================
+        // HELPERS
+        // ============================
+
+        private static Rectangle CalculateImageRect(
+            Image image,
+            Rectangle bounds,
+            GsImageScaleMode mode)
+        {
+            if (mode == GsImageScaleMode.Stretch)
+                return bounds;
+
+            Size imgSize = image.Size;
+
+            float ratioX = (float)bounds.Width / imgSize.Width;
+            float ratioY = (float)bounds.Height / imgSize.Height;
+
+            float ratio = mode == GsImageScaleMode.Fill
+                ? Math.Max(ratioX, ratioY)
+                : Math.Min(ratioX, ratioY);
+
+            int w = (int)(imgSize.Width * ratio);
+            int h = (int)(imgSize.Height * ratio);
+
+            int x = bounds.X + (bounds.Width - w) / 2;
+            int y = bounds.Y + (bounds.Height - h) / 2;
+
+            return new Rectangle(x, y, w, h);
+        }
     }
 }
