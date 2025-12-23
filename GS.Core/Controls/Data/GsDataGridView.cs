@@ -6,20 +6,79 @@ using System.Windows.Forms;
 namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
-    /// DataGridView padronizado do GS Core.
-    /// Responsável apenas por aparência e comportamento visual.
-    /// Não contém regra de negócio.
+    /// DataGridView padronizado do GS Core UI.
+    /// Responsável APENAS por exibição e interação visual.
+    /// 
+    /// NÃO conhece:
+    /// - banco de dados
+    /// - regras de negócio
+    /// - serviços
     /// </summary>
     public class GsDataGridView : DataGridView, IThemedControl
     {
+        // ==========================================================
+        // EVENTOS
+        // ==========================================================
+
+        /// <summary>
+        /// Evento legado (mantido por compatibilidade).
+        /// </summary>
         public event EventHandler EditarSolicitado;
 
+        /// <summary>
+        /// Evento moderno e semântico de ação solicitada.
+        /// </summary>
+        public event EventHandler<GsGridActionEventArgs> ActionRequested;
+
+        // ==========================================================
+        // CAMPOS PRIVADOS
+        // ==========================================================
+
         private Font _headerFont;
+        private GsGridState _state = GsGridState.Ready;
+
+        // ==========================================================
+        // PROPRIEDADES DE UX
+        // ==========================================================
+
+        /// <summary>
+        /// Estado atual do grid.
+        /// Deve ser controlado pelo container.
+        /// </summary>
+        public GsGridState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Mensagem exibida quando não há dados.
+        /// </summary>
+        public string EmptyMessage { get; set; } =
+            "Nenhum registro encontrado";
+
+        /// <summary>
+        /// Mensagem exibida em caso de erro.
+        /// </summary>
+        public string ErrorMessage { get; set; } =
+            "Falha ao carregar os dados";
+
+        // ==========================================================
+        // CONSTRUTOR
+        // ==========================================================
 
         public GsDataGridView()
         {
             InicializarComportamento();
         }
+
+        // ==========================================================
+        // CONFIGURAÇÃO BASE
+        // ==========================================================
 
         private void InicializarComportamento()
         {
@@ -37,12 +96,48 @@ namespace GS.Core.UI.Controls.Data
 
             DoubleBuffered = true;
 
+            // Duplo clique → ação padrão (Edit)
             CellDoubleClick += (_, e) =>
             {
                 if (e.RowIndex >= 0)
-                    EditarSolicitado?.Invoke(this, EventArgs.Empty);
+                    DispararAcao(GsGridAction.Edit, e.RowIndex);
+            };
+
+            // Enter → ação padrão
+            KeyDown += (_, e) =>
+            {
+                if (e.KeyCode == Keys.Enter && CurrentRow != null)
+                {
+                    e.Handled = true;
+                    DispararAcao(
+                        GsGridAction.Edit,
+                        CurrentRow.Index
+                    );
+                }
             };
         }
+
+        // ==========================================================
+        // DISPARO DE AÇÃO
+        // ==========================================================
+
+        private void DispararAcao(GsGridAction action, int rowIndex)
+        {
+            var item = Rows[rowIndex]?.DataBoundItem;
+
+            // Evento moderno
+            ActionRequested?.Invoke(
+                this,
+                new GsGridActionEventArgs(action, rowIndex, item)
+            );
+
+            // Evento legado
+            EditarSolicitado?.Invoke(this, EventArgs.Empty);
+        }
+
+        // ==========================================================
+        // THEME
+        // ==========================================================
 
         public void ApplyTheme(GsTheme theme)
         {
@@ -50,7 +145,6 @@ namespace GS.Core.UI.Controls.Data
                 return;
 
             Font = theme.DefaultFont;
-
             _headerFont ??= new Font(theme.DefaultFont, FontStyle.Bold);
 
             BackgroundColor = theme.Surface;
@@ -72,16 +166,52 @@ namespace GS.Core.UI.Controls.Data
             ColumnHeadersDefaultCellStyle.BackColor = theme.GridHeaderBackground;
             ColumnHeadersDefaultCellStyle.ForeColor = theme.GridHeaderText;
             ColumnHeadersDefaultCellStyle.Font = _headerFont;
-            ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-
             ColumnHeadersHeight = 36;
-            ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 
             // Células
             CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-
-            // Template
             RowTemplate.Height = 32;
+        }
+
+        // ==========================================================
+        // ESTADOS DE UX (RENDER)
+        // ==========================================================
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (State == GsGridState.Ready)
+                return;
+
+            var g = e.Graphics;
+            var theme = ThemeManager.Current;
+
+            using var bg = new SolidBrush(theme.Surface);
+            g.FillRectangle(bg, ClientRectangle);
+
+            string message = State switch
+            {
+                GsGridState.Loading => "Carregando...",
+                GsGridState.Empty => EmptyMessage,
+                GsGridState.Error => ErrorMessage,
+                _ => string.Empty
+            };
+
+            using var brush = new SolidBrush(theme.TextSecondary);
+            using var format = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString(
+                message,
+                theme.DefaultFont,
+                brush,
+                ClientRectangle,
+                format
+            );
         }
     }
 }
