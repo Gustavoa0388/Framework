@@ -1,8 +1,6 @@
 ﻿using GS.Core.UI.Controls.Data;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Controls.Layout;
-using GS.Core.UI.Controls.Legacy;
-using GS.Core.UI.Theming;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,27 +12,27 @@ namespace GS.Core.UI.Forms
     /// <summary>
     /// FormBaseConsulta
     ///
-    /// Classe base para telas de consulta/listagem.
+    /// Classe base para telas de consulta/listagem no GS Core.
     ///
-    /// ARQUITETURA:
-    /// - NÃO usa Designer
-    /// - Criação 100% por código
-    /// - Responsável por layout, filtro, grid e ações
+    /// RESPONSABILIDADES:
+    /// - Criar layout base (filtro, grid, paginação, ações)
+    /// - Centralizar lógica de busca e paginação
+    /// - Orquestrar ações padrão (Novo, Editar, Excluir, Fechar)
     ///
     /// REGRAS:
-    /// - Telas filhas NÃO devem manipular controles base
-    /// - Designer nunca referencia membros daqui
+    /// - NÃO usa Designer
+    /// - Telas filhas NÃO manipulam controles base diretamente
+    /// - Telas filhas sobrescrevem apenas métodos virtuais
     /// </summary>
-    public class FormBaseConsulta : GsBaseForm
+    public abstract class FormBaseConsulta : GsBaseForm
     {
         // =============================
         // CONTROLES BASE
         // =============================
 
-        protected TextBox txtFiltro;
+        protected GsTextBox txtFiltro;
         protected GsDataGridView Grid;
         protected FlowLayoutPanel pnlAcoes;
-        protected Label lblPagina;
 
         protected GsButton btnNovo;
         protected GsButton btnEditar;
@@ -42,16 +40,9 @@ namespace GS.Core.UI.Forms
         protected GsButton btnFechar;
         protected GsButton btnBuscar;
 
-        // =============================
-        // PAGINAÇÃO / BUSCA
-        // =============================
-
-        private System.Windows.Forms.Timer _debounceTimer;
-        private const int DebounceDelay = 300;
-
         protected GsPaginator paginator;
-        private List<object> _dadosPaginados;
 
+        private List<object> _dadosPaginados = new();
 
         // =============================
         // CONSTRUTOR
@@ -61,25 +52,18 @@ namespace GS.Core.UI.Forms
         {
             SuspendLayout();
 
-            
-            CriarGrid();
-            CriarAcoes();
             CriarFiltro();
+            CriarGrid();
             CriarPaginacao();
+            CriarAcoes();
 
             ResumeLayout();
         }
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            BackColor = BackColor; // neutro, mantém padrão
-        }
-
 
         // =============================
         // FILTRO
         // =============================
+
         private void CriarFiltro()
         {
             var pnlFiltro = new FlowLayoutPanel
@@ -91,12 +75,11 @@ namespace GS.Core.UI.Forms
                 WrapContents = false
             };
 
-            txtFiltro = new TextBox
+            txtFiltro = new GsTextBox
             {
                 Width = 300
             };
 
-            // ENTER executa busca
             txtFiltro.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -106,21 +89,13 @@ namespace GS.Core.UI.Forms
                 }
             };
 
-            // 🔥 LIMPOU O CAMPO → VOLTA TUDO AUTOMATICAMENTE
             txtFiltro.TextChanged += (_, _) =>
             {
                 if (string.IsNullOrWhiteSpace(txtFiltro.Text))
-                {
                     ExecutarBusca();
-                }
             };
 
-            btnBuscar = new GsButton
-            {
-                Text = "Buscar",
-                Width = 90
-            };
-            btnBuscar.Click += (_, _) => ExecutarBusca();
+            btnBuscar = CriarBotao("Buscar", (_, _) => ExecutarBusca());
 
             pnlFiltro.Controls.Add(txtFiltro);
             pnlFiltro.Controls.Add(btnBuscar);
@@ -137,7 +112,7 @@ namespace GS.Core.UI.Forms
             var pnlGrid = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(0, 2, 0, 0) // 👈 ESSENCIAL
+                Padding = new Padding(0, 2, 0, 0)
             };
 
             Grid = new GsDataGridView
@@ -149,6 +124,25 @@ namespace GS.Core.UI.Forms
             Controls.Add(pnlGrid);
         }
 
+        // =============================
+        // PAGINAÇÃO
+        // =============================
+
+        private void CriarPaginacao()
+        {
+            paginator = new GsPaginator
+            {
+                Dock = DockStyle.Bottom,
+                PageSize = 10
+            };
+
+            paginator.PageChanged += (_, e) =>
+            {
+                AtualizarGridPagina(e.Page, e.PageSize);
+            };
+
+            Controls.Add(paginator);
+        }
 
         // =============================
         // AÇÕES
@@ -179,25 +173,8 @@ namespace GS.Core.UI.Forms
         }
 
         // =============================
-        // PAGINAÇÃO
+        // BUSCA / PAGINAÇÃO
         // =============================
-
-        private void CriarPaginacao()
-        {
-            paginator = new GsPaginator
-            {
-                Dock = DockStyle.Bottom,
-                PageSize = 10
-            };
-
-            paginator.PageChanged += (_, e) =>
-            {
-                AtualizarGridPagina(e.Page, e.PageSize);
-            };
-
-            Controls.Add(paginator);
-        }
-
 
         protected string TextoFiltro => txtFiltro?.Text?.Trim();
 
@@ -224,19 +201,31 @@ namespace GS.Core.UI.Forms
             Grid.DataSource = pageData;
         }
 
-
         // =============================
-        // AÇÕES (OVERRIDE)
+        // CONTRATOS PARA TELAS FILHAS
         // =============================
 
-        protected virtual void CarregarDados() { }
+        protected abstract void CarregarDados();
+
         protected virtual void OnNovoClick(object sender, EventArgs e) { }
         protected virtual void OnEditarClick(object sender, EventArgs e) { }
+
+        /// <summary>
+        /// Ação de exclusão padrão.
+        /// Usa confirmação modal legacy (FormMsg) por decisão consciente.
+        /// </summary>
         protected virtual void OnExcluirClick(object sender, EventArgs e)
         {
-            if (Grid.CurrentRow == null) return;
-            if (!FormMsg.Confirm("Deseja excluir o registro selecionado?")) return;
+            if (Grid.CurrentRow == null)
+                return;
+
+            if (!FormMsg.Confirm("Deseja excluir o registro selecionado?"))
+                return;
         }
+
+        // =============================
+        // UTILITÁRIOS
+        // =============================
 
         private GsButton CriarBotao(string texto, EventHandler click)
         {
@@ -246,6 +235,7 @@ namespace GS.Core.UI.Forms
                 Width = 100,
                 Height = 30
             };
+
             btn.Click += click;
             return btn;
         }
