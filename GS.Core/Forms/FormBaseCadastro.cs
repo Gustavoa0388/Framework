@@ -6,9 +6,23 @@ using System.Windows.Forms;
 namespace GS.Core.UI.Forms
 {
     /// <summary>
-    /// Base padrão para formulários de cadastro.
-    /// Fornece layout consistente, validação automática e fluxo de salvamento.
-    /// NÃO utiliza Designer.
+    /// FormBaseCadastro
+    /// 
+    /// Classe base para formulários de cadastro (Create / Edit).
+    /// 
+    /// RESPONSABILIDADES:
+    /// - Fornecer layout padrão (conteúdo + ações)
+    /// - Centralizar fluxo de salvar e cancelar
+    /// - Executar validação global automaticamente
+    /// 
+    /// CARACTERÍSTICAS:
+    /// - NÃO utiliza Designer
+    /// - Deve ser herdada por formulários concretos
+    /// - Usa GsBaseForm como base
+    /// 
+    /// OBSERVAÇÃO:
+    /// - Os botões ainda são Button nativo
+    ///   (migração para GsButton fica para fase extra)
     /// </summary>
     public class FormBaseCadastro : GsBaseForm
     {
@@ -16,15 +30,33 @@ namespace GS.Core.UI.Forms
         // CONFIGURAÇÕES PÚBLICAS
         // ============================
 
+        /// <summary>
+        /// Define se o botão Cancelar deve ser exibido.
+        /// </summary>
         public bool ShowCancelButton { get; set; } = true;
+
+        /// <summary>
+        /// Define se o formulário deve fechar após salvar com sucesso.
+        /// </summary>
         public bool CloseOnSave { get; set; } = true;
+
+        /// <summary>
+        /// Define se deve solicitar confirmação ao cancelar.
+        /// </summary>
         public bool ConfirmCancel { get; set; } = true;
 
         // ============================
         // CONTROLES BASE
         // ============================
 
+        /// <summary>
+        /// Painel onde os controles de cadastro devem ser adicionados.
+        /// </summary>
         protected Panel ContentPanel;
+
+        /// <summary>
+        /// Painel inferior de ações (Salvar / Cancelar).
+        /// </summary>
         protected Panel ActionPanel;
 
         protected Button BtnSalvar;
@@ -141,7 +173,7 @@ namespace GS.Core.UI.Forms
 
         private void OnSalvarClick()
         {
-            // 🔹 validação global vem do GsBaseForm
+            // Validação global vem do GsBaseForm
             if (!ValidateForm())
                 return;
 
@@ -171,14 +203,13 @@ namespace GS.Core.UI.Forms
         {
             if (ConfirmCancel)
             {
-                if (ConfirmCancel && !FormMsg.Confirm("Deseja cancelar as alterações?"))
+                if (!FormMsg.Confirm("Deseja cancelar as alterações?"))
                     return;
-
-                Close();
             }
+
+            Close();
         }
 
-              
         // ============================
         // GANCHOS PARA OVERRIDE
         // ============================
@@ -187,18 +218,12 @@ namespace GS.Core.UI.Forms
         /// Executa a lógica de salvamento.
         /// Retorne true para indicar sucesso.
         /// </summary>
-        protected virtual bool OnSalvar()
-        {
-            return true;
-        }
+        protected virtual bool OnSalvar() => true;
 
         /// <summary>
         /// Executado após salvar com sucesso.
         /// </summary>
-        protected virtual void OnSalvarSuccess()
-        {
-            // Hook para toast, log, eventos etc.
-        }
+        protected virtual void OnSalvarSuccess() { }
 
         /// <summary>
         /// Executado quando ocorre erro no salvamento.
@@ -206,7 +231,6 @@ namespace GS.Core.UI.Forms
         protected virtual void OnSalvarError(Exception ex)
         {
             FormMsg.Error(ex.Message);
-
         }
     }
 }
