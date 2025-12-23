@@ -32,10 +32,11 @@ namespace GS.Core.UI.Theming
             TitleFont = new Font("Segoe UI", 18F, FontStyle.Bold),
             SubtitleFont = new Font("Segoe UI", 14F, FontStyle.Bold),
             SectionFont = new Font("Segoe UI", 12F, FontStyle.Bold),
+                        
+            TitleText = Color.FromArgb(30, 90, 168),  // Primary
+            SubtitleText = Color.FromArgb(30, 90, 168),  // Primary também
+            SectionText = Color.FromArgb(22, 63, 115),  // PrimaryDark
 
-            TitleText = Color.White,                  // TextPrimary
-            SubtitleText = Color.FromArgb(180, 180, 180),  // TextSecondary
-            SectionText = Color.FromArgb(180, 180, 180),  // TextSecondary
 
             // Inputs
             InputBackground = Color.White,
