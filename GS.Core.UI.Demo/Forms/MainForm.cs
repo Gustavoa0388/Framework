@@ -32,6 +32,7 @@ namespace GS.Core.UI.Demo
         public MainForm()
         {
             InitializeComponent();
+           
 
             // Permite forçar um tema específico no demo (opcional)
             // CustomTheme = GsThemes.Dark;
@@ -39,7 +40,7 @@ namespace GS.Core.UI.Demo
 
             // Cria o menu de navegação dos formulários de teste
             BuildMenu();
-
+            BuildSideMenu(); // 👈 AQUI
             // Métodos existentes do demo (inalterados)
             BuildInputs();
             BuildButtons();
@@ -63,6 +64,68 @@ namespace GS.Core.UI.Demo
         /// - Exclusivo do projeto Demo
         /// - Não faz parte do GS Core
         /// </summary>
+        /// 
+
+        // =========================================================
+        // SIDE MENU (DEMO BLOCO 3)
+        // =========================================================
+        private void BuildSideMenu()
+        {
+            var sideMenu = new GsSideMenu
+            {
+                Dock = DockStyle.Left,
+                Width = 220
+            };
+
+            // ---- Itens do menu ----
+            var itemInputs = new GsSideMenuItem { Text = "Inputs" };
+            var itemButtons = new GsSideMenuItem { Text = "Botões" };
+            var itemLayout = new GsSideMenuItem { Text = "Layout" };
+            var itemCharts = new GsSideMenuItem { Text = "Charts" };
+
+            // Seleção inicial correta (via container)
+            sideMenu.AddItem(itemInputs);
+            sideMenu.AddItem(itemButtons);
+            sideMenu.AddItem(itemLayout);
+            sideMenu.AddItem(itemCharts);
+
+            // Força seleção inicial SEM simular clique
+            sideMenu.ItemSelected += (_, item) =>
+            {
+                if (item == itemInputs) tabMain.SelectedIndex = 0;
+                if (item == itemButtons) tabMain.SelectedIndex = 1;
+                if (item == itemLayout) tabMain.SelectedIndex = 2;
+                if (item == itemCharts) tabMain.SelectedIndex = 3;
+            };
+
+            // Seleciona o primeiro item manualmente
+            // (chamando a lógica do container, não do item)
+            typeof(GsSideMenu)
+                .GetMethod("SelectItem", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(sideMenu, new object[] { itemInputs });
+
+            Controls.Add(sideMenu);
+            sideMenu.SendToBack(); // 👈 importante
+            tabMain.Dock = DockStyle.Fill;
+        }
+
+            /// <summary>
+            /// Seleciona programaticamente um item do menu.
+            /// </summary>
+            public void Select(GsSideMenuItem item)
+        {
+            if (item == null)
+                return;
+
+            // reutiliza a lógica interna
+            typeof(GsSideMenu)
+                .GetMethod("SelectItem", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(this, new object[] { item });
+        }
+
+        
+        
+
         private void BuildMenu()
         {
             // MenuStrip padrão do WinForms
@@ -105,6 +168,8 @@ namespace GS.Core.UI.Demo
             // Garante que o menu fique acima do TabControl
             menu.BringToFront();
         }
+
+
 
         // =========================================================
         // CONSTANTES DE LAYOUT (DEMO)

@@ -43,10 +43,10 @@
             tabMain.Controls.Add(Buttons);
             tabMain.Controls.Add(Layout);
             tabMain.Controls.Add(Charts);
-            tabMain.Location = new Point(12, 43);
+            tabMain.Location = new Point(12, 52);
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
-            tabMain.Size = new Size(776, 518);
+            tabMain.Size = new Size(882, 518);
             tabMain.TabIndex = 0;
             // 
             // Inputs
@@ -55,7 +55,7 @@
             Inputs.Location = new Point(4, 24);
             Inputs.Name = "Inputs";
             Inputs.Padding = new Padding(3);
-            Inputs.Size = new Size(768, 490);
+            Inputs.Size = new Size(874, 490);
             Inputs.TabIndex = 0;
             Inputs.Text = "Inputs";
             // 
@@ -65,7 +65,7 @@
             Buttons.Location = new Point(4, 24);
             Buttons.Name = "Buttons";
             Buttons.Padding = new Padding(3);
-            Buttons.Size = new Size(768, 466);
+            Buttons.Size = new Size(768, 490);
             Buttons.TabIndex = 1;
             Buttons.Text = "Buttons";
             // 
@@ -75,7 +75,7 @@
             Layout.Location = new Point(4, 24);
             Layout.Name = "Layout";
             Layout.Padding = new Padding(3);
-            Layout.Size = new Size(768, 466);
+            Layout.Size = new Size(768, 490);
             Layout.TabIndex = 2;
             Layout.Text = "Layout";
             // 
@@ -85,7 +85,7 @@
             Charts.Location = new Point(4, 24);
             Charts.Name = "Charts";
             Charts.Padding = new Padding(3);
-            Charts.Size = new Size(768, 466);
+            Charts.Size = new Size(768, 490);
             Charts.TabIndex = 3;
             Charts.Text = "Charts";
             // 
@@ -93,7 +93,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 573);
+            ClientSize = new Size(906, 655);
             Controls.Add(tabMain);
             Font = new Font("Segoe UI", 9F);
             ForeColor = Color.Black;

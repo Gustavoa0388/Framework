@@ -53,7 +53,22 @@ namespace GS.Core.UI.Controls.Layout
         /// Indica se o item está selecionado.
         /// </summary>
         [Browsable(false)]
-        public bool IsSelected { get; internal set; }
+        private bool _isSelected;
+
+        [Browsable(false)]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            internal set
+            {
+                if (_isSelected == value)
+                    return;
+
+                _isSelected = value;
+                Invalidate(); // 👈 ESSENCIAL
+            }
+        }
+
 
         /// <summary>
         /// Evento disparado ao clicar no item.
