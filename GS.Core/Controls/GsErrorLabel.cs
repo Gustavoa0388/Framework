@@ -4,31 +4,42 @@ using System.Windows.Forms;
 
 namespace GS.Core.UI.Controls
 {
+    /// <summary>
+    /// GsErrorLabel
+    /// 
+    /// Label específico para exibição de mensagens de erro.
+    /// 
+    /// RESPONSABILIDADE:
+    /// - Exibir erro de validação
+    /// - Controlar visibilidade do erro
+    /// 
+    /// STATUS:
+    /// - GS Core
+    /// 
+    /// OBSERVAÇÕES:
+    /// - Inicia invisível
+    /// - Exibição controlada via ShowError / ClearError
+    /// </summary>
     public class GsErrorLabel : Label, IThemedControl
     {
         public GsErrorLabel()
         {
             AutoSize = true;
-            BackColor = Color.Transparent;
-            TextAlign = ContentAlignment.MiddleLeft;
-            UseMnemonic = false;
-
-            Visible = false; // começa oculto
-            ApplyFont();
-        }
-
-        private void ApplyFont()
-        {
-            Font = new Font(
-                Font.FontFamily,
-                9f,
-                FontStyle.Regular,
-                GraphicsUnit.Point
-            );
+            Visible = false;
         }
 
         /// <summary>
-        /// Exibe a mensagem de erro.
+        /// Aplica o tema visual ao label de erro.
+        /// </summary>
+        public void ApplyTheme(GsTheme theme)
+        {
+            Font = theme.DefaultFont;
+            ForeColor = theme.Error;
+            BackColor = Color.Transparent;
+        }
+
+        /// <summary>
+        /// Exibe uma mensagem de erro.
         /// </summary>
         public void ShowError(string message)
         {
@@ -37,28 +48,12 @@ namespace GS.Core.UI.Controls
         }
 
         /// <summary>
-        /// Oculta a mensagem de erro.
+        /// Limpa e oculta o erro.
         /// </summary>
         public void ClearError()
         {
             Text = string.Empty;
             Visible = false;
-        }
-
-        public void ApplyTheme(GsTheme theme)
-        {
-            BackColor = Color.Transparent;
-
-            // Vermelho adaptado ao tema
-            ForeColor = theme.IsDark
-                ? Color.FromArgb(255, 120, 120) // vermelho suave no dark
-                : Color.FromArgb(200, 0, 0);    // vermelho padrão no light
-
-            Font = theme.DefaultFont != null
-                ? new Font(theme.DefaultFont.FontFamily, 9f, FontStyle.Regular)
-                : Font;
-
-            Invalidate();
         }
     }
 }

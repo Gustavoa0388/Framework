@@ -1,4 +1,5 @@
 ﻿using GS.Core.UI.Theming;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -6,194 +7,181 @@ using System.Windows.Forms;
 
 namespace GS.Core.UI.Controls
 {
-    public class GsLabel : Label, IThemedControl
+    /// <summary>
+    /// GsLabel
+    /// 
+    /// Label avançado do GS Core com compatibilidade LEGACY
+    /// para o Designer WinForms.
+    /// </summary>
+    public class GsLabel : Control, IThemedControl
     {
-        public GsLabel()
-        {
-            DoubleBuffered = true;
-            AutoSize = true;
-            TextAlign = ContentAlignment.MiddleLeft;
-            BackColor = Color.Transparent;
-            TextAlign = ContentAlignment.MiddleRight;
+        // ============================
+        // LEGACY — PROPRIEDADES DO DESIGNER
+        // ============================
 
-        }
+        [Category("Legacy")]
+        public Color Cor1 { get; set; } = Color.Black;
 
-        // ===============================
-        // PROPRIEDADES CUSTOM
-        // ===============================
+        [Category("Legacy")]
+        public Color Cor2 { get; set; } = Color.Black;
 
-        [DisplayName("_Quebra de Texto")]
-        public bool QuebraTexto { get; set; } = false;
+        [Category("Legacy")]
+        public int Angulo { get; set; }
 
-        [DisplayName("_Usar Gradiente no Texto")]
-        public bool UsarGradienteTexto { get; set; } = true;
+        [Category("Legacy")]
+        public bool AtivarSombra { get; set; }
 
-        [DisplayName("_Cor Gradiente 1")]
-        public Color Cor1 { get; set; } = Color.SteelBlue;
-
-        [DisplayName("_Cor Gradiente 2")]
-        public Color Cor2 { get; set; } = Color.MidnightBlue;
-
-        [DisplayName("_Ângulo do Gradiente")]
-        public int Angulo { get; set; } = 90;
-
-        [DisplayName("_Ativar Sombra")]
-        public bool AtivarSombra { get; set; } = false;
-
-        [DisplayName("_Sombra X")]
-        public int SombraX { get; set; } = 1;
-
-        [DisplayName("_Sombra Y")]
-        public int SombraY { get; set; } = 1;
-
-        [DisplayName("_Cor da Sombra")]
+        [Category("Legacy")]
         public Color CorSombra { get; set; } = Color.Black;
 
-        [DisplayName("_Espaço Imagem x Texto")]
-        public int EspacoTexto { get; set; } = 5;
+        /// <summary>
+        /// LEGACY: alinhamento do texto (Designer)
+        /// </summary>
+        [Category("Legacy")]
+        public ContentAlignment TextAlign { get; set; } = ContentAlignment.MiddleLeft;
 
-        [DisplayName("_Require")]
-        public Control TargetControl { get; set; }
-
-
-        // ===============================
-        // PINTURA
-        // ===============================
-
-        protected override void OnPaint(PaintEventArgs e)
+        /// <summary>
+        /// LEGACY: mapeia para Location.X
+        /// </summary>
+        [Category("Legacy")]
+        public int X
         {
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-
-            // fundo
-            using (var bg = new SolidBrush(BackColor))
-                g.FillRectangle(bg, ClientRectangle);
-
-            if (string.IsNullOrEmpty(Text))
-                return;
-
-            SizeF textSize = g.MeasureString(Text, Font);
-            float textX = 0;
-            float textY = (Height - textSize.Height) / 2;
-
-            bool isRequired = false;
-
-            if (TargetControl is IGsRequiredAware req)
-                isRequired = req.Required;
-                      
-            // ===============================
-            // SOMBRA (APENAS SE GRADIENTE)
-            // ===============================
-            if (AtivarSombra && UsarGradienteTexto)
-            {
-                using var shadowBrush = new SolidBrush(Color.FromArgb(60, CorSombra));
-                g.DrawString(Text, Font, shadowBrush, textX + SombraX, textY + SombraY);
-            }
-
-            // ===============================
-            // ESCOLHA DO PINCEL
-            // ===============================
-            Brush textBrush;
-
-            if (UsarGradienteTexto)
-            {
-                textBrush = new LinearGradientBrush(
-                    ClientRectangle,
-                    Cor1,
-                    Cor2,
-                    Angulo
-                );
-            }
-            else
-            {
-                textBrush = new SolidBrush(ForeColor);
-            }
-
-            // ===============================
-            // DESENHO DO TEXTO
-            // ===============================
-            if (AutoEllipsis && textSize.Width > Width)
-            {
-                string ellipsed = Text;
-                while (ellipsed.Length > 0 &&
-                       g.MeasureString(ellipsed + "...", Font).Width > Width)
-                {
-                    ellipsed = ellipsed[..^1];
-                }
-
-                g.DrawString(ellipsed + "...", Font, textBrush, textX, textY);
-            }
-            else if (QuebraTexto)
-            {
-                RectangleF rect = new RectangleF(0, 0, Width, Height);
-                g.DrawString(Text, Font, textBrush, rect);
-            }
-            else
-            {
-                g.DrawString(Text, Font, textBrush, textX, textY);
-            }
-
-            if (isRequired)
-            {
-                SizeF baseSize = g.MeasureString(Text, Font);
-
-                using var starBrush = new SolidBrush(
-                ThemeManager.Current.Error
-                );
-                using var starFont = new Font(Font.FontFamily, Font.Size, FontStyle.Bold);
-
-                g.DrawString(
-                    "*",
-                    starFont,
-                    starBrush,
-                    textX + baseSize.Width + 2,
-                    textY
-                );
-            }
-
+            get => Location.X;
+            set => Location = new Point(value, Location.Y);
         }
 
-        // ===============================
-        // THEME
-        // ===============================
+        /// <summary>
+        /// LEGACY: mapeia para Location.Y
+        /// </summary>
+        [Category("Legacy")]
+        public int Y
+        {
+            get => Location.Y;
+            set => Location = new Point(Location.X, value);
+        }
+
+        // ============================
+        // GS CORE — PROPRIEDADES ATIVAS
+        // ============================
+
+        public Control TargetControl { get; set; }
+
+        [Category("GS Core")]
+        public bool Required { get; set; }
+
+        [Category("GS Core")]
+        public bool UseEllipsis { get; set; } = true;
+
+        private GsTheme _theme;
+
+        public GsLabel()
+        {
+            SetStyle(
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.UserPaint |
+                ControlStyles.ResizeRedraw,
+                true
+            );
+
+            AutoSize = false;
+            Height = 24;
+        }
 
         public void ApplyTheme(GsTheme theme)
         {
-            BackColor = Color.Transparent;
-
-
-            ForeColor = theme.IsDark
-            ? theme.TextSecondary
-            : theme.TextPrimary;
+            _theme = theme;
             Font = theme.DefaultFont;
-
-            // Gradiente só no Light
-            UsarGradienteTexto = !theme.IsDark;
-
+            ForeColor = theme.TextPrimary;
             Invalidate();
         }
 
-        // ===============================
-        // COMPATIBILIDADE COM VERSÕES ANTIGAS
-        // (Designer.cs legado)
-        // ===============================
-
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public int X
+        protected override void OnPaint(PaintEventArgs e)
         {
-            get => SombraX;
-            set => SombraX = value;
+            base.OnPaint(e);
+
+            if (_theme == null)
+                return;
+
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(BackColor);
+
+            string text = Text;
+            if (Required)
+                text += " *";
+
+            Rectangle area = ClientRectangle;
+
+            using Brush textBrush = new SolidBrush(ForeColor);
+
+            StringFormat format = CriarStringFormat(TextAlign);
+
+            // Sombra (LEGACY)
+            if (AtivarSombra)
+            {
+                using var shadowBrush = new SolidBrush(Color.FromArgb(80, CorSombra));
+                var shadowRect = new Rectangle(area.X + 1, area.Y + 1, area.Width, area.Height);
+                g.DrawString(text, Font, shadowBrush, shadowRect, format);
+            }
+
+            g.DrawString(text, Font, textBrush, area, format);
         }
 
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public int Y
+        /// <summary>
+        /// Converte ContentAlignment em StringFormat
+        /// </summary>
+        private StringFormat CriarStringFormat(ContentAlignment align)
         {
-            get => SombraY;
-            set => SombraY = value;
-        }
+            var format = new StringFormat
+            {
+                Trimming = UseEllipsis ? StringTrimming.EllipsisCharacter : StringTrimming.None,
+                FormatFlags = StringFormatFlags.NoWrap
+            };
 
+            switch (align)
+            {
+                case ContentAlignment.TopLeft:
+                    format.Alignment = StringAlignment.Near;
+                    format.LineAlignment = StringAlignment.Near;
+                    break;
+                case ContentAlignment.TopCenter:
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Near;
+                    break;
+                case ContentAlignment.TopRight:
+                    format.Alignment = StringAlignment.Far;
+                    format.LineAlignment = StringAlignment.Near;
+                    break;
+
+                case ContentAlignment.MiddleLeft:
+                    format.Alignment = StringAlignment.Near;
+                    format.LineAlignment = StringAlignment.Center;
+                    break;
+                case ContentAlignment.MiddleCenter:
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Center;
+                    break;
+                case ContentAlignment.MiddleRight:
+                    format.Alignment = StringAlignment.Far;
+                    format.LineAlignment = StringAlignment.Center;
+                    break;
+
+                case ContentAlignment.BottomLeft:
+                    format.Alignment = StringAlignment.Near;
+                    format.LineAlignment = StringAlignment.Far;
+                    break;
+                case ContentAlignment.BottomCenter:
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Far;
+                    break;
+                case ContentAlignment.BottomRight:
+                    format.Alignment = StringAlignment.Far;
+                    format.LineAlignment = StringAlignment.Far;
+                    break;
+            }
+
+            return format;
+        }
     }
 }
