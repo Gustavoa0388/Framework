@@ -32,6 +32,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         private List<object> _clientes;
 
+
         // ==========================================================
         // CONSTRUTOR
         // ==========================================================

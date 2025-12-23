@@ -1,6 +1,7 @@
 ﻿using GS.Core.UI.Controls.Data;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Controls.Layout;
+using GS.Core.UI.Controls.UX;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,6 +42,8 @@ namespace GS.Core.UI.Forms
         protected GsButton btnBuscar;
 
         protected GsPaginator paginator;
+
+        protected GsStateView StateView;
 
         private List<object> _dadosPaginados = new();
 
@@ -125,6 +128,15 @@ namespace GS.Core.UI.Forms
 
             pnlGrid.Controls.Add(Grid);
             Controls.Add(pnlGrid);
+
+            StateView = new GsStateView
+            {
+                State = GsUxState.Hidden
+            };
+
+            pnlGrid.Controls.Add(StateView);
+            pnlGrid.Controls.SetChildIndex(StateView, 0);
+
 
         }
 
@@ -222,11 +234,25 @@ namespace GS.Core.UI.Forms
 
         protected virtual void ExecutarBusca()
         {
-            Grid.State = GsGridState.Loading;
-            paginator.State = GsPaginatorState.Loading;
+            try
+            {
+                StateView.State = GsUxState.Loading;
 
-            CarregarDados();
+                Grid.State = GsGridState.Loading;
+                paginator.State = GsPaginatorState.Loading;
+
+                CarregarDados();
+            }
+            catch
+            {
+                StateView.State = GsUxState.Error;
+                StateView.Message = "Erro ao carregar os dados";
+
+                Grid.State = GsGridState.Error;
+                paginator.State = GsPaginatorState.Disabled;
+            }
         }
+
 
         protected void AtualizarPaginacao(IEnumerable<object> dados)
         {
@@ -234,6 +260,15 @@ namespace GS.Core.UI.Forms
 
             paginator.TotalItems = _dadosPaginados.Count;
             paginator.Reset();
+
+            if (_dadosPaginados.Count == 0)
+            {
+                StateView.State = GsUxState.Empty;
+            }
+            else
+            {
+                StateView.State = GsUxState.Hidden;
+            }
 
             Grid.State = _dadosPaginados.Count == 0
                 ? GsGridState.Empty
