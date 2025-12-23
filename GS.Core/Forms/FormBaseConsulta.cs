@@ -67,6 +67,13 @@ namespace GS.Core.UI.Forms
 
             ResumeLayout();
         }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            BackColor = BackColor; // neutro, mantém padrão
+        }
+
 
         // =============================
         // FILTRO

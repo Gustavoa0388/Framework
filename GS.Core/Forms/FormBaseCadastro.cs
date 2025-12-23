@@ -70,6 +70,14 @@ namespace GS.Core.UI.Forms
         {
             InitializeLayout();
         }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            // Aqui SIM esses painéis existem
+            ContentPanel.BackColor = BackColor;
+            ActionPanel.BackColor = BackColor;
+        }
 
         // ============================
         // LAYOUT BASE
