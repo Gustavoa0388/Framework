@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using GS.Core.UI.Utils.Legacy;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
     /// <summary>
     /// GsPanel (LEGACY / ECTurbo)
@@ -27,9 +27,11 @@ namespace GS.Core.UI.Controls
     /// - Isolar completamente Utils.Legacy
     /// - Padronizar comportamento visual
     /// </summary>
-    public class GsPanel : Panel, IThemedControl
+    public class GsPanelLegacy : Panel, IThemedControl
     {
-        public GsPanel()
+        [Obsolete("Controle legado do ECTurbo. Use GsPanel moderno.")]
+
+        public GsPanelLegacy()
         {
             // Evita flicker em renderizações customizadas
             DoubleBuffered = true;

@@ -4,6 +4,7 @@ using GS.Core.UI.Forms;
 using GS.Core.UI.Theming;
 using System.Drawing;
 using System.Windows.Forms;
+using GS.Core.UI.Controls.Layout;
 
 namespace GS.Core.UI.Demo
 {
