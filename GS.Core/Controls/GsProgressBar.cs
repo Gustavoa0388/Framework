@@ -192,14 +192,4 @@ namespace GS.Core.UI.Controls
             }
         }
     }
-
-    /// <summary>
-    /// Estados visuais da barra de progresso.
-    /// </summary>
-    public enum ProgressState
-    {
-        Normal,
-        Success,
-        Error
-    }
 }
