@@ -63,12 +63,41 @@ namespace GS.Core.UI.Demo.Forms.Pages
         private void ConfigurarGrid()
         {
             Grid.AutoGenerateColumns = false;
-            Grid.Columns.Clear();
 
-            Grid.Columns.Add(GsGridColumn.Id("Id").Build());
-            Grid.Columns.Add(GsGridColumn.Text("Nome", "Nome", "Nome").Build());
-            Grid.Columns.Add(GsGridColumn.Email("Email").Build());
+            // Limpa qualquer configuração anterior
+            Grid.Columns.Clear();
+            Grid.ColumnsDefinition.Clear();
+
+            // ============================
+            // DEFINIÇÃO DAS COLUNAS
+            // ============================
+
+            Grid.ColumnsDefinition.Add(
+                new GsGridColumn("Código", "Id")
+                {
+                    Width = 80,
+                    Alignment = DataGridViewContentAlignment.MiddleCenter
+                });
+
+            Grid.ColumnsDefinition.Add(
+                new GsGridColumn("Nome", "Nome")
+                {
+                    Width = 250
+                });
+
+            Grid.ColumnsDefinition.Add(
+                new GsGridColumn("E-mail", "Email")
+                {
+                    Width = 250
+                });
+
+            // ============================
+            // CONSTRÓI AS COLUNAS REAIS
+            // ============================
+
+            Grid.BuildColumns();
         }
+
 
         // ==========================================================
         // CARREGAMENTO DE DADOS
@@ -87,16 +116,16 @@ namespace GS.Core.UI.Demo.Forms.Pages
     {
         new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
         new { Id = 2, Nome = "Paulo Moura", Email = "paulo@email.com" },
-        new { Id = 2, Nome = "Maria Souza", Email = "maria@email.com" },
-        new { Id = 3, Nome = "Carlos Pereira", Email = "carlos@email.com" },
-        new { Id = 3, Nome = "Marcela Costa", Email = "marcela@email.com" },
-        new { Id = 3, Nome = "Maria Tavares", Email = "mariat@email.com" },
-        new { Id = 3, Nome = "Rogério Maia", Email = "rogerio@email.com" },
-        new { Id = 3, Nome = "Ana Paula Rossi", Email = "anap@email.com" },
-        new { Id = 3, Nome = "João Rocha", Email = "joaor@email.com" },
-        new { Id = 3, Nome = "Marina Silva", Email = "marina@email.com" },
-        new { Id = 3, Nome = "Carla Silva", Email = "carla@email.com" },
-        new { Id = 3, Nome = "Paula Silva", Email = "paula@email.com" },
+        new { Id = 3, Nome = "Maria Souza", Email = "maria@email.com" },
+        new { Id = 4, Nome = "Carlos Pereira", Email = "carlos@email.com" },
+        new { Id = 5, Nome = "Marcela Costa", Email = "marcela@email.com" },
+        new { Id = 6, Nome = "Maria Tavares", Email = "mariat@email.com" },
+        new { Id = 7, Nome = "Rogério Maia", Email = "rogerio@email.com" },
+        new { Id = 8, Nome = "Ana Paula Rossi", Email = "anap@email.com" },
+        new { Id = 9, Nome = "João Rocha", Email = "joaor@email.com" },
+        new { Id = 10, Nome = "Marina Silva", Email = "marina@email.com" },
+        new { Id = 11, Nome = "Carla Silva", Email = "carla@email.com" },
+        new { Id = 12, Nome = "Paula Silva", Email = "paula@email.com" },
     };
 
             // 🔎 APLICA FILTRO

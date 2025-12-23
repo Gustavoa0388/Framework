@@ -120,10 +120,50 @@ namespace GS.Core.UI.Forms
                 Dock = DockStyle.Fill
             };
 
+            // 🔗 Integração oficial de ações do grid
+            Grid.ActionRequested += OnGridActionRequested;
+
             pnlGrid.Controls.Add(Grid);
             Controls.Add(pnlGrid);
+
         }
 
+        /// <summary>
+        /// Handler central de ações solicitadas pelo grid.
+        /// Centraliza Enter, duplo clique e futuras ações.
+        /// </summary>
+        private void OnGridActionRequested(object sender, GsGridActionEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case GsGridAction.Edit:
+                    OnEditarClick(this, EventArgs.Empty);
+                    break;
+
+                case GsGridAction.View:
+                    OnVisualizarClick(this, EventArgs.Empty);
+                    break;
+
+                case GsGridAction.Select:
+                    OnSelecionarClick(this, EventArgs.Empty);
+                    break;
+            }
+        }
+        /// <summary>
+        /// Ação de visualização (opcional).
+        /// </summary>
+        protected virtual void OnVisualizarClick(object sender, EventArgs e)
+        {
+            // opcional — tela filha decide
+        }
+
+        /// <summary>
+        /// Ação de seleção (opcional).
+        /// </summary>
+        protected virtual void OnSelecionarClick(object sender, EventArgs e)
+        {
+            // opcional — tela filha decide
+        }
 
 
         // =============================
@@ -145,7 +185,7 @@ namespace GS.Core.UI.Forms
 
             Controls.Add(paginator);
         }
-
+        
         // =============================
         // AÇÕES
         // =============================
@@ -182,6 +222,9 @@ namespace GS.Core.UI.Forms
 
         protected virtual void ExecutarBusca()
         {
+            Grid.State = GsGridState.Loading;
+            paginator.State = GsPaginatorState.Loading;
+
             CarregarDados();
         }
 
@@ -190,9 +233,16 @@ namespace GS.Core.UI.Forms
             _dadosPaginados = dados.ToList();
 
             paginator.TotalItems = _dadosPaginados.Count;
+            paginator.Reset();
+
+            Grid.State = _dadosPaginados.Count == 0
+                ? GsGridState.Empty
+                : GsGridState.Ready;
+
+            paginator.State = GsPaginatorState.Ready;
+
             AtualizarGridPagina(1, paginator.PageSize);
         }
-
         private void AtualizarGridPagina(int page, int pageSize)
         {
             var pageData = _dadosPaginados

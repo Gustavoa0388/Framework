@@ -43,7 +43,7 @@
             pnlAcoes.BackColor = Color.White;
             pnlAcoes.Font = new Font("Segoe UI", 9F);
             pnlAcoes.ForeColor = Color.Black;
-            pnlAcoes.Location = new Point(0, 511);
+            pnlAcoes.Dock = DockStyle.Bottom;
             pnlAcoes.Size = new Size(1064, 50);
 
             // 
@@ -87,12 +87,12 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1064, 561);
+            ClientSize = new Size(600, 600);
             Font = new Font("Segoe UI", 9F);
             ForeColor = Color.Black;
             Name = "FrmConsultaCliente";
             Text = "FrmConsultaCliente";
-            WindowState = FormWindowState.Maximized;            
+            WindowState = FormWindowState.Normal;            
             Controls.SetChildIndex(pnlAcoes, 0);
             pnlAcoes.ResumeLayout(false);
             ResumeLayout(false);
