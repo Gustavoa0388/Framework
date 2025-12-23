@@ -4,7 +4,7 @@ using GS.Core.UI.Utils.Legacy;
 
 
 
-namespace GS.Core.UI.Controls.Inputs
+namespace GS.Core.UI.Controls.Legacy
 {
     /// <summary>
     /// GsRadioButton
@@ -29,14 +29,16 @@ namespace GS.Core.UI.Controls.Inputs
     /// - Aplicar tokens de theme
     // TODO: Revisar no Bloco 3 (UI Estrutural)
     /// </summary>
-    public class GsRadioButton : RadioButton
+    [Obsolete("Controle legado do ECTurbo. Use GsRadioOption.")]
+    public class GsRadioButtonLegacy : RadioButton
+
     {
         private System.Windows.Forms.Timer animationTimer;
         private float currentMarkerSize;
         private bool isAnimating;
         private bool expanding; // Controla se o marcador está aumentando ou diminuindo
 
-        public GsRadioButton()
+        public GsRadioButtonLegacy()
         {
             Tag = "";
 

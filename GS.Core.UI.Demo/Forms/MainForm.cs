@@ -376,11 +376,24 @@ namespace GS.Core.UI.Demo
             chk.Location = new Point(20, 150);
             page.Controls.Add(chk);
 
-            var radioA = new GsRadioButton { Text = "Opção A", Location = new Point(20, 190) };
-            var radioB = new GsRadioButton { Text = "Opção B", Location = new Point(20, 220) };
+            var rbA = new GsRadioOption
+            {
+                Text = "Opção A",
+                Location = new Point(20, 40)
+            };
 
-            page.Controls.Add(radioA);
-            page.Controls.Add(radioB);
+            var rbB = new GsRadioOption
+            {
+                Text = "Opção B",
+                Location = new Point(20, 70)
+            };
+
+            Controls.Add(rbA);
+            Controls.Add(rbB);
+
+
+            page.Controls.Add(rbA);
+            page.Controls.Add(rbB);
 
             var btnTheme = new GsButton
             {

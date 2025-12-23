@@ -51,6 +51,12 @@ namespace GS.Core.UI.Theming
             ToggleThumb = Color.White,
             ToggleText = Color.FromArgb(26, 26, 26), // TextPrimary
 
+            // Radio
+            RadioBorder = Color.FromArgb(208, 215, 226), // Border
+            RadioFill = Color.FromArgb(30, 90, 168),   // Primary
+            RadioText = Color.FromArgb(26, 26, 26),    // TextPrimary
+
+
             // ProgressBar
             ProgressBackground = Color.FromArgb(230, 236, 245),
             ProgressFill = Color.FromArgb(30, 90, 168),
@@ -122,6 +128,10 @@ namespace GS.Core.UI.Theming
             ToggleThumb = Color.White,
             ToggleText = Color.White, // TextPrimary
 
+            // Radio
+            RadioBorder = Color.FromArgb(60, 60, 60),    // Border
+            RadioFill = Color.FromArgb(90, 155, 245),  // PrimaryLight
+            RadioText = Color.White,                   // TextPrimary
 
             //ProgressBar
             ProgressBackground = Color.FromArgb(45, 50, 55),

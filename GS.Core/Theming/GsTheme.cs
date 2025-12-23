@@ -173,6 +173,26 @@ namespace GS.Core.UI.Theming
         /// </summary>
         public Color ToggleText { get; set; }
 
+        // =====================================================
+        // RADIO BUTTON
+        // =====================================================
+
+        /// <summary>
+        /// Cor da borda do radio.
+        /// </summary>
+        public Color RadioBorder { get; set; }
+
+        /// <summary>
+        /// Cor do preenchimento quando selecionado.
+        /// </summary>
+        public Color RadioFill { get; set; }
+
+        /// <summary>
+        /// Cor do texto do radio.
+        /// </summary>
+        public Color RadioText { get; set; }
+
+
 
         // =====================================================
         // GRID
