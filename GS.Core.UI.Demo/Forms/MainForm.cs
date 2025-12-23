@@ -1,10 +1,11 @@
 ﻿using GS.Core.UI.Controls;
+using GS.Core.UI.Controls.Layout;
+using GS.Core.UI.Controls.States;
 using GS.Core.UI.Demo.Forms.Pages;
 using GS.Core.UI.Forms;
 using GS.Core.UI.Theming;
 using System.Drawing;
 using System.Windows.Forms;
-using GS.Core.UI.Controls.Layout;
 
 namespace GS.Core.UI.Demo
 {
@@ -275,14 +276,14 @@ namespace GS.Core.UI.Demo
             var title = new GsTitleLabel
             {
                 Text = "Configuração de Conexão",
-                TitleSize = GsTitleSize.Title,
+                TitleLevel = GsTitleLevel.Title,
                 Location = new Point(20, 20)
             };
 
             var subtitle = new GsTitleLabel
             {
                 Text = "Dados do Banco",
-                TitleSize = GsTitleSize.Subtitle,
+                TitleLevel = GsTitleLevel.Subtitle,
                 Location = new Point(20, 60)
             };
 

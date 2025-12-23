@@ -28,6 +28,15 @@ namespace GS.Core.UI.Theming
             TextSecondary = Color.FromArgb(95, 107, 122),
             TextOnPrimary = Color.White,
 
+            // Títulos
+            TitleFont = new Font("Segoe UI", 18F, FontStyle.Bold),
+            SubtitleFont = new Font("Segoe UI", 14F, FontStyle.Bold),
+            SectionFont = new Font("Segoe UI", 12F, FontStyle.Bold),
+
+            TitleText = Color.White,                  // TextPrimary
+            SubtitleText = Color.FromArgb(180, 180, 180),  // TextSecondary
+            SectionText = Color.FromArgb(180, 180, 180),  // TextSecondary
+
             // Inputs
             InputBackground = Color.White,
             InputBorder = Color.FromArgb(208, 215, 226),
@@ -83,6 +92,15 @@ namespace GS.Core.UI.Theming
             TextPrimary = Color.White,
             TextSecondary = Color.FromArgb(180, 180, 180),
             TextOnPrimary = Color.White,
+
+            // Títulos
+            TitleFont = new Font("Segoe UI", 18F, FontStyle.Bold),
+            SubtitleFont = new Font("Segoe UI", 14F, FontStyle.Bold),
+            SectionFont = new Font("Segoe UI", 12F, FontStyle.Bold),
+
+            TitleText = Color.White,                  // TextPrimary
+            SubtitleText = Color.FromArgb(180, 180, 180),  // TextSecondary
+            SectionText = Color.FromArgb(180, 180, 180),  // TextSecondary
 
             // Inputs
             InputBackground = Color.FromArgb(32, 35, 36),

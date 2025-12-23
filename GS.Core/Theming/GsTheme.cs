@@ -80,6 +80,41 @@ namespace GS.Core.UI.Theming
         public Color TextOnPrimary { get; set; }
 
         // =====================================================
+        // TÍTULOS (HIERARQUIA TEXTUAL)
+        // =====================================================
+
+        /// <summary>
+        /// Fonte para títulos principais de página.
+        /// </summary>
+        public Font TitleFont { get; set; }
+
+        /// <summary>
+        /// Fonte para subtítulos.
+        /// </summary>
+        public Font SubtitleFont { get; set; }
+
+        /// <summary>
+        /// Fonte para títulos de seção.
+        /// </summary>
+        public Font SectionFont { get; set; }
+
+        /// <summary>
+        /// Cor do texto de título principal.
+        /// </summary>
+        public Color TitleText { get; set; }
+
+        /// <summary>
+        /// Cor do texto de subtítulo.
+        /// </summary>
+        public Color SubtitleText { get; set; }
+
+        /// <summary>
+        /// Cor do texto de seção.
+        /// </summary>
+        public Color SectionText { get; set; }
+
+
+        // =====================================================
         // INPUTS
         // =====================================================
 

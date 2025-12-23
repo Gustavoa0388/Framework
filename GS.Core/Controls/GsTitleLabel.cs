@@ -1,17 +1,26 @@
-﻿using GS.Core.UI.Theming;
+﻿using GS.Core.UI.Controls.States;
+using GS.Core.UI.Theming;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace GS.Core.UI.Controls
 {
-    public enum GsTitleSize
-    {
-        Title,
-        Subtitle,
-        Section
-    }
-
+    /// <summary>
+    /// GsTitleLabel
+    /// 
+    /// Label semântico para hierarquia textual do GS Core UI.
+    /// 
+    /// REPRESENTA:
+    /// - Título de página
+    /// - Subtítulo
+    /// - Título de seção
+    /// 
+    /// NÃO FAZ:
+    /// - Decidir cores por tema (dark/light)
+    /// - Criar fontes manualmente
+    /// - Usar tamanhos hardcoded
+    /// </summary>
     public class GsTitleLabel : Label, IThemedControl
     {
         public GsTitleLabel()
@@ -21,47 +30,58 @@ namespace GS.Core.UI.Controls
             BackColor = Color.Transparent;
             UseMnemonic = false;
 
-            TitleSize = GsTitleSize.Title;
+            TitleLevel = GsTitleLevel.Title;
         }
 
-        private GsTitleSize _titleSize;
-        [Category("GS")]
-        public GsTitleSize TitleSize
+        // =====================================================
+        // PROPRIEDADES
+        // =====================================================
+
+        private GsTitleLevel _titleLevel;
+
+        /// <summary>
+        /// Define o nível hierárquico do título.
+        /// </summary>
+        [Category("GS Core")]
+        [DefaultValue(GsTitleLevel.Title)]
+        public GsTitleLevel TitleLevel
         {
-            get => _titleSize;
+            get => _titleLevel;
             set
             {
-                _titleSize = value;
-                ApplyFont();
-                Invalidate();
+                _titleLevel = value;
+                ApplyTheme(ThemeManager.Current);
             }
         }
 
-        private void ApplyFont()
-        {
-            float size = _titleSize switch
-            {
-                GsTitleSize.Title => 18f,
-                GsTitleSize.Subtitle => 14f,
-                GsTitleSize.Section => 12f,
-                _ => 14f
-            };
+        // =====================================================
+        // THEME
+        // =====================================================
 
-            Font = new Font(
-                Font.FontFamily,
-                size,
-                FontStyle.Bold,
-                GraphicsUnit.Point
-            );
-        }
-
+        /// <summary>
+        /// Aplica o tema visual ao título.
+        /// </summary>
         public void ApplyTheme(GsTheme theme)
         {
             BackColor = Color.Transparent;
 
-            ForeColor = theme.IsDark
-                ? theme.TextPrimary     // branco / cinza claro
-                : theme.Primary;        // azul no light
+            switch (TitleLevel)
+            {
+                case GsTitleLevel.Title:
+                    Font = theme.TitleFont;
+                    ForeColor = theme.TitleText;
+                    break;
+
+                case GsTitleLevel.Subtitle:
+                    Font = theme.SubtitleFont;
+                    ForeColor = theme.SubtitleText;
+                    break;
+
+                case GsTitleLevel.Section:
+                    Font = theme.SectionFont;
+                    ForeColor = theme.SectionText;
+                    break;
+            }
 
             Invalidate();
         }
