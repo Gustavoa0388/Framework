@@ -1,4 +1,5 @@
 ﻿using GS.Core.UI.Controls;
+using GS.Core.UI.Controls.Legacy;
 using GS.Core.UI.Theming;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace GS.Core.UI.Forms
         private System.Windows.Forms.Timer _debounceTimer;
         private const int DebounceDelay = 300;
 
-        protected GsPaginator<object> _paginator;
+        protected GsPaginatorLegacy<object> _paginator;
 
         // =============================
         // CONSTRUTOR
@@ -172,7 +173,7 @@ namespace GS.Core.UI.Forms
 
         private void CriarPaginacao()
         {
-            _paginator = new GsPaginator<object> { PageSize = 10 };
+            _paginator = new GsPaginatorLegacy<object> { PageSize = 10 };
 
             lblPagina = new Label
             {
