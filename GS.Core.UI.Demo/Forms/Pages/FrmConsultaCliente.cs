@@ -41,10 +41,10 @@ namespace GS.Core.UI.Demo.Forms.Pages
             // Inicialização do Designer (OBRIGATÓRIO)
             InitializeComponent();
 
-            Text = "Consulta de Clientes";
-
-            ConfigurarGrid();
             CarregarDados();
+            ConfigurarGrid();
+            Text = "Consulta de Clientes";
+            
         }
 
         // ==========================================================

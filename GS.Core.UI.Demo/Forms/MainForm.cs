@@ -109,25 +109,8 @@ namespace GS.Core.UI.Demo
             Controls.Add(sideMenu);
             sideMenu.SendToBack(); // 👈 importante
             tabMain.Dock = DockStyle.Fill;
-        }
-
-            /// <summary>
-            /// Seleciona programaticamente um item do menu.
-            /// </summary>
-            public void Select(GsSideMenuItem item)
-        {
-            if (item == null)
-                return;
-
-            // reutiliza a lógica interna
-            typeof(GsSideMenu)
-                .GetMethod("SelectItem", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.Invoke(this, new object[] { item });
-        }
-
-        
-        
-
+        }     
+               
         private void BuildMenu()
         {
             // MenuStrip padrão do WinForms
@@ -367,13 +350,13 @@ namespace GS.Core.UI.Demo
                 Location = new Point(20, 40)
             };
 
-            Controls.Add(toggle);
+            page.Controls.Add(toggle);
 
 
-            AddLabeledControl(page, "Toggle Button", new GsToggleSwitch { Text = "Ativo" }, 20, 80);
+            AddLabeledControl(page, "Toggle Button", new GsToggleSwitch { Text = "Ativo" }, 20, 150);
 
             var chk = new GsCheckBox { Text = "Aceito os termos" };
-            chk.Location = new Point(20, 150);
+            chk.Location = new Point(20, 200);
             page.Controls.Add(chk);
 
             var rbA = new GsRadioOption
@@ -386,11 +369,7 @@ namespace GS.Core.UI.Demo
             {
                 Text = "Opção B",
                 Location = new Point(20, 70)
-            };
-
-            Controls.Add(rbA);
-            Controls.Add(rbB);
-
+            };           
 
             page.Controls.Add(rbA);
             page.Controls.Add(rbB);
