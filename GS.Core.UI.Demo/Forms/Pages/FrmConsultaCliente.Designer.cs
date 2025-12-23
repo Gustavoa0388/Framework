@@ -52,6 +52,7 @@
             pnlAcoes.ForeColor = Color.Black;
             pnlAcoes.Location = new Point(0, 511);
             pnlAcoes.Size = new Size(1064, 50);
+
             // 
             // btnNovo
             // 

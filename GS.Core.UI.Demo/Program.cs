@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using GS.Core.UI.Demo.Forms;
 
 namespace GS.Core.UI.Demo
 {
@@ -10,7 +11,8 @@ namespace GS.Core.UI.Demo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Forms.Pages.FrmConsultaCliente());
+            //Application.Run(new Forms.Pages.FrmConsultaCliente());
+            Application.Run(new MainForm());
         }
     }
 }

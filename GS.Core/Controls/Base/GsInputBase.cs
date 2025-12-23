@@ -27,6 +27,15 @@ namespace GS.Core.UI.Controls.Base
 
         private GsErrorLabel errorLabel;
 
+        private static readonly Bitmap ErrorIcon =
+        Properties.Resources.error;
+
+        private static Bitmap GetErrorIcon()
+        {
+            return new Bitmap(Properties.Resources.error);
+        }
+
+
         // =============================
         // REQUIRED
         // =============================
@@ -130,13 +139,15 @@ namespace GS.Core.UI.Controls.Base
             base.OnPaint(e);
 
             var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             var theme = ThemeManager.Current;
 
+            // Fundo
             using (var bg = new SolidBrush(theme.InputBackground))
                 g.FillRectangle(bg, ClientRectangle);
 
+            // Borda
             Color borderColor =
                 HasError ? theme.InputError :
                 IsFocused ? theme.InputFocus :
@@ -145,7 +156,26 @@ namespace GS.Core.UI.Controls.Base
 
             using (var pen = new Pen(borderColor))
                 g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+
+            // =============================
+            // ÍCONE DE ERRO (RESTAURADO)
+            // =============================
+            if (HasError)
+            {
+                int x = Width - Padding.Right - ErrorIconSize;
+                int y = (Height - ErrorIconSize) / 2;
+
+                using (var icon = GetErrorIcon())
+                {
+                    e.Graphics.DrawImage(
+                        icon,
+                        new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
+                    );
+                }
+            }
         }
+
+
 
         // =============================
         // VALIDAÇÃO

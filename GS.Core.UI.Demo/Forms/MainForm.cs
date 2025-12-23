@@ -1,50 +1,164 @@
 ﻿using GS.Core.UI.Controls;
-using System.Drawing;
-using GS.Core.UI.Theming;
+using GS.Core.UI.Demo.Forms.Pages;
 using GS.Core.UI.Forms;
-
+using GS.Core.UI.Theming;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace GS.Core.UI.Demo
-
 {
+    /// <summary>
+    /// MainForm
+    /// 
+    /// Formulário principal do projeto de DEMO do GS Core UI.
+    /// 
+    /// RESPONSABILIDADES:
+    /// - Servir como HUB de testes dos controles GS Core
+    /// - Demonstrar inputs, botões, layout e charts
+    /// - Permitir navegação para outros formulários de teste (Consulta, Cadastro, etc.)
+    /// 
+    /// IMPORTANTE:
+    /// - Este formulário utiliza WinForms Designer
+    /// - Não deve ter sua estrutura alterada nesta fase
+    /// - O objetivo aqui é VALIDAÇÃO, não refatoração
+    /// </summary>
     public partial class MainForm : GsBaseForm
-
     {
+        // =========================================================
+        // CONSTRUTOR
+        // =========================================================
+
         public MainForm()
         {
             InitializeComponent();
 
-            //CustomTheme = GsThemes.Dark; // opcional
-            //CustomTheme = GsThemes.Light; // opcional
+            // Permite forçar um tema específico no demo (opcional)
+            // CustomTheme = GsThemes.Dark;
+            // CustomTheme = GsThemes.Light;
 
+            // Cria o menu de navegação dos formulários de teste
+            BuildMenu();
+
+            // Métodos existentes do demo (inalterados)
             BuildInputs();
             BuildButtons();
             BuildLayout();
             BuildCharts();
         }
 
-        
+        // =========================================================
+        // MENU DE DEMOS (FASE 10)
+        // =========================================================
+
+        /// <summary>
+        /// Cria o menu superior para navegação entre formulários de teste.
+        /// 
+        /// DECISÃO DE ARQUITETURA:
+        /// - Menu criado por código (não Designer)
+        /// - Evita acoplamento desnecessário
+        /// - Não interfere no layout existente (TabControl)
+        /// 
+        /// ESCOPO:
+        /// - Exclusivo do projeto Demo
+        /// - Não faz parte do GS Core
+        /// </summary>
+        private void BuildMenu()
+        {
+            // MenuStrip padrão do WinForms
+            var menu = new MenuStrip();
+
+            // Menu principal "Demos"
+            var menuDemos = new ToolStripMenuItem("Demos");
+
+            // -----------------------------
+            // Consulta de Clientes
+            // -----------------------------
+            var itemConsulta = new ToolStripMenuItem("Consulta de Clientes");
+            itemConsulta.Click += (_, _) =>
+            {
+                // Abertura modal apenas para testes
+                using var frm = new FrmConsultaCliente();
+                frm.ShowDialog(this);
+            };
+
+            // -----------------------------
+            // Cadastro de Clientes
+            // -----------------------------
+            var itemCadastro = new ToolStripMenuItem("Cadastro de Clientes");
+            itemCadastro.Click += (_, _) =>
+            {
+                using var frm = new FrmCadastroCliente();
+                frm.ShowDialog(this);
+            };
+
+            // Adiciona itens ao menu "Demos"
+            menuDemos.DropDownItems.Add(itemConsulta);
+            menuDemos.DropDownItems.Add(itemCadastro);
+
+            // Adiciona menu "Demos" ao MenuStrip
+            menu.Items.Add(menuDemos);
+
+            // Adiciona o MenuStrip ao formulário
+            Controls.Add(menu);
+
+            // Garante que o menu fique acima do TabControl
+            menu.BringToFront();
+        }
+
+        // =========================================================
+        // CONSTANTES DE LAYOUT (DEMO)
+        // =========================================================
+
+        // Posições e espaçamentos usados nos métodos de build
         private const int X = 20;
         private const int Y_START = 20;
         private const int GAP = 60;
+
+        // =========================================================
+        // CAMPOS DE CONTROLES (DEMO)
+        // =========================================================
+
+        // Inputs usados no demo
         private GsTextBox txt;
         private GsPasswordTextBox pwd;
         private GsMaskedInput mask;
         private GsNumericInput num;
         private GsDateSelector date;
 
+        // Tooltip apenas para explicar os controles no demo
         private readonly ToolTip _tip = new ToolTip();
 
+        // =========================================================
+        // TOOLTIP (DEMO)
+        // =========================================================
+
+        /// <summary>
+        /// Aplica ToolTips explicativos nos controles do demo.
+        /// 
+        /// OBSERVAÇÃO:
+        /// - Apenas para fins didáticos
+        /// - Não faz parte do GS Core
+        /// </summary>
         private void ApplyTooltips()
         {
-            _tip.SetToolTip(txt, "GsTextBox: input padrão com estilo GS");
-            _tip.SetToolTip(pwd, "GsPasswordTextBox: senha com botão de visibilidade");
-            _tip.SetToolTip(mask, "GsMaskedTextBox: campo com máscara");
-            _tip.SetToolTip(num, "GsNumericBox: aceita apenas números");
+            _tip.SetToolTip(txt, "GsTextBox: input padrão com estilo GS Core");
+            _tip.SetToolTip(pwd, "GsPasswordTextBox: campo de senha com botão de visibilidade");
+            _tip.SetToolTip(mask, "GsMaskedInput: campo com máscara");
+            _tip.SetToolTip(num, "GsNumericInput: aceita apenas números");
             _tip.SetToolTip(date, "GsDateSelector: seleção de data");
         }
 
+        // =========================================================
+        // HELPER DE LAYOUT (DEMO)
+        // =========================================================
 
+        /// <summary>
+        /// Helper para adicionar um controle com label associado.
+        /// 
+        /// DECISÃO:
+        /// - Usado apenas no Demo para reduzir repetição
+        /// - Pode virar utilitário no futuro (FASE EXTRA)
+        /// </summary>
         private void AddLabeledControl(
             Control parent,
             string labelText,
@@ -58,11 +172,9 @@ namespace GS.Core.UI.Demo
                 Text = labelText,
                 Location = new Point(x, y),
                 AutoSize = false,
-                TargetControl = control,   // 🔥 ESSENCIAL
+                TargetControl = control,
                 TextAlign = ContentAlignment.MiddleRight
-
             };
-
 
             int labelWidth = 120;
 
@@ -72,14 +184,24 @@ namespace GS.Core.UI.Demo
             );
             control.Width = width;
 
-            if (lbl is GsLabel gsLabel)
-                gsLabel.TargetControl = control;
-
             parent.Controls.Add(lbl);
             parent.Controls.Add(control);
         }
 
-
+        // =========================================================
+        // MÉTODOS BUILD (DEMO)
+        // =========================================================
+        // IMPORTANTE:
+        // Os métodos abaixo já existiam no projeto original
+        // e NÃO foram alterados nesta fase.
+        //
+        // - BuildInputs()
+        // - BuildButtons()
+        // - BuildLayout()
+        // - BuildCharts()
+        //
+        // Eles são responsáveis apenas por demonstrar
+        // o uso dos controles GS Core.
 
         private void BuildInputs()
         {
@@ -98,7 +220,7 @@ namespace GS.Core.UI.Demo
                 Location = new Point(20, 60)
             };
 
-            
+
 
             page.Controls.Add(title);
             page.Controls.Add(subtitle);
@@ -120,7 +242,7 @@ namespace GS.Core.UI.Demo
                 Required = true
             };
             AddLabeledControl(page, "Password", pwd, 20, 160);
-                       
+
             mask = new GsMaskedInput
             {
                 Mask = "000.000.000-00",
@@ -303,7 +425,5 @@ namespace GS.Core.UI.Demo
 
             // Aqui entra a lógica real (salvar, conectar, etc.)
         }
-
-
     }
 }

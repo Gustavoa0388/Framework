@@ -1,6 +1,8 @@
-﻿namespace GS.Core.UI.Demo.Forms.Pages
+﻿using GS.Core.UI.Forms;
+
+namespace GS.Core.UI.Demo.Forms.Pages
 {
-    partial class FrmCadastroCliente
+    public partial class FrmCadastroCliente : FormBaseCadastro
     {
         private System.ComponentModel.IContainer components = null;
 
