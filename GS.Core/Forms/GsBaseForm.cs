@@ -46,7 +46,7 @@ namespace GS.Core.UI.Forms
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
+            base.OnLoad(e);           
             ApplyThemeIfNeeded();
         }
 
@@ -70,7 +70,9 @@ namespace GS.Core.UI.Forms
                 return;
 
             ThemeManager.ApplyTheme(this, theme);
+            Invalidate(true); // força repaint completo
         }
+
 
         // ============================
         // VALIDAÇÃO GLOBAL

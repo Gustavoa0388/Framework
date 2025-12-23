@@ -47,7 +47,9 @@ namespace GS.Core.UI.Forms
         private System.Windows.Forms.Timer _debounceTimer;
         private const int DebounceDelay = 300;
 
-        protected GsPaginatorLegacy<object> _paginator;
+        protected GsPaginator paginator;
+        private List<object> _dadosPaginados;
+
 
         // =============================
         // CONSTRUTOR
@@ -173,19 +175,20 @@ namespace GS.Core.UI.Forms
 
         private void CriarPaginacao()
         {
-            _paginator = new GsPaginatorLegacy<object> { PageSize = 10 };
-
-            lblPagina = new Label
+            paginator = new GsPaginator
             {
                 Dock = DockStyle.Bottom,
-                Height = 20,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(10),
-                Text = "Página 1 / 1"
+                PageSize = 10
             };
 
-            Controls.Add(lblPagina);
+            paginator.PageChanged += (_, e) =>
+            {
+                AtualizarGridPagina(e.Page, e.PageSize);
+            };
+
+            Controls.Add(paginator);
         }
+
 
         protected string TextoFiltro => txtFiltro?.Text?.Trim();
 
@@ -196,10 +199,22 @@ namespace GS.Core.UI.Forms
 
         protected void AtualizarPaginacao(IEnumerable<object> dados)
         {
-            _paginator.SetSource(dados);
-            Grid.DataSource = _paginator.GetCurrentPage().ToList();
-            lblPagina.Text = $"Página {_paginator.CurrentPage} / {_paginator.TotalPages}";
+            _dadosPaginados = dados.ToList();
+
+            paginator.TotalItems = _dadosPaginados.Count;
+            AtualizarGridPagina(1, paginator.PageSize);
         }
+
+        private void AtualizarGridPagina(int page, int pageSize)
+        {
+            var pageData = _dadosPaginados
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            Grid.DataSource = pageData;
+        }
+
 
         // =============================
         // AÇÕES (OVERRIDE)
