@@ -1,244 +1,173 @@
-﻿using GS.Core.UI.Formularios;
-using System;
-using System.Drawing;
+﻿using System;
+using System.Linq;
 using System.Windows.Forms;
+using GS.Core.UI.Controls.Base;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Forms
 {
     /// <summary>
     /// FormBaseCadastro
     /// 
-    /// Classe base para formulários de cadastro (Create / Edit).
+    /// Base oficial para todos os formulários de cadastro do GS Core.
     /// 
-    /// RESPONSABILIDADES:
-    /// - Fornecer layout padrão (conteúdo + ações)
-    /// - Centralizar fluxo de salvar e cancelar
-    /// - Executar validação global automaticamente
+    /// RESPONSABILIDADE:
+    /// - Controlar o ciclo de vida do cadastro
+    /// - Centralizar habilitação/desabilitação de inputs
+    /// - Executar validação via IGsValidatable
     /// 
-    /// CARACTERÍSTICAS:
-    /// - NÃO utiliza Designer
-    /// - Deve ser herdada por formulários concretos
-    /// - Usa GsBaseForm como base
-    /// 
-    /// OBSERVAÇÃO:
-    /// - Os botões ainda são Button nativo
-    ///   (migração para GsButton fica para fase extra)
+    /// NÃO FAZ:
+    /// - Layout
+    /// - Mensagens
+    /// - Persistência
     /// </summary>
-    public class FormBaseCadastro : GsBaseForm
+    public abstract class FormBaseCadastro : GsBaseForm
     {
-        // ============================
-        // CONFIGURAÇÕES PÚBLICAS
-        // ============================
-
         /// <summary>
-        /// Define se o botão Cancelar deve ser exibido.
+        /// Indica se o formulário está em modo de edição.
         /// </summary>
-        public bool ShowCancelButton { get; set; } = true;
-
-        /// <summary>
-        /// Define se o formulário deve fechar após salvar com sucesso.
-        /// </summary>
-        public bool CloseOnSave { get; set; } = true;
-
-        /// <summary>
-        /// Define se deve solicitar confirmação ao cancelar.
-        /// </summary>
-        public bool ConfirmCancel { get; set; } = true;
-
-        // ============================
-        // CONTROLES BASE
-        // ============================
-
-        /// <summary>
-        /// Painel onde os controles de cadastro devem ser adicionados.
-        /// </summary>
-        protected Panel ContentPanel;
-
-        /// <summary>
-        /// Painel inferior de ações (Salvar / Cancelar).
-        /// </summary>
-        protected Panel ActionPanel;
-
-        protected Button BtnSalvar;
-        protected Button BtnCancelar;
-
-        // ============================
-        // CONSTRUTOR
-        // ============================
+        protected bool IsEditMode { get; private set; }
 
         protected FormBaseCadastro()
         {
-            InitializeLayout();
-        }
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+            StartPosition = FormStartPosition.CenterScreen;
+            KeyPreview = true;
 
-            // Aqui SIM esses painéis existem
-            ContentPanel.BackColor = BackColor;
-            ActionPanel.BackColor = BackColor;
+            Load += OnFormLoad;
         }
 
-        // ============================
-        // LAYOUT BASE
-        // ============================
-
-        private void InitializeLayout()
+        private void OnFormLoad(object sender, EventArgs e)
         {
-            SuspendLayout();
-
-            // Painel de conteúdo (inputs)
-            ContentPanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                Padding = new Padding(16),
-                BackColor = Color.Transparent
-            };
-
-            // Painel inferior (ações)
-            ActionPanel = new Panel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 60,
-                Padding = new Padding(10),
-                BackColor = Color.Transparent
-            };
-
-            // Botão Salvar
-            BtnSalvar = new Button
-            {
-                Text = "Salvar",
-                Width = 100,
-                Height = 32,
-                Anchor = AnchorStyles.Right | AnchorStyles.Bottom
-            };
-            BtnSalvar.Click += (_, _) => OnSalvarClick();
-
-            // Botão Cancelar
-            BtnCancelar = new Button
-            {
-                Text = "Cancelar",
-                Width = 100,
-                Height = 32,
-                Anchor = AnchorStyles.Right | AnchorStyles.Bottom
-            };
-            BtnCancelar.Click += (_, _) => OnCancelarClick();
-
-            ActionPanel.Controls.Add(BtnSalvar);
-            ActionPanel.Controls.Add(BtnCancelar);
-
-            Controls.Add(ContentPanel);
-            Controls.Add(ActionPanel);
-
-            ResumeLayout();
+            OnInitialize();
+            EnterViewMode();
         }
 
-        // ============================
-        // POSICIONAMENTO DOS BOTÕES
-        // ============================
+        // =====================================================
+        // CONTRATOS OBRIGATÓRIOS
+        // =====================================================
 
-        protected virtual void PositionButtons()
+        protected abstract void OnInitialize();
+        protected abstract void OnLoadData();
+        protected abstract void OnSave();
+        protected abstract void OnDelete();
+
+        // =====================================================
+        // MODOS
+        // =====================================================
+
+        protected virtual void EnterViewMode()
         {
-            if (BtnSalvar == null || ActionPanel == null)
-                return;
-
-            BtnCancelar.Visible = ShowCancelButton;
-
-            int right = ActionPanel.Width - 10;
-            int top = (ActionPanel.Height - BtnSalvar.Height) / 2;
-
-            if (BtnCancelar.Visible)
-            {
-                BtnCancelar.Location = new Point(
-                    right - BtnCancelar.Width,
-                    top
-                );
-
-                right -= BtnCancelar.Width + 10;
-            }
-
-            BtnSalvar.Location = new Point(
-                right - BtnSalvar.Width,
-                top
-            );
+            IsEditMode = false;
+            SetInputsEnabled(false);
+            OnLoadData();
         }
 
-        protected override void OnResize(EventArgs e)
+        protected virtual void EnterEditMode()
         {
-            base.OnResize(e);
-            PositionButtons();
+            IsEditMode = true;
+            SetInputsEnabled(true);
         }
 
-        protected override void OnShown(EventArgs e)
+        protected virtual void EnterNewMode()
         {
-            base.OnShown(e);
-            PositionButtons();
+            IsEditMode = true;
+            ClearInputs();
+            SetInputsEnabled(true);
         }
 
-        // ============================
-        // FLUXO DE SALVAR
-        // ============================
+        // =====================================================
+        // AÇÕES PADRÃO
+        // =====================================================
 
-        private void OnSalvarClick()
+        protected void ActionNovo()
         {
-            // Validação global vem do GsBaseForm
-            if (!ValidateForm())
-                return;
-
-            try
-            {
-                bool sucesso = OnSalvar();
-
-                if (sucesso)
-                {
-                    OnSalvarSuccess();
-
-                    if (CloseOnSave)
-                        Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                OnSalvarError(ex);
-            }
+            EnterNewMode();
         }
 
-        // ============================
-        // FLUXO DE CANCELAR
-        // ============================
-
-        private void OnCancelarClick()
+        protected void ActionEditar()
         {
-            if (ConfirmCancel)
-            {
-                if (!FormMsg.Confirm("Deseja cancelar as alterações?"))
-                    return;
-            }
+            EnterEditMode();
+        }
 
+        protected void ActionSalvar()
+        {
+            ValidateForm(); // segue o contrato atual do Core
+
+            OnSave();
+            EnterViewMode();
+        }
+
+        protected void ActionExcluir()
+        {
+            OnDelete();
             Close();
         }
 
-        // ============================
-        // GANCHOS PARA OVERRIDE
-        // ============================
-
-        /// <summary>
-        /// Executa a lógica de salvamento.
-        /// Retorne true para indicar sucesso.
-        /// </summary>
-        protected virtual bool OnSalvar() => true;
-
-        /// <summary>
-        /// Executado após salvar com sucesso.
-        /// </summary>
-        protected virtual void OnSalvarSuccess() { }
-
-        /// <summary>
-        /// Executado quando ocorre erro no salvamento.
-        /// </summary>
-        protected virtual void OnSalvarError(Exception ex)
+        protected void ActionCancelar()
         {
-            FormMsg.Error(ex.Message);
+            EnterViewMode();
+        }
+
+        // =====================================================
+        // VALIDAÇÃO
+        // =====================================================
+
+        protected virtual void ValidateForm()
+        {
+            var validatables = GetAllControls(this)
+                .OfType<IGsValidatable>();
+
+            foreach (var control in validatables)
+            {
+                control.Validate();
+            }
+        }
+
+        // =====================================================
+        // UTILITÁRIOS
+        // =====================================================
+
+        private void SetInputsEnabled(bool enabled)
+        {
+            foreach (var control in GetAllControls(this))
+            {
+                if (control is Control c && c is IGsValidatable)
+                    c.Enabled = enabled;
+            }
+        }
+
+        private void ClearInputs()
+        {
+            foreach (var control in GetAllControls(this))
+            {
+                switch (control)
+                {
+                    case TextBoxBase txt:
+                        txt.Clear();
+                        break;
+
+                    case CheckBox chk:
+                        chk.Checked = false;
+                        break;
+
+                    case RadioButton rb:
+                        rb.Checked = false;
+                        break;
+
+                    case ComboBox cb:
+                        cb.SelectedIndex = -1;
+                        break;
+                }
+            }
+        }
+
+        private static Control[] GetAllControls(Control parent)
+        {
+            return parent.Controls
+                .Cast<Control>()
+                .SelectMany(GetAllControls)
+                .Concat(parent.Controls.Cast<Control>())
+                .ToArray();
         }
     }
 }

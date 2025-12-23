@@ -37,5 +37,91 @@ feat(ui-inputs): organiza slots de ícones e restaura visual consistente dos inp
 - Mantém validação automática e limpeza ao corrigir
 - Preserva layout e comportamento estilo ECturbo
 
+todos os commit serão feitos Pelo Visual Studio - Alterações do Git sempre que fizermos uma implementação novo ou correção de erros e bugs, segue um exemplo de como os commits nesse estilo (título + lista clara)devem ser:
+
+feat(ui-forms): integra validação global ao fluxo de ações do formulário
+
+- Conecta botão Salvar criado via código ao evento Click
+- Aciona validação global do formulário a partir do GsBaseForm
+- Garante validação de inputs dentro de TabPages e containers
+- Mantém comportamento consistente para inputs Required
+
+toda vez que você me passar um código completo ou somente um trexo dele, me fale certinho em qual arquivo eu devo colocar, ou se for arquivo novo me passar a estrutura de como criar e onde criar, exemplo 
+PASSO 1 — Criar a interface IGsRequiredAware
+"
+📍 Onde criar
+
+GS.Core.UI
+ └─ Controls
+    └─ Interfaces
+       └─ IGsRequiredAware.cs
 
 
+📄 Arquivo: IGsRequiredAware.cs
+
+namespace GS.Core.UI.Controls
+{
+    public interface IGsRequiredAware
+    {
+        bool Required { get; }
+    }
+}
+
+
+👉 Isso é só um “contrato”.
+Nada quebra, ninguém é obrigado a usar ainda.
+
+ASSO 2 — Fazer o GsInputBase implementar essa interface
+
+📍 Arquivo
+
+GS.Core.UI.Controls.Base
+ └─ GsInputBase.cs
+
+🔧 Altere a assinatura da classe
+
+De:
+
+public abstract class GsInputBase : UserControl, IThemedControl
+
+
+Para:
+
+public abstract class GsInputBase : UserControl, IThemedControl, IGsRequiredAware
+
+
+⚠️ Nada mais precisa ser feito, porque:
+
+Required já existe
+
+A interface só “expõe” isso para fora"
+
+
+outro exemplo:
+"
+🎯 O QUE PRECISA SER FEITO AGORA
+
+👉 Tornar o ValidateForm() recursivo
+(ou seja: ele entra nos filhos, netos, etc.)
+
+Nada de mudar MainForm.
+Nada de mexer nos inputs.
+
+Só melhorar o GsBaseForm.
+
+🧩 PASSO A PASSO — CORREÇÃO CERTA
+📍 ONDE mexer
+
+Arquivo:
+
+GS.Core.UI
+└── Forms
+    └── GsBaseForm.cs
+
+✍️ O QUE COLOCAR (copiar e colar)
+
+Substitua o seu método ValidateForm() por estes dois métodos:..."
+
+
+Todo código que você me entregar deve vir comentado, explicando o que faz, por que existe e onde mexer com segurança. Padrão profissional, sem adivinhação, para que eu me localize dentro do código o que pé cada coisa, pra que serve, assim
+me ajud a entender as coisas e se eu precisar modificar fica fácil. Lembre-se tbm de sempre manter a coerência das coisas, se algo deu errado e eu te pedir pra corrigir e me passar o código completo e corrigido, tenta manter o máximo como o código estáva, só corrigindo o que estava errado, vamos tentar manter sempre o mesmo padão.
