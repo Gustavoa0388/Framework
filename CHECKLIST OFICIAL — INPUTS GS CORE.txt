@@ -1,0 +1,116 @@
+🧱 CHECKLIST OFICIAL — INPUTS GS CORE
+🔹 A. Estrutura
+
+Herdar de GsInputBase
+
+NÃO herdar direto de UserControl
+
+NÃO usar Designer
+
+Possui CreateInnerTextBox()
+
+🔹 B. Controle Interno
+
+Controle interno armazenado em campo privado
+
+Retornado por CreateInnerTextBox()
+
+BorderStyle = None (feito pela base)
+
+🔹 C. Propagação de Eventos (OBRIGATÓRIO)
+
+TextChanged → OnTextChanged
+
+KeyDown → OnKeyDown
+
+KeyPress → OnKeyPress
+
+KeyUp → OnKeyUp
+
+⚠️ Se faltar UM → debounce / busca quebra.
+
+🔹 D. Propriedade Text
+
+override string Text
+
+Getter delega ao controle interno
+
+Setter delega ao controle interno
+
+Não existe campo duplicado de valor
+
+🔹 E. Validação
+
+NÃO existe método Validate()
+
+Existe protected override ValidateInput()
+
+Chama base.ValidateInput()
+
+Valida regras próprias somente se !HasError
+
+Não lança exceção
+
+Não usa MessageBox
+
+🔹 F. Required
+
+Implementa IGsRequiredAware (via base)
+
+Respeita Required
+
+Usa RequiredMessage
+
+Required não executa regra de negócio
+
+🔹 G. Tema
+
+Não usa Color.X
+
+Usa apenas tokens do GsTheme
+
+Reage a troca de tema
+
+Não sobrescreve tema no código do input
+
+🔹 H. UX / Acessibilidade
+
+Tab funciona corretamente
+
+Enter previsível
+
+Não rouba foco
+
+Erro é local (label)
+
+Visual consistente com outros inputs
+
+🔹 I. Performance
+
+Não usa reflection
+
+Não cria objetos gráficos em loop
+
+Não aloca recursos em eventos de alta frequência
+
+🔹 J. Documentação
+
+XML Summary na classe
+
+Comentários por bloco lógico
+
+Explica:
+
+o que faz
+
+quando usar
+
+quando não usar
+
+🧠 REGRA DE GOVERNANÇA (ESSA VIRA LEI)
+
+Se um input não passa nesse checklist,
+ele NÃO entra no GS Core.
+
+Sem exceção.
+Isso protege você no futuro.
