@@ -2,15 +2,20 @@
 using GS.Core.UI.Utils.Legacy;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
-    public class GsProgressBar : Control
+
+    [Obsolete(
+  "GsProgressBarLegacy está obsoleto. Utilize GsProgressBar do GS Core."
+)]
+
+    public class GsProgressBarLegacy : Control
     {
         private System.Windows.Forms.Timer timer;
         private float targetPercentual;
         private float step = 1; // Passo de incremento da animação
 
-        public GsProgressBar()
+        public GsProgressBarLegacy()
         {
             DoubleBuffered = true;
             MinimumSize = new Size(50, 12);

@@ -36,6 +36,13 @@ namespace GS.Core.UI.Theming
             InputError = Color.FromArgb(211, 47, 47),
             TextPlaceholder = Color.FromArgb(160, 160, 160),
 
+            // ProgressBar
+            ProgressBackground = Color.FromArgb(230, 236, 245),
+            ProgressFill = Color.FromArgb(30, 90, 168),
+            ProgressBorder = Color.FromArgb(208, 215, 226),
+            ProgressError = Color.FromArgb(211, 47, 47),
+            ProgressSuccess = Color.FromArgb(46, 125, 50),
+
             // Grid
             GridHeaderBackground = Color.FromArgb(22, 63, 115),
             GridHeaderText = Color.White,
@@ -48,10 +55,11 @@ namespace GS.Core.UI.Theming
             Warning = Color.FromArgb(249, 168, 37),
             Success = Color.FromArgb(46, 125, 50),
             Info = Color.FromArgb(30, 136, 229),
-
+                        
             // Fonte
             DefaultFont = new Font("Segoe UI", 9F),
 
+            //Thema claro
             IsDark = false
         };
 
@@ -60,19 +68,23 @@ namespace GS.Core.UI.Theming
         // ==========================================================
         public static GsTheme Dark => new GsTheme
         {
+            // Identidade
             Primary = Color.FromArgb(58, 123, 213),
             PrimaryDark = Color.FromArgb(18, 32, 52),
             PrimaryLight = Color.FromArgb(90, 155, 245),
             Secondary = Color.FromArgb(155, 110, 255),
 
+            // Superfícies
             Surface = Color.FromArgb(24, 26, 27),
             SurfaceAlt = Color.FromArgb(32, 35, 36),
             Border = Color.FromArgb(60, 60, 60),
 
+            // Texto
             TextPrimary = Color.White,
             TextSecondary = Color.FromArgb(180, 180, 180),
             TextOnPrimary = Color.White,
 
+            // Inputs
             InputBackground = Color.FromArgb(32, 35, 36),
             InputBorder = Color.FromArgb(60, 60, 60),
             InputHover = Color.FromArgb(45, 50, 55),
@@ -80,18 +92,30 @@ namespace GS.Core.UI.Theming
             InputError = Color.FromArgb(229, 57, 53),
             TextPlaceholder = Color.FromArgb(140, 140, 140),
 
+            //ProgressBar
+            ProgressBackground = Color.FromArgb(45, 50, 55),
+            ProgressFill = Color.FromArgb(90, 155, 245),
+            ProgressBorder = Color.FromArgb(60, 60, 60),
+            ProgressError = Color.FromArgb(229, 57, 53),
+            ProgressSuccess = Color.FromArgb(102, 187, 106),
+
+            // Grid
             GridHeaderBackground = Color.FromArgb(18, 32, 52),
             GridHeaderText = Color.White,
+            // Grid utiliza a identidade primária como seleção
             GridSelection = Color.FromArgb(58, 123, 213),
             GridSelectionText = Color.White,
 
+            // Estados
             Error = Color.FromArgb(229, 57, 53),
             Warning = Color.FromArgb(255, 202, 40),
             Success = Color.FromArgb(102, 187, 106),
             Info = Color.FromArgb(100, 181, 246),
 
+            // Fonte
             DefaultFont = new Font("Segoe UI", 9F),
 
+            //Thema escuro
             IsDark = true
         };
     }

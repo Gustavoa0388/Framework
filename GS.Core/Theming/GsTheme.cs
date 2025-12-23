@@ -163,6 +163,35 @@ namespace GS.Core.UI.Theming
         public Color Info { get; set; }
 
         // =====================================================
+        // PROGRESS BAR
+        // =====================================================
+
+        /// <summary>
+        /// Fundo da barra de progresso.
+        /// </summary>
+        public Color ProgressBackground { get; set; }
+
+        /// <summary>
+        /// Cor principal de preenchimento da barra de progresso.
+        /// </summary>
+        public Color ProgressFill { get; set; }
+
+        /// <summary>
+        /// Cor da borda da barra de progresso.
+        /// </summary>
+        public Color ProgressBorder { get; set; }
+
+        /// <summary>
+        /// Cor usada quando o progresso indica sucesso.
+        /// </summary>
+        public Color ProgressSuccess { get; set; }
+
+        /// <summary>
+        /// Cor usada quando o progresso indica erro.
+        /// </summary>
+        public Color ProgressError { get; set; }
+
+        // =====================================================
         // OUTROS
         // =====================================================
 
