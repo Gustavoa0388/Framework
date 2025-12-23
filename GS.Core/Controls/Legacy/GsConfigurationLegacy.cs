@@ -2,11 +2,16 @@
 using System.Drawing;
 
 
-namespace GS.Core.UI.Controls.Layout
+namespace GS.Core.UI.Controls.Legacy
 {
-    public class GsConfiguration : Component
+    [Obsolete(
+  "Configuração legacy do ECTurbo. " +
+  "Use GsTheme + ThemeManager no GS Core."
+)]
+    public class GsConfigurationLegacy : Component
+
     {
-		private Color vCorPrimaria = Config.CorPrimaria;
+        private Color vCorPrimaria = Config.CorPrimaria;
         [Category("Cores do Sistema")]
 		public Color CorPrimaria
         {
