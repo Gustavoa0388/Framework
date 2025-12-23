@@ -1,0 +1,307 @@
+
+
+# 📘 DOCUMENTO OFICIAL
+
+## GS CORE UI — RELATÓRIO TÉCNICO DE EVOLUÇÃO E LIÇÕES APRENDIDAS
+
+**(FASE 1 → FASE 10)**
+
+> Este documento registra decisões técnicas, erros encontrados, correções aplicadas e regras consolidadas durante a construção e validação do GS Core UI.
+
+---
+
+## 1️⃣ VISÃO GERAL DO PROJETO
+
+**Projeto:** GS Core UI
+**Tecnologia:** WinForms (.NET)
+**Objetivo:** Criar um núcleo reutilizável de controles, temas e formulários base, com foco em:
+
+* padronização visual
+* previsibilidade de comportamento
+* facilidade de manutenção
+* aderência a boas práticas (qualidade / validação)
+
+---
+
+## 2️⃣ DECISÕES ARQUITETURAIS FUNDAMENTAIS
+
+### 2.1 Separação clara de responsabilidades
+
+| Elemento       | Regra                                  |
+| -------------- | -------------------------------------- |
+| Form Base      | ❌ Não usa Designer                     |
+| Form Tela      | ✅ Usa Designer                         |
+| Controles Base | Criados por código                     |
+| Theme          | Centralizado, nunca direto no controle |
+
+📌 **Motivo:** evitar conflito Designer × lógica, NullReference e layout imprevisível.
+
+---
+
+### 2.2 Theme como núcleo do sistema
+
+* Nenhum controle deve:
+
+  * definir cor diretamente
+  * acessar `Color.FromArgb(...)` fora do Theme
+* Todo estilo passa por:
+
+  * `GsTheme`
+  * `ThemeManager`
+  * tokens padronizados
+
+📌 **Erro comum corrigido:**
+Controles herdados do ECTurbo puxavam cor “na mão”.
+
+---
+
+## 3️⃣ ERROS IMPORTANTES ENCONTRADOS (E COMO EVITAR)
+
+### 🔴 ERRO 1 — Mistura de layout manual com Dock
+
+**Sintoma:**
+
+* botões cortados
+* grid invadindo outras áreas
+* layout quebrando em resize
+
+**Causa:**
+
+```csharp
+btn.Location = new Point(...)
+```
+
+**Correção aplicada:**
+
+* Uso exclusivo de:
+
+  * `FlowLayoutPanel`
+  * `Dock`
+  * `Padding`
+
+📌 **REGRA:**
+
+> Nunca misturar `Location` manual com layout automático.
+
+---
+
+### 🔴 ERRO 2 — Ordem errada de Dock
+
+**Sintoma:**
+
+* Primeira linha do grid “cortada”
+
+**Causa:**
+
+```csharp
+CriarFiltro();   // Top
+CriarGrid();     // Fill
+CriarAcoes();    // Bottom
+```
+
+**Correção correta:**
+
+```csharp
+CriarGrid();     // Fill SEMPRE primeiro
+CriarAcoes();    // Bottom
+CriarFiltro();   // Top
+CriarPaginacao();
+```
+
+📌 **REGRA DE OURO (WinForms):**
+
+> `DockStyle.Fill` deve ser criado **antes** dos Top / Bottom.
+
+---
+
+### 🔴 ERRO 3 — Designer referenciando controle do Form Base
+
+**Sintoma:**
+
+* `NullReferenceException` no `InitializeComponent()`
+
+**Causa:**
+
+* `FormBaseConsulta` cria `pnlAcoes`
+* `FrmConsultaCliente.Designer` tenta usar `pnlAcoes`
+
+**Correção:**
+
+* Form Base **não tem Designer**
+* Form Tela **não toca em controles base**
+
+---
+
+### 🔴 ERRO 4 — Busca sem contrato definido
+
+**Sintoma:**
+
+* botão não fazia nada
+* Enter não funcionava
+* comportamento confuso
+
+**Correção:**
+Definição clara de contrato:
+
+| Ação         | Comportamento                  |
+| ------------ | ------------------------------ |
+| Enter        | Executa busca                  |
+| Botão Buscar | Executa busca                  |
+| Campo limpo  | Restaura lista automaticamente |
+| Digitar      | NÃO busca automaticamente      |
+
+📌 **Modelo escolhido:** híbrido corporativo (controle + UX previsível).
+
+---
+
+## 4️⃣ PADRÕES CONSOLIDADOS (QUE NÃO DEVEM SER QUEBRADOS)
+
+### 4.1 FormBaseConsulta
+
+Responsabilidades:
+
+* layout
+* filtro
+* grid
+* paginação
+* ações
+
+Não faz:
+
+* acesso a banco
+* regra de negócio
+* filtro específico
+
+---
+
+### 4.2 Controles GS Core
+
+* Herdam de base comum
+* Implementam contratos (`IThemedControl`, etc.)
+* Não tomam decisões visuais sozinhos
+
+---
+
+## 5️⃣ IMPACTO PARA QUALIDADE / VALIDAÇÃO
+
+Este histórico permite:
+
+* rastreabilidade de decisões
+* prevenção de regressões
+* base para:
+
+  * validação interna
+  * auditoria
+  * treinamento de novos devs
+
+📌 **Isso vira evidência técnica**, não só código.
+
+---
+
+# 🧱 FASE EXTRA — PLANO OFICIAL
+
+## 🔹 BLOCO 2 — LIMPEZA DE LEGADO (ECTurbo)
+
+### Objetivo
+
+Mapear e refatorar controles herdados que:
+
+* usam lógica antiga
+* burlam o Theme
+* têm comportamento inconsistente
+
+### Exemplos já identificados
+
+* `GsChart1.cs` → `GsChart5.cs`
+* `GsCheckBox.cs`
+* `GsComboBox.cs`
+* `GsPanel.cs`
+* outros que surgirem
+
+### Estratégia
+
+Para cada controle:
+
+1. Diagnóstico
+2. Classificação:
+
+   * 🟢 OK
+   * 🟡 Compatível, mas feio
+   * 🔴 Legado perigoso
+3. Decisão:
+
+   * refatorar
+   * manter
+   * descartar
+
+---
+
+## 🔹 BLOCO 3 — THEME (IDEIAS + FREIO CONSCIENTE)
+
+Suas ideias **não são viagem**, só precisam de freio técnico 😄
+
+Possibilidades reais:
+
+* múltiplos temas (Light / Dark / Corporate)
+* tokens sobrescrevíveis
+* **Theme customizável por configuração**, não por UI direta
+
+⚠️ Freio recomendado:
+
+* usuário **não escolhe cor livre**
+* ele escolhe **variação de token**
+* evita bagunça visual
+
+---
+
+## 🔹 BLOCO 4 — UX DE CONTROLES
+
+Permitido:
+
+* ajustes de timing
+* feedback visual
+* foco / erro / disabled
+
+Evitar:
+
+* comportamento “surpresa”
+* controle que faz coisa escondida
+
+---
+
+## 🔹 BLOCO 5 — DOCUMENTAÇÃO INTERNA (SEU TERRENO)
+
+Aqui entra forte:
+
+* normas internas
+* guias de uso
+* decisões arquiteturais
+* checklist de validação
+
+Isso vira:
+
+* README
+* Wiki
+* base para auditoria (ANVISA / ISO)
+
+---
+
+# ▶️ PRÓXIMO PASSO (CONFORME VOCÊ PEDIU)
+
+👉 **Encerramos oficialmente:**
+
+* FASE 10 ✔️
+* Documento histórico ✔️
+
+👉 **Próximo chat / próximo bloco:**
+**BLOCO 2 — LIMPEZA DE LEGADO (ECTurbo)**
+Começando por:
+
+* **mapa geral dos controles**
+* o que fica / o que sai / o que refatorar
+
+Quando quiser, é só dizer:
+
+> “Vamos iniciar o BLOCO 2 — Limpeza de legado”
+
+E a gente entra cirúrgico, um controle por vez.
