@@ -5,7 +5,7 @@ using GS.Core.UI.Utils.Legacy;
 
 
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
     [Obsolete(
         "GsComboBoxLegacy está obsoleto. Utilize GsComboBox. " +
