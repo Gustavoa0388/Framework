@@ -8,53 +8,129 @@ namespace GS.Core.UI.Controls.Base
 {
     /// <summary>
     /// Classe base para TODOS os inputs do GS Core.
-    /// Centraliza:
-    /// - Tema
-    /// - Borda
-    /// - Hover / Focus
-    /// - Required
-    /// - Validação
+    ///
+    /// RESPONSABILIDADE PRINCIPAL:
+    /// - Fornecer um "container inteligente" para inputs (TextBox, Masked, Numeric, etc.)
+    ///
+    /// ESTA CLASSE CENTRALIZA:
+    /// - Aplicação de tema
+    /// - Desenho de borda customizada
+    /// - Estados visuais (hover, foco, erro)
+    /// - Validação (required e erros)
+    ///
+    /// O QUE ESTA CLASSE **NÃO FAZ**:
+    /// - Não conhece regra de negócio
+    /// - Não conhece banco de dados
+    /// - Não decide lógica de busca, cálculo ou persistência
+    ///
+    /// OBS:
+    /// - Inputs concretos (GsTextBox, GsMaskedTextBox, etc.)
+    ///   são responsáveis por propagar eventos do controle interno.
     /// </summary>
     public abstract class GsInputBase : UserControl,
         IThemedControl,
         IGsValidatable,
         IGsRequiredAware
     {
+        // ==========================================================
+        // CONTROLE INTERNO
+        // ==========================================================
+
+        /// <summary>
+        /// TextBoxBase interno real (TextBox, MaskedTextBox, etc.).
+        /// Ele é criado pela classe filha via CreateInnerTextBox().
+        /// </summary>
         protected TextBoxBase InnerTextBox;
 
+        // ==========================================================
+        // ESTADOS VISUAIS
+        // ==========================================================
+
+        /// <summary>
+        /// Indica se o input está com foco.
+        /// Usado exclusivamente para decisão visual (borda).
+        /// </summary>
         protected bool IsFocused;
+
+        /// <summary>
+        /// Indica se o mouse está sobre o input.
+        /// Usado para hover visual.
+        /// </summary>
         protected bool IsHovered;
 
+        // ==========================================================
+        // ERRO / VALIDAÇÃO VISUAL
+        // ==========================================================
+
+        /// <summary>
+        /// Label auxiliar responsável por exibir mensagens de erro
+        /// abaixo do input.
+        /// </summary>
         private GsErrorLabel errorLabel;
 
-        private static readonly Bitmap ErrorIcon =
-        Properties.Resources.error;
+        /// <summary>
+        /// Ícone de erro reutilizável.
+        /// Bitmap estático evita criação excessiva de objetos
+        /// durante o repaint (performance).
+        /// </summary>
+        protected static readonly Bitmap ErrorIcon =
+            Properties.Resources.error;
 
-        private static Bitmap GetErrorIcon()
-        {
-            return new Bitmap(Properties.Resources.error);
-        }
+        // ==========================================================
+        // REQUIRED (CONTRATO DE INPUT)
+        // ==========================================================
 
-
-        // =============================
-        // REQUIRED
-        // =============================
+        /// <summary>
+        /// Indica se o campo é obrigatório.
+        /// A validação ocorre automaticamente no LostFocus.
+        /// </summary>
         public bool Required { get; set; }
+
+        /// <summary>
+        /// Mensagem exibida quando o campo obrigatório está vazio.
+        /// </summary>
         public string RequiredMessage { get; set; } = "Campo obrigatório";
 
-        // =============================
-        // VALIDAÇÃO
-        // =============================
+        // ==========================================================
+        // ESTADO DE VALIDAÇÃO
+        // ==========================================================
+
+        /// <summary>
+        /// Indica se o input está válido.
+        /// Conveniência para telas e formulários.
+        /// </summary>
         public bool IsValid => !HasError;
+
+        /// <summary>
+        /// Última mensagem de erro gerada pela validação.
+        /// Exposta por contrato (IGsValidatable).
+        /// </summary>
         public string ErrorMessage { get; private set; }
 
+        /// <summary>
+        /// Indica se o input está atualmente em estado de erro.
+        /// </summary>
         public bool HasError { get; private set; }
+
+        // ==========================================================
+        // CONSTANTES DE LAYOUT
+        // ==========================================================
 
         protected const int ErrorIconSize = 14;
         protected const int ErrorIconSpacing = 6;
 
+        // ==========================================================
+        // CONSTRUTOR
+        // ==========================================================
+
+        /// <summary>
+        /// Construtor base.
+        /// Define estilo de pintura customizada e
+        /// inicializa estados visuais.
+        /// </summary>
         protected GsInputBase()
         {
+            // Ativa pintura manual e double buffer
             SetStyle(
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint |
@@ -66,22 +142,54 @@ namespace GS.Core.UI.Controls.Base
             Padding = new Padding(8, 6, 8, 6);
             BackColor = Color.Transparent;
 
-            MouseEnter += (_, _) => { IsHovered = true; Invalidate(); };
-            MouseLeave += (_, _) => { IsHovered = false; Invalidate(); };
+            // Controle de hover visual
+            MouseEnter += (_, _) =>
+            {
+                IsHovered = true;
+                Invalidate();
+            };
+
+            MouseLeave += (_, _) =>
+            {
+                IsHovered = false;
+                Invalidate();
+            };
         }
 
+        // ==========================================================
+        // CRIAÇÃO DO CONTROLE INTERNO
+        // ==========================================================
+
+        /// <summary>
+        /// Método que DEVE ser implementado pelas classes filhas
+        /// para fornecer o TextBox interno real.
+        ///
+        /// Ex:
+        /// - TextBox
+        /// - MaskedTextBox
+        /// - NumericTextBox
+        /// </summary>
         protected abstract TextBoxBase CreateInnerTextBox();
 
+        /// <summary>
+        /// Criação tardia do controle interno.
+        /// Garante que o controle só seja criado
+        /// quando o handle existir.
+        /// </summary>
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
 
+            // Evita recriação
             if (InnerTextBox != null)
                 return;
 
             InnerTextBox = CreateInnerTextBox();
             InnerTextBox.BorderStyle = BorderStyle.None;
 
+            // =============================
+            // FOCO
+            // =============================
             InnerTextBox.GotFocus += (_, _) =>
             {
                 IsFocused = true;
@@ -91,12 +199,15 @@ namespace GS.Core.UI.Controls.Base
             InnerTextBox.LostFocus += (_, _) =>
             {
                 IsFocused = false;
-                Validate();
+                ValidateInput();
                 Invalidate();
             };
 
             Controls.Add(InnerTextBox);
 
+            // =============================
+            // LABEL DE ERRO
+            // =============================
             errorLabel = new GsErrorLabel { Visible = false };
 
             ParentChanged += (_, _) =>
@@ -111,6 +222,15 @@ namespace GS.Core.UI.Controls.Base
             UpdateLayout();
         }
 
+        // ==========================================================
+        // LAYOUT
+        // ==========================================================
+
+        /// <summary>
+        /// Atualiza layout interno considerando:
+        /// - Padding
+        /// - Presença de ícone de erro
+        /// </summary>
         protected virtual void UpdateLayout()
         {
             if (InnerTextBox == null)
@@ -125,6 +245,9 @@ namespace GS.Core.UI.Controls.Base
             UpdateErrorPosition();
         }
 
+        /// <summary>
+        /// Posiciona o label de erro logo abaixo do input.
+        /// </summary>
         private void UpdateErrorPosition()
         {
             if (errorLabel == null)
@@ -133,6 +256,10 @@ namespace GS.Core.UI.Controls.Base
             errorLabel.Location = new Point(Left, Bottom + 4);
             errorLabel.Width = Width;
         }
+
+        // ==========================================================
+        // PINTURA CUSTOMIZADA
+        // ==========================================================
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -147,7 +274,7 @@ namespace GS.Core.UI.Controls.Base
             using (var bg = new SolidBrush(theme.InputBackground))
                 g.FillRectangle(bg, ClientRectangle);
 
-            // Borda
+            // Borda conforme estado
             Color borderColor =
                 HasError ? theme.InputError :
                 IsFocused ? theme.InputFocus :
@@ -157,35 +284,42 @@ namespace GS.Core.UI.Controls.Base
             using (var pen = new Pen(borderColor))
                 g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
 
-            // =============================
-            // ÍCONE DE ERRO (RESTAURADO)
-            // =============================
+            // Ícone de erro
             if (HasError)
             {
                 int x = Width - Padding.Right - ErrorIconSize;
                 int y = (Height - ErrorIconSize) / 2;
 
-                using (var icon = GetErrorIcon())
-                {
-                    e.Graphics.DrawImage(
-                        icon,
-                        new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
-                    );
-                }
+                g.DrawImage(
+                    ErrorIcon,
+                    new Rectangle(x, y, ErrorIconSize, ErrorIconSize)
+                );
             }
         }
 
-
-
-        // =============================
+        // ==========================================================
         // VALIDAÇÃO
-        // =============================
-        public virtual void Validate()
+        // ==========================================================
+
+        /// <summary>
+        /// Validação interna do input.
+        /// Pode ser sobrescrita por inputs específicos.
+        /// </summary>
+        public virtual void ValidateInput()
         {
             ClearError();
 
             if (Required && string.IsNullOrWhiteSpace(Text))
                 ShowError(RequiredMessage);
+        }
+
+        /// <summary>
+        /// Implementação explícita da interface IGsValidatable.
+        /// Evita conflito com Control.Validate().
+        /// </summary>
+        void IGsValidatable.Validate()
+        {
+            ValidateInput();
         }
 
         protected void ShowError(string message)
@@ -208,9 +342,14 @@ namespace GS.Core.UI.Controls.Base
             Invalidate();
         }
 
-        // =============================
-        // THEME
-        // =============================
+        // ==========================================================
+        // TEMA
+        // ==========================================================
+
+        /// <summary>
+        /// Aplica tema visual ao input.
+        /// Chamado automaticamente pelo ThemeManager.
+        /// </summary>
         public virtual void ApplyTheme(GsTheme theme)
         {
             Font = theme.DefaultFont;
@@ -224,10 +363,22 @@ namespace GS.Core.UI.Controls.Base
             Invalidate();
         }
 
+        // ==========================================================
+        // TEXTO
+        // ==========================================================
+
+        /// <summary>
+        /// Propagação da propriedade Text.
+        /// Garante comportamento consistente com controles nativos.
+        /// </summary>
         public override string Text
         {
             get => InnerTextBox?.Text ?? string.Empty;
-            set { if (InnerTextBox != null) InnerTextBox.Text = value; }
+            set
+            {
+                if (InnerTextBox != null)
+                    InnerTextBox.Text = value;
+            }
         }
     }
 }
