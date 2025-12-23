@@ -27,6 +27,7 @@ namespace GS.Core.UI.Controls
     /// - Criar GsRadioButtonCore
     /// - Desacoplar banco
     /// - Aplicar tokens de theme
+    // TODO: Revisar no Bloco 3 (UI Estrutural)
     /// </summary>
     public class GsRadioButton : RadioButton
     {
