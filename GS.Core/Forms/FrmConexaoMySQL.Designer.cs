@@ -1,5 +1,8 @@
-﻿using GS.Core.UI.Controls.Display;
-using GS.Core.UI.Controls.Inputs;
+﻿using GS.Core.UI.Controls.Inputs;
+using GS.Core.UI.Controls.Display;
+using GS.Core.UI.Controls.Data;
+using GS.Core.UI.Controls.Layout;
+
 
 namespace GS.Core.UI.Formularios
 {
@@ -33,19 +36,19 @@ namespace GS.Core.UI.Formularios
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmConexaoMySQL));
             pictureBox1 = new PictureBox();
-            ecTurbo_Label1 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label2 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label3 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label4 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label5 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label6 = new GS.Core.UI.Controls.GsLabel();
-            ecTurbo_Label7 = new GS.Core.UI.Controls.GsLabel();
-            TxtBanco = new GS.Core.UI.Controls.GsTextBox();
-            TxtServidor = new GS.Core.UI.Controls.GsTextBox();
-            TxtPorta = new GS.Core.UI.Controls.GsTextBox();
-            TxtUsuario = new GS.Core.UI.Controls.GsTextBox();
-            TxtSenha = new GS.Core.UI.Controls.GsTextBox();
-            BtSalvar = new GS.Core.UI.Controls.GsButton();
+            ecTurbo_Label1 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label2 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label3 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label4 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label5 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label6 = new GS.Core.UI.Controls.Display.GsLabel();
+            ecTurbo_Label7 = new GS.Core.UI.Controls.Display.GsLabel();
+            TxtBanco = new GS.Core.UI.Controls.Inputs.GsTextBox();
+            TxtServidor = new GS.Core.UI.Controls.Inputs.GsTextBox();
+            TxtPorta = new GS.Core.UI.Controls.Inputs.GsTextBox();
+            TxtUsuario = new GS.Core.UI.Controls.Inputs.GsTextBox();
+            TxtSenha = new GS.Core.UI.Controls.Inputs.GsTextBox();
+            BtSalvar = new GS.Core.UI.Controls.Inputs.GsButton();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 

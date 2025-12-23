@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// ComboBox padrão do GS Core.

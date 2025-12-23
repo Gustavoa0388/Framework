@@ -93,7 +93,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
         {
             int labelWidth = 120;
 
-            var lbl = new GsLabel
+            var lbl = new GS.Core.UI.Controls.Display.GsLabel
             {
                 Text = labelText,
                 Location = new Point(x, y),

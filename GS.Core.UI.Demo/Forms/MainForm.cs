@@ -1,10 +1,6 @@
-﻿using GS.Core.UI.Controls.Base;
+﻿using GS.Core.UI.Controls.Display;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Controls.Layout;
-using GS.Core.UI.Controls.States;
-using GS.Core.UI.Controls.Data;
-using GS.Core.UI.Controls.Display;
-using GS.Core.UI.Controls.Legacy;
 using GS.Core.UI.Controls.States;
 using GS.Core.UI.Demo.Forms.Pages;
 using GS.Core.UI.Forms;
@@ -278,14 +274,14 @@ namespace GS.Core.UI.Demo
         private void BuildInputs()
         {
             var page = tabMain.TabPages[0];
-            var title = new GsTitleLabel
+            var title = new GS.Core.UI.Controls.Display.GsTitleLabel
             {
                 Text = "Configuração de Conexão",
                 TitleLevel = GsTitleLevel.Title,
                 Location = new Point(20, 20)
             };
 
-            var subtitle = new GsTitleLabel
+            var subtitle = new GS.Core.UI.Controls.Display.GsTitleLabel
             {
                 Text = "Dados do Banco",
                 TitleLevel = GsTitleLevel.Subtitle,
@@ -315,7 +311,7 @@ namespace GS.Core.UI.Demo
             };
             AddLabeledControl(page, "Password", pwd, 20, 160);
 
-            mask = new GsMaskedInput
+            mask = new GS.Core.UI.Controls.Inputs.GsMaskedInput
             {
                 Mask = "000.000.000-00",
                 Required = true
@@ -403,7 +399,7 @@ namespace GS.Core.UI.Demo
 
             page.Controls.Add(btnTheme);
 
-            var combo = new GsComboBox
+            var combo = new GS.Core.UI.Controls.Inputs.GsComboBox
             {
                 Required = true,
                 Placeholder = "Selecione o estado"
@@ -472,7 +468,7 @@ namespace GS.Core.UI.Demo
                 AutoSize = true
             });
 
-            page.Controls.Add(new GsChart1
+            page.Controls.Add(new GS.Core.UI.Controls.Data.GsChart1
             {
                 Location = new Point(20, 45),
                 Size = new Size(300, 180)
@@ -485,7 +481,7 @@ namespace GS.Core.UI.Demo
                 AutoSize = true
             });
 
-            page.Controls.Add(new GsChart2
+            page.Controls.Add(new GS.Core.UI.Controls.Data.GsChart2
             {
                 Location = new Point(340, 45),
                 Size = new Size(300, 180)

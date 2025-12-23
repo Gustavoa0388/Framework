@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// Input numérico padrão do GS Core.

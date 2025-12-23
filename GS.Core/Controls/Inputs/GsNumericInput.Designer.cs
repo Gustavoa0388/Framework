@@ -1,4 +1,4 @@
-﻿namespace GS.Core.UI.Controls
+﻿namespace GS.Core.UI.Controls.Inputs
 {
     partial class GsNumericInput
     {
