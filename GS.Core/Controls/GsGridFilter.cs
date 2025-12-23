@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GS.Core.UI.Controls.States;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,12 +17,12 @@ namespace GS.Core.UI.Controls
     public class GsGridFilter<T>
     {
         public string PropertyName { get; }
-        public GsGridFilterType FilterType { get; }
+        public GridFilterType FilterType { get; }
         public bool IgnoreCase { get; set; } = true;
 
         private readonly PropertyInfo _property;
 
-        public GsGridFilter(string propertyName, GsGridFilterType filterType)
+        public GsGridFilter(string propertyName, GridFilterType filterType)
         {
             PropertyName = propertyName;
             FilterType = filterType;
@@ -69,10 +70,10 @@ namespace GS.Core.UI.Controls
 
             return FilterType switch
             {
-                GsGridFilterType.Contains => source.Contains(filter),
-                GsGridFilterType.Equals => source == filter,
-                GsGridFilterType.StartsWith => source.StartsWith(filter),
-                GsGridFilterType.EndsWith => source.EndsWith(filter),
+                GridFilterType.Contains => source.Contains(filter),
+                GridFilterType.Equals => source == filter,
+                GridFilterType.StartsWith => source.StartsWith(filter),
+                GridFilterType.EndsWith => source.EndsWith(filter),
                 _ => false
             };
         }

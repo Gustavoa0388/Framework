@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GS.Core.UI.Controls.States;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GS.Core.UI.Controls
@@ -15,8 +16,8 @@ namespace GS.Core.UI.Controls
     {
         private readonly List<GsGridFilter<T>> _filters = new();
 
-        public GsGridFilterCombineMode CombineMode { get; set; } =
-            GsGridFilterCombineMode.Or;
+        public GridFilterCombineMode CombineMode { get; set; } =
+            GridFilterCombineMode.Or;
 
         public void Add(GsGridFilter<T> filter)
         {
@@ -31,7 +32,7 @@ namespace GS.Core.UI.Controls
             if (_filters.Count == 0)
                 return source;
 
-            return CombineMode == GsGridFilterCombineMode.Or
+            return CombineMode == GridFilterCombineMode.Or
                 ? ApplyOr(source, filterText)
                 : ApplyAnd(source, filterText);
         }
