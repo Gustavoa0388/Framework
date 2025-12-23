@@ -3,11 +3,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 
-namespace GS.Core.UI.Controls
+namespace GS.Core.UI.Controls.Legacy
 {
-    public class GsSideMenu : Panel
+    public class GsSideMenuLegacy : Panel
     {
-        public GsSideMenu()
+        public GsSideMenuLegacy()
         {
             DoubleBuffered = true;
             BackColor = Color.Transparent;
