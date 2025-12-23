@@ -32,7 +32,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         public FrmCadastroCliente()
         {
-            InitializeComponent();
+            
             BuildLayout();
             BuildForm();
         }

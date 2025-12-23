@@ -4,9 +4,11 @@ using GS.Core.UI.Controls.Layout;
 using GS.Core.UI.Controls.UX;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace GS.Core.UI.Forms
 {
@@ -27,9 +29,9 @@ namespace GS.Core.UI.Forms
     /// </summary>
     public abstract class FormBaseConsulta : GsBaseForm
     {
-        // =============================
+        // =====================================================
         // CONTROLES BASE
-        // =============================
+        // =====================================================
 
         protected GsTextBox txtFiltro;
         protected GsDataGridView Grid;
@@ -42,14 +44,16 @@ namespace GS.Core.UI.Forms
         protected GsButton btnBuscar;
 
         protected GsPaginator paginator;
-
         protected GsStateView StateView;
 
-        private List<object> _dadosPaginados = new();
+        private readonly List<object> _dadosPaginados = new();
 
-        // =============================
+        // Timer para debounce da busca
+        private System.Windows.Forms.Timer _searchTimer;
+
+        // =====================================================
         // CONSTRUTOR
-        // =============================
+        // =====================================================
 
         protected FormBaseConsulta()
         {
@@ -63,9 +67,9 @@ namespace GS.Core.UI.Forms
             ResumeLayout();
         }
 
-        // =============================
-        // FILTRO
-        // =============================
+        // =====================================================
+        // FILTRO / BUSCA
+        // =====================================================
 
         private void CriarFiltro()
         {
@@ -83,22 +87,47 @@ namespace GS.Core.UI.Forms
                 Width = 300
             };
 
-            txtFiltro.KeyDown += (s, e) =>
+            // ============================
+            // TIMER (DEBOUNCE)
+            // ============================
+            _searchTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 300
+            };
+
+            _searchTimer.Tick += (_, _) =>
+            {
+                _searchTimer.Stop();
+                ExecutarBusca();
+            };
+
+            // ============================
+            // TEXT CHANGED (DIGITAR)
+            // ============================
+            txtFiltro.TextChanged += (_, _) =>
+            {
+                _searchTimer.Stop();
+                _searchTimer.Start();
+            };
+
+            // ============================
+            // ENTER
+            // ============================
+            txtFiltro.KeyDown += (_, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
                 {
                     e.SuppressKeyPress = true;
+                    _searchTimer.Stop();
                     ExecutarBusca();
                 }
             };
 
-            txtFiltro.TextChanged += (_, _) =>
+            btnBuscar = CriarBotao("Buscar", (_, _) =>
             {
-                if (string.IsNullOrWhiteSpace(txtFiltro.Text))
-                    ExecutarBusca();
-            };
-
-            btnBuscar = CriarBotao("Buscar", (_, _) => ExecutarBusca());
+                _searchTimer.Stop();
+                ExecutarBusca();
+            });
 
             pnlFiltro.Controls.Add(txtFiltro);
             pnlFiltro.Controls.Add(btnBuscar);
@@ -106,9 +135,10 @@ namespace GS.Core.UI.Forms
             Controls.Add(pnlFiltro);
         }
 
-        // =============================
-        // GRID
-        // =============================
+
+        // =====================================================
+        // GRID + STATE VIEW
+        // =====================================================
 
         private void CriarGrid()
         {
@@ -123,12 +153,12 @@ namespace GS.Core.UI.Forms
                 Dock = DockStyle.Fill
             };
 
-            // 🔗 Integração oficial de ações do grid
+            // Integração oficial das ações do grid
             Grid.ActionRequested += OnGridActionRequested;
 
             pnlGrid.Controls.Add(Grid);
-            Controls.Add(pnlGrid);
 
+            // Overlay de estados de UX
             StateView = new GsStateView
             {
                 State = GsUxState.Hidden
@@ -137,12 +167,11 @@ namespace GS.Core.UI.Forms
             pnlGrid.Controls.Add(StateView);
             pnlGrid.Controls.SetChildIndex(StateView, 0);
 
-
+            Controls.Add(pnlGrid);
         }
 
         /// <summary>
         /// Handler central de ações solicitadas pelo grid.
-        /// Centraliza Enter, duplo clique e futuras ações.
         /// </summary>
         private void OnGridActionRequested(object sender, GsGridActionEventArgs e)
         {
@@ -161,26 +190,20 @@ namespace GS.Core.UI.Forms
                     break;
             }
         }
+
         /// <summary>
         /// Ação de visualização (opcional).
         /// </summary>
-        protected virtual void OnVisualizarClick(object sender, EventArgs e)
-        {
-            // opcional — tela filha decide
-        }
+        protected virtual void OnVisualizarClick(object sender, EventArgs e) { }
 
         /// <summary>
         /// Ação de seleção (opcional).
         /// </summary>
-        protected virtual void OnSelecionarClick(object sender, EventArgs e)
-        {
-            // opcional — tela filha decide
-        }
+        protected virtual void OnSelecionarClick(object sender, EventArgs e) { }
 
-
-        // =============================
+        // =====================================================
         // PAGINAÇÃO
-        // =============================
+        // =====================================================
 
         private void CriarPaginacao()
         {
@@ -197,10 +220,10 @@ namespace GS.Core.UI.Forms
 
             Controls.Add(paginator);
         }
-        
-        // =============================
+
+        // =====================================================
         // AÇÕES
-        // =============================
+        // =====================================================
 
         private void CriarAcoes()
         {
@@ -226,9 +249,9 @@ namespace GS.Core.UI.Forms
             Controls.Add(pnlAcoes);
         }
 
-        // =============================
-        // BUSCA / PAGINAÇÃO
-        // =============================
+        // =====================================================
+        // BUSCA / UX / PAGINAÇÃO
+        // =====================================================
 
         protected string TextoFiltro => txtFiltro?.Text?.Trim();
 
@@ -236,8 +259,8 @@ namespace GS.Core.UI.Forms
         {
             try
             {
+                // UX - início do carregamento
                 StateView.State = GsUxState.Loading;
-
                 Grid.State = GsGridState.Loading;
                 paginator.State = GsPaginatorState.Loading;
 
@@ -253,14 +276,15 @@ namespace GS.Core.UI.Forms
             }
         }
 
-
         protected void AtualizarPaginacao(IEnumerable<object> dados)
         {
-            _dadosPaginados = dados.ToList();
+            _dadosPaginados.Clear();
+            _dadosPaginados.AddRange(dados);
 
             paginator.TotalItems = _dadosPaginados.Count;
             paginator.Reset();
 
+            // UX - estado final
             if (_dadosPaginados.Count == 0)
             {
                 StateView.State = GsUxState.Empty;
@@ -278,6 +302,7 @@ namespace GS.Core.UI.Forms
 
             AtualizarGridPagina(1, paginator.PageSize);
         }
+
         private void AtualizarGridPagina(int page, int pageSize)
         {
             var pageData = _dadosPaginados
@@ -288,9 +313,9 @@ namespace GS.Core.UI.Forms
             Grid.DataSource = pageData;
         }
 
-        // =============================
+        // =====================================================
         // CONTRATOS PARA TELAS FILHAS
-        // =============================
+        // =====================================================
 
         protected abstract void CarregarDados();
 
@@ -299,7 +324,6 @@ namespace GS.Core.UI.Forms
 
         /// <summary>
         /// Ação de exclusão padrão.
-        /// Usa confirmação modal legacy (FormMsg) por decisão consciente.
         /// </summary>
         protected virtual void OnExcluirClick(object sender, EventArgs e)
         {
@@ -310,9 +334,9 @@ namespace GS.Core.UI.Forms
                 return;
         }
 
-        // =============================
+        // =====================================================
         // UTILITÁRIOS
-        // =============================
+        // =====================================================
 
         private GsButton CriarBotao(string texto, EventHandler click)
         {

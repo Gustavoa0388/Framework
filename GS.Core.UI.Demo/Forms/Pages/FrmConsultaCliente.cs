@@ -26,6 +26,14 @@ namespace GS.Core.UI.Demo.Forms.Pages
     /// </summary>
     public partial class FrmConsultaCliente : FormBaseConsulta
     {
+
+        class ClienteDto
+        {
+            public int Id { get; set; }
+            public string Nome { get; set; }
+            public string Email { get; set; }
+        }
+
         // ==========================================================
         // DADOS (MOCK)
         // ==========================================================
@@ -39,15 +47,17 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         public FrmConsultaCliente()
         {
-            // Inicialização do Designer (OBRIGATÓRIO)
-            InitializeComponent();
-
-            CarregarDados();
-            ConfigurarGrid();
-            
-            
             Text = "Consulta de Clientes";
-            
+
+            // Tamanho inicial e mínimo (OBRIGATÓRIO)
+            StartPosition = FormStartPosition.CenterScreen;
+            Size = new Size(900, 600);
+            MinimumSize = new Size(800, 500);
+
+            ConfigurarGrid();
+
+            // PRIMEIRA CARGA DE DADOS
+            ExecutarBusca();
         }
 
         // ==========================================================
@@ -113,38 +123,37 @@ namespace GS.Core.UI.Demo.Forms.Pages
         /// </summary>
         protected override void CarregarDados()
         {
-            var todos = new List<object>
+            var todos = new List<ClienteDto>
     {
-        new { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
-        new { Id = 2, Nome = "Paulo Moura", Email = "paulo@email.com" },
-        new { Id = 3, Nome = "Maria Souza", Email = "maria@email.com" },
-        new { Id = 4, Nome = "Carlos Pereira", Email = "carlos@email.com" },
-        new { Id = 5, Nome = "Marcela Costa", Email = "marcela@email.com" },
-        new { Id = 6, Nome = "Maria Tavares", Email = "mariat@email.com" },
-        new { Id = 7, Nome = "Rogério Maia", Email = "rogerio@email.com" },
-        new { Id = 8, Nome = "Ana Paula Rossi", Email = "anap@email.com" },
-        new { Id = 9, Nome = "João Rocha", Email = "joaor@email.com" },
-        new { Id = 10, Nome = "Marina Silva", Email = "marina@email.com" },
-        new { Id = 11, Nome = "Carla Silva", Email = "carla@email.com" },
-        new { Id = 12, Nome = "Paula Silva", Email = "paula@email.com" },
+        new ClienteDto { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
+        new ClienteDto { Id = 2, Nome = "Paulo Moura", Email = "paulo@email.com" },
+        new ClienteDto { Id = 3, Nome = "Maria Souza", Email = "maria@email.com" },
+        new ClienteDto { Id = 4, Nome = "Carlos Pereira", Email = "carlos@email.com" },
+        new ClienteDto { Id = 5, Nome = "Marcela Costa", Email = "marcela@email.com" },
+        new ClienteDto { Id = 6, Nome = "Maria Tavares", Email = "mariat@email.com" },
+        new ClienteDto { Id = 7, Nome = "Rogério Maia", Email = "rogerio@email.com" },
+        new ClienteDto { Id = 8, Nome = "Ana Paula Rossi", Email = "anap@email.com" },
+        new ClienteDto { Id = 9, Nome = "João Rocha", Email = "joaor@email.com" },
+        new ClienteDto { Id = 10, Nome = "Marina Silva", Email = "marina@email.com" },
+        new ClienteDto { Id = 11, Nome = "Carla Silva", Email = "carla@email.com" },
+        new ClienteDto { Id = 12, Nome = "Paula Silva", Email = "paula@email.com" },
     };
 
-            // 🔎 APLICA FILTRO
+            IEnumerable<ClienteDto> filtrado = todos;
+
             if (!string.IsNullOrWhiteSpace(TextoFiltro))
             {
                 var filtro = TextoFiltro.ToLower();
 
-                todos = todos.FindAll(c =>
-                    c.GetType().GetProperty("Nome")?
-                     .GetValue(c)?
-                     .ToString()?
-                     .ToLower()
-                     .Contains(filtro) == true
+                filtrado = filtrado.Where(c =>
+                    c.Nome.ToLower().Contains(filtro) ||
+                    c.Email.ToLower().Contains(filtro)
                 );
             }
 
-            AtualizarPaginacao(todos);
+            AtualizarPaginacao(filtrado.Cast<object>());
         }
+
 
 
         // ==========================================================
