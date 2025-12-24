@@ -169,7 +169,14 @@ namespace GS.Core.UI.Controls.Base
         /// - MaskedTextBox
         /// - NumericTextBox
         /// </summary>
-        protected abstract TextBoxBase CreateInnerTextBox();
+        /// <summary>
+        /// Cria o controle interno do input.
+        /// Por padrão, inputs que NÃO usam TextBox podem retornar null.
+        /// </summary>
+        protected virtual TextBoxBase CreateInnerTextBox()
+        {
+            return null;
+        }
 
         /// <summary>
         /// Criação tardia do controle interno.

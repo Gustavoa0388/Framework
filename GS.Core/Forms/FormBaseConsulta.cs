@@ -261,7 +261,8 @@ namespace GS.Core.UI.Forms
             {
                 // UX - início do carregamento
                 StateView.State = GsUxState.Loading;
-                Grid.State = GsGridState.Loading;
+                Grid.State = GsGridState.Disabled;
+                StateView.State = GsUxState.Loading;
                 paginator.State = GsPaginatorState.Loading;
 
                 CarregarDados();
@@ -271,7 +272,7 @@ namespace GS.Core.UI.Forms
                 StateView.State = GsUxState.Error;
                 StateView.Message = "Erro ao carregar os dados";
 
-                Grid.State = GsGridState.Error;
+                Grid.State = GsGridState.Disabled;
                 paginator.State = GsPaginatorState.Disabled;
             }
         }
@@ -287,16 +288,18 @@ namespace GS.Core.UI.Forms
             // UX - estado final
             if (_dadosPaginados.Count == 0)
             {
+                Grid.State = GsGridState.Ready;
+
                 StateView.State = GsUxState.Empty;
+                StateView.Message = "Nenhum registro encontrado.";
             }
             else
             {
+                Grid.State = GsGridState.Ready;
                 StateView.State = GsUxState.Hidden;
             }
 
-            Grid.State = _dadosPaginados.Count == 0
-                ? GsGridState.Empty
-                : GsGridState.Ready;
+
 
             paginator.State = GsPaginatorState.Ready;
 

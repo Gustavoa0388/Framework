@@ -72,8 +72,9 @@ namespace GS.Core.UI.Controls.Inputs
         /// <summary>
         /// Coleção de itens do ComboBox.
         /// </summary>
-        [Browsable(false)]
-        public IList Items => _combo?.Items;
+        [Browsable(false)]       
+        public IList Items => _combo.Items;
+
 
         /// <summary>
         /// Índice selecionado.
@@ -106,8 +107,7 @@ namespace GS.Core.UI.Controls.Inputs
         // ==========================================================
         // CRIAÇÃO DO CONTROLE
         // ==========================================================
-
-        protected override TextBoxBase CreateInnerTextBox()
+        public GsComboBox()
         {
             _combo = new ComboBox
             {
@@ -115,10 +115,6 @@ namespace GS.Core.UI.Controls.Inputs
                     ? ComboBoxStyle.DropDownList
                     : ComboBoxStyle.DropDown
             };
-
-            // ============================
-            // EVENTOS
-            // ============================
 
             _combo.SelectedIndexChanged += (_, _) =>
             {
@@ -132,9 +128,8 @@ namespace GS.Core.UI.Controls.Inputs
 
             Controls.Add(_combo);
             _combo.BringToFront();
-
-            return null; // Não há TextBox interno
         }
+
 
         // ==========================================================
         // LAYOUT

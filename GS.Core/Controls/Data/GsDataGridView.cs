@@ -58,21 +58,10 @@ namespace GS.Core.UI.Controls.Data
             set
             {
                 _state = value;
+                Enabled = _state == GsGridState.Ready;
                 Invalidate();
             }
         }
-
-        /// <summary>
-        /// Mensagem exibida quando não há dados.
-        /// </summary>
-        public string EmptyMessage { get; set; } =
-            "Nenhum registro encontrado";
-
-        /// <summary>
-        /// Mensagem exibida em caso de erro.
-        /// </summary>
-        public string ErrorMessage { get; set; } =
-            "Falha ao carregar os dados";
 
         // ==========================================================
         // CONSTRUTOR
@@ -210,41 +199,8 @@ namespace GS.Core.UI.Controls.Data
         // ESTADOS DE UX (RENDER)
         // ==========================================================
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            if (State == GsGridState.Ready)
-                return;
-
-            var g = e.Graphics;
-            var theme = ThemeManager.Current;
-
-            using var bg = new SolidBrush(theme.Surface);
-            g.FillRectangle(bg, ClientRectangle);
-
-            string message = State switch
-            {
-                GsGridState.Loading => "Carregando...",
-                GsGridState.Empty => EmptyMessage,
-                GsGridState.Error => ErrorMessage,
-                _ => string.Empty
-            };
-
-            using var brush = new SolidBrush(theme.TextSecondary);
-            using var format = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
-
-            g.DrawString(
-                message,
-                theme.DefaultFont,
-                brush,
-                ClientRectangle,
-                format
-            );
+        
         }
     }
-}
+
+
