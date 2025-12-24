@@ -1,100 +1,56 @@
-﻿using GS.Core.UI.Theming;
-using GS.Core.UI.Controls.Base;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using GS.Core.UI.Controls.Base;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// GsRadioOption
     ///
-    /// RadioButton padrão do GS Core.
+    /// Opção de seleção única do GS Core UI.
     ///
-    /// OBJETIVO:
-    /// Representar uma opção exclusiva dentro de um grupo,
-    /// integrada ao sistema de tema, validação e UX do GS Core.
+    /// CLASSIFICAÇÃO:
+    /// - Input COMPOSTO (não baseado em TextBox)
     ///
-    /// ESTE CONTROLE:
-    /// - Herda de <see cref="GsInputBase"/> (pipeline oficial de inputs)
-    /// - Usa <see cref="RadioButton"/> como controle real
-    /// - Possui renderização custom (owner draw)
-    /// - Integra-se ao sistema de Theme
-    /// - Participa do fluxo de validação (Required)
+    /// RESPONSABILIDADE:
+    /// - Representar uma opção de RadioButton
+    /// - Integrar Required, Theme e UX
     ///
-    /// ESTE CONTROLE NÃO FAZ:
-    /// - Não gerencia grupos
-    /// - Não valida regra de negócio
-    /// - Não acessa dados externos
-    ///
-    /// REGRA DE REQUIRED:
-    /// - Required = true → opção deve estar marcada
+    /// NÃO FAZ:
+    /// - Não cria InnerTextBox
+    /// - Não gerencia grupos automaticamente
     /// </summary>
     public class GsRadioOption : GsInputBase
     {
-        // =====================================================
-        // CONTROLE INTERNO
-        // =====================================================
+        private readonly RadioButton _radio;
 
-        private RadioButton _radio;
-        private GsTheme _theme;
+        // ==========================================================
+        // PROPRIEDADES
+        // ==========================================================
 
-        private const int RadioSize = 14;
-
-        // =====================================================
-        // PROPRIEDADES PÚBLICAS
-        // =====================================================
-
-        /// <summary>
-        /// Define se a opção está selecionada.
-        /// </summary>
         [Category("GS Core")]
         public bool Checked
         {
-            get => _radio?.Checked ?? false;
-            set
-            {
-                if (_radio != null)
-                    _radio.Checked = value;
-            }
+            get => _radio.Checked;
+            set => _radio.Checked = value;
         }
 
-        /// <summary>
-        /// Texto exibido ao lado da opção.
-        /// </summary>
-        [Category("GS Core")]
-        public override string Text
-        {
-            get => _radio?.Text ?? string.Empty;
-            set
-            {
-                if (_radio != null)
-                    _radio.Text = value;
-            }
-        }
+        // ==========================================================
+        // CONSTRUTOR
+        // ==========================================================
 
-        // =====================================================
-        // CRIAÇÃO DO CONTROLE
-        // =====================================================
-
-        /// <summary>
-        /// Cria o RadioButton interno real.
-        /// </summary>
-        protected override TextBoxBase CreateInnerTextBox()
+        public GsRadioOption()
         {
+            Height = 28;
+
             _radio = new RadioButton
             {
-                AutoSize = false,
-                Height = 22,
-                Cursor = Cursors.Hand,
-                Padding = new Padding(RadioSize + 6, 0, 0, 0)
+                AutoSize = true,
+                Location = new Point(0, 4)
             };
-
-            // ============================
-            // EVENTOS
-            // ============================
 
             _radio.CheckedChanged += (_, _) =>
             {
@@ -102,81 +58,23 @@ namespace GS.Core.UI.Controls.Inputs
                 ValidateInput();
             };
 
-            _radio.KeyDown += (s, e) => OnKeyDown(e);
-            _radio.KeyUp += (s, e) => OnKeyUp(e);
-
             Controls.Add(_radio);
-            _radio.BringToFront();
-
-            return null; // Não há TextBox interno
         }
 
-        // =====================================================
-        // TEMA
-        // =====================================================
+        // ==========================================================
+        // TEXTO
+        // ==========================================================
 
-        /// <summary>
-        /// Aplica o tema visual ao controle.
-        /// </summary>
-        public override void ApplyTheme(GsTheme theme)
+        public override string Text
         {
-            _theme = theme;
-
-            Font = theme.DefaultFont;
-            ForeColor = theme.RadioText;
-
-            Invalidate();
+            get => _radio.Text;
+            set => _radio.Text = value;
         }
 
-        // =====================================================
-        // RENDERIZAÇÃO
-        // =====================================================
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            if (_theme == null)
-                return;
-
-            var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.Clear(Parent?.BackColor ?? BackColor);
-
-            Rectangle circle = new Rectangle(
-                Padding.Left - RadioSize - 6,
-                (Height - RadioSize) / 2,
-                RadioSize,
-                RadioSize
-            );
-
-            using (var pen = new Pen(_theme.RadioBorder, 1))
-                g.DrawEllipse(pen, circle);
-
-            if (Checked)
-            {
-                Rectangle inner = Rectangle.Inflate(circle, -4, -4);
-                using (var brush = new SolidBrush(_theme.RadioFill))
-                    g.FillEllipse(brush, inner);
-            }
-
-            TextRenderer.DrawText(
-                g,
-                Text,
-                Font,
-                new Rectangle(Padding.Left, 0, Width, Height),
-                ForeColor,
-                TextFormatFlags.VerticalCenter | TextFormatFlags.Left
-            );
-        }
-
-        // =====================================================
+        // ==========================================================
         // VALIDAÇÃO
-        // =====================================================
+        // ==========================================================
 
-        /// <summary>
-        /// Valida o estado da opção conforme regras do GS Core.
-        /// </summary>
         public override void ValidateInput()
         {
             ClearError();
@@ -184,8 +82,20 @@ namespace GS.Core.UI.Controls.Inputs
             if (Required && !_radio.Checked)
             {
                 ShowError(RequiredMessage);
-                return;
             }
+        }
+
+        // ==========================================================
+        // TEMA
+        // ==========================================================
+
+        public override void ApplyTheme(GsTheme theme)
+        {
+            base.ApplyTheme(theme);
+
+            _radio.Font = theme.DefaultFont;
+            _radio.ForeColor = theme.TextPrimary;
+            _radio.BackColor = Color.Transparent;
         }
     }
 }

@@ -51,8 +51,8 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
             // Tamanho inicial e mínimo (OBRIGATÓRIO)
             StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(900, 600);
-            MinimumSize = new Size(800, 500);
+            Size = new Size(650, 500);
+            MinimumSize = new Size(600, 500);
 
             ConfigurarGrid();
 

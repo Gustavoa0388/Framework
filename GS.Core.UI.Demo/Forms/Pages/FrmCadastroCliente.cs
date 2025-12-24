@@ -32,7 +32,10 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         public FrmCadastroCliente()
         {
-            
+            // Tamanho inicial e mínimo (OBRIGATÓRIO)
+            StartPosition = FormStartPosition.CenterScreen;
+            Size = new Size(500, 400);
+            MinimumSize = new Size(500, 300);
             BuildLayout();
             BuildForm();
         }
