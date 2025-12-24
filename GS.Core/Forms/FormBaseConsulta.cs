@@ -44,6 +44,7 @@ namespace GS.Core.UI.Forms
         protected GsButton btnBuscar;
 
         protected GsPaginator paginator;
+
         protected GsStateView StateView;
 
         private readonly List<object> _dadosPaginados = new();
@@ -61,11 +62,31 @@ namespace GS.Core.UI.Forms
 
             CriarGrid();
             CriarFiltro();
-            CriarPaginacao();
+            CriarPaginacao(); // paginator é criado aqui
             CriarAcoes();
+
+            // 🔑 AGORA SIM
+            paginator.PageChanged += OnPaginatorPageChanged;
 
             ResumeLayout();
         }
+
+
+        private void OnPaginatorPageChanged(object sender, GsPageChangedEventArgs e)
+        {
+            if (_dadosPaginados.Count == 0)
+                return;
+
+            _paginaAtual = e.Page;
+
+            AtualizarGridPagina(
+                _paginaAtual,
+                paginator.PageSize
+            );
+        }
+
+
+
 
         // =====================================================
         // FILTRO / BUSCA
@@ -204,6 +225,7 @@ namespace GS.Core.UI.Forms
         // =====================================================
         // PAGINAÇÃO
         // =====================================================
+        private int _paginaAtual = 1;
 
         private void CriarPaginacao()
         {
@@ -211,11 +233,6 @@ namespace GS.Core.UI.Forms
             {
                 Dock = DockStyle.Bottom,
                 PageSize = 10
-            };
-
-            paginator.PageChanged += (_, e) =>
-            {
-                AtualizarGridPagina(e.Page, e.PageSize);
             };
 
             Controls.Add(paginator);
@@ -259,11 +276,9 @@ namespace GS.Core.UI.Forms
         {
             try
             {
-                // UX - início do carregamento
-                StateView.State = GsUxState.Loading;
-                Grid.State = GsGridState.Disabled;
                 StateView.State = GsUxState.Loading;
                 paginator.State = GsPaginatorState.Loading;
+                Grid.State = GsGridState.Disabled;
 
                 CarregarDados();
             }
@@ -272,10 +287,11 @@ namespace GS.Core.UI.Forms
                 StateView.State = GsUxState.Error;
                 StateView.Message = "Erro ao carregar os dados";
 
-                Grid.State = GsGridState.Disabled;
                 paginator.State = GsPaginatorState.Disabled;
+                Grid.State = GsGridState.Disabled;
             }
         }
+
 
         protected void AtualizarPaginacao(IEnumerable<object> dados)
         {
@@ -283,27 +299,28 @@ namespace GS.Core.UI.Forms
             _dadosPaginados.AddRange(dados);
 
             paginator.TotalItems = _dadosPaginados.Count;
-            paginator.Reset();
 
-            // UX - estado final
             if (_dadosPaginados.Count == 0)
             {
+                Grid.DataSource = null;
+
                 Grid.State = GsGridState.Ready;
+                paginator.State = GsPaginatorState.Disabled;
 
                 StateView.State = GsUxState.Empty;
                 StateView.Message = "Nenhum registro encontrado.";
-            }
-            else
-            {
-                Grid.State = GsGridState.Ready;
-                StateView.State = GsUxState.Hidden;
+                return;
             }
 
-
-
+            Grid.State = GsGridState.Ready;
             paginator.State = GsPaginatorState.Ready;
+            StateView.State = GsUxState.Hidden;
 
-            AtualizarGridPagina(1, paginator.PageSize);
+            // 🔑 CARGA INICIAL EXPLÍCITA
+            _paginaAtual = 1;
+            AtualizarGridPagina(_paginaAtual, paginator.PageSize);
+            paginator.SetCurrentPage(1);
+
         }
 
         private void AtualizarGridPagina(int page, int pageSize)
@@ -315,6 +332,7 @@ namespace GS.Core.UI.Forms
 
             Grid.DataSource = pageData;
         }
+
 
         // =====================================================
         // CONTRATOS PARA TELAS FILHAS

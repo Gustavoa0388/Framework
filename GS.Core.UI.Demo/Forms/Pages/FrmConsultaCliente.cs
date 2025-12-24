@@ -1,4 +1,5 @@
 ﻿using GS.Core.UI.Controls.Data;
+using GS.Core.UI.Controls.UX;
 using GS.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
     /// - Herda layout base e grid do FormBaseConsulta
     /// </summary>
     public partial class FrmConsultaCliente : FormBaseConsulta
-    {
-
-        class ClienteDto
-        {
-            public int Id { get; set; }
-            public string Nome { get; set; }
-            public string Email { get; set; }
-        }
+    {             
 
         // ==========================================================
         // DADOS (MOCK)
@@ -51,8 +45,8 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
             // Tamanho inicial e mínimo (OBRIGATÓRIO)
             StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(650, 500);
-            MinimumSize = new Size(600, 500);
+            Size = new Size(550, 550);
+            MinimumSize = new Size(400, 500);
 
             ConfigurarGrid();
 
@@ -86,20 +80,26 @@ namespace GS.Core.UI.Demo.Forms.Pages
             Grid.ColumnsDefinition.Add(
                 new GsGridColumn("Código", "Id")
                 {
-                    Width = 80,
+                    Width = 60,
                     Alignment = DataGridViewContentAlignment.MiddleCenter
                 });
 
             Grid.ColumnsDefinition.Add(
                 new GsGridColumn("Nome", "Nome")
                 {
-                    Width = 250
+                    Width = 200
                 });
 
             Grid.ColumnsDefinition.Add(
                 new GsGridColumn("E-mail", "Email")
                 {
-                    Width = 250
+                    Width = 200
+                });
+
+            Grid.ColumnsDefinition.Add(
+                new GsGridColumn("Ativo", "Ativo")
+                {
+                    Width = 60
                 });
 
             // ============================
@@ -123,37 +123,38 @@ namespace GS.Core.UI.Demo.Forms.Pages
         /// </summary>
         protected override void CarregarDados()
         {
-            var todos = new List<ClienteDto>
-    {
-        new ClienteDto { Id = 1, Nome = "João Silva", Email = "joao@email.com" },
-        new ClienteDto { Id = 2, Nome = "Paulo Moura", Email = "paulo@email.com" },
-        new ClienteDto { Id = 3, Nome = "Maria Souza", Email = "maria@email.com" },
-        new ClienteDto { Id = 4, Nome = "Carlos Pereira", Email = "carlos@email.com" },
-        new ClienteDto { Id = 5, Nome = "Marcela Costa", Email = "marcela@email.com" },
-        new ClienteDto { Id = 6, Nome = "Maria Tavares", Email = "mariat@email.com" },
-        new ClienteDto { Id = 7, Nome = "Rogério Maia", Email = "rogerio@email.com" },
-        new ClienteDto { Id = 8, Nome = "Ana Paula Rossi", Email = "anap@email.com" },
-        new ClienteDto { Id = 9, Nome = "João Rocha", Email = "joaor@email.com" },
-        new ClienteDto { Id = 10, Nome = "Marina Silva", Email = "marina@email.com" },
-        new ClienteDto { Id = 11, Nome = "Carla Silva", Email = "carla@email.com" },
-        new ClienteDto { Id = 12, Nome = "Paula Silva", Email = "paula@email.com" },
-    };
-
-            IEnumerable<ClienteDto> filtrado = todos;
-
-            if (!string.IsNullOrWhiteSpace(TextoFiltro))
+            try
             {
-                var filtro = TextoFiltro.ToLower();
+                StateView.State = GsUxState.Loading;
+                StateView.Message = "Carregando clientes...";
+                StateView.Visible = true;
 
-                filtrado = filtrado.Where(c =>
-                    c.Nome.ToLower().Contains(filtro) ||
-                    c.Email.ToLower().Contains(filtro)
-                );
+                var clientes = new List<ClienteDto>
+        {
+            new ClienteDto { Id = 1, Nome = "João Silva", Email = "joao@email.com", Ativo = true },
+            new ClienteDto { Id = 2, Nome = "Paulo Moura", Email = "paulo@email.com", Ativo = true },
+            new ClienteDto { Id = 3, Nome = "Maria Souza", Email = "maria@email.com", Ativo = false },
+            new ClienteDto { Id = 4, Nome = "Carlos Pereira", Email = "carlos@email.com", Ativo = true },
+            new ClienteDto { Id = 5, Nome = "Marcela Costa", Email = "marcela@email.com", Ativo = true },
+            new ClienteDto { Id = 6, Nome = "Teste 6", Email = "teste6@email.com", Ativo = true },
+            new ClienteDto { Id = 7, Nome = "Teste 7", Email = "teste7@email.com", Ativo = true },
+            new ClienteDto { Id = 8, Nome = "Teste 8", Email = "teste8@email.com", Ativo = false },
+            new ClienteDto { Id = 9, Nome = "Teste 9", Email = "teste9@email.com", Ativo = true },
+            new ClienteDto { Id = 10, Nome = "Teste 10", Email = "teste10@email.com", Ativo = true },
+            new ClienteDto { Id = 11, Nome = "Teste 11", Email = "teste11@email.com", Ativo = true },
+            new ClienteDto { Id = 12, Nome = "Teste 12", Email = "teste12@email.com", Ativo = true },
+        };
+
+                // 🔑 AQUI É O CORAÇÃO DA PAGINAÇÃO
+                AtualizarPaginacao(clientes.Cast<object>());
             }
-
-            AtualizarPaginacao(filtrado.Cast<object>());
+            catch (Exception ex)
+            {
+                StateView.State = GsUxState.Error;
+                StateView.Message = ex.Message;
+                StateView.Visible = true;
+            }
         }
-
 
 
         // ==========================================================
@@ -195,5 +196,19 @@ namespace GS.Core.UI.Demo.Forms.Pages
             // Exclusão mock
             FormMsg.Success("Cliente excluído (exemplo)");
         }
+
+        // =====================================================
+        // DTO
+        // =====================================================
+
+        private class ClienteDto
+        {
+            public int Id { get; set; }
+            public string Nome { get; set; }
+            public string Email { get; set; }
+            public bool Ativo { get; set; }
+        }
     }
 }
+    
+

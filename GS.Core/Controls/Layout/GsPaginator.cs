@@ -7,16 +7,6 @@ namespace GS.Core.UI.Controls.Data
 {
     /// <summary>
     /// Controle de paginação padronizado do GS Core UI.
-    /// 
-    /// RESPONSABILIDADES:
-    /// - Navegar entre páginas
-    /// - Exibir estado atual
-    /// - Emitir evento semântico
-    /// 
-    /// NÃO FAZ:
-    /// - Carga de dados
-    /// - Filtro
-    /// - Integração direta com grid
     /// </summary>
     public class GsPaginator : UserControl, IThemedControl
     {
@@ -24,6 +14,9 @@ namespace GS.Core.UI.Controls.Data
         // EVENTOS
         // ======================================================
 
+        /// <summary>
+        /// Disparado quando o usuário navega entre páginas.
+        /// </summary>
         public event EventHandler<GsPageChangedEventArgs> PageChanged;
 
         // ======================================================
@@ -105,12 +98,16 @@ namespace GS.Core.UI.Controls.Data
         // MÉTODOS PÚBLICOS
         // ======================================================
 
+        /// <summary>
+        /// Navega para a página informada disparando evento.
+        /// USO: interação do usuário.
+        /// </summary>
         public void GoToPage(int page)
         {
-            if (State != GsPaginatorState.Ready)
+            if (page < 1 || page > TotalPages)
                 return;
 
-            if (page < 1 || page > TotalPages)
+            if (_currentPage == page)
                 return;
 
             _currentPage = page;
@@ -127,10 +124,25 @@ namespace GS.Core.UI.Controls.Data
             );
         }
 
+        /// <summary>
+        /// Define a página atual sem disparar evento.
+        /// USO: controle interno do framework.
+        /// </summary>
+        public void SetCurrentPage(int page)
+        {
+            if (page < 1 || page > TotalPages)
+                return;
+
+            _currentPage = page;
+            AtualizarUI();
+        }
+
+        /// <summary>
+        /// Reinicia a paginação para a primeira página.
+        /// </summary>
         public void Reset()
         {
-            _currentPage = 1;
-            AtualizarUI();
+            SetCurrentPage(1);
         }
 
         // ======================================================
