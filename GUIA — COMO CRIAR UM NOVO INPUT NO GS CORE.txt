@@ -1,0 +1,130 @@
+🧭 GUIA — COMO CRIAR UM NOVO INPUT NO GS CORE
+Exemplo: GsMaskedTextBox, GsNumericTextBox, GsSearchBox
+🧱 PASSO 1 — Herança correta
+
+Todo input DEVE herdar de:
+
+GsInputBase
+
+
+Nunca herdar direto de UserControl ou TextBox.
+
+🧱 PASSO 2 — Criar o controle interno
+
+Implementar:
+
+protected override TextBoxBase CreateInnerTextBox()
+
+
+Exemplo:
+
+protected override TextBoxBase CreateInnerTextBox()
+{
+    return new MaskedTextBox
+    {
+        Mask = "000.000.000-00"
+    };
+}
+
+🧱 PASSO 3 — Propagar eventos IMPORTANTES
+
+No controle concreto (ex: GsTextBox):
+
+TextChanged
+
+KeyDown
+
+KeyPress
+
+KeyUp
+
+Exemplo:
+
+_inner.TextChanged += (s, e) => OnTextChanged(e);
+_inner.KeyDown += (s, e) => OnKeyDown(e);
+
+
+👉 Se não fizer isso, debounce, busca e atalhos quebram.
+
+🧱 PASSO 4 — Propagar propriedade Text
+
+Sempre sobrescrever:
+
+public override string Text
+{
+    get => _inner.Text;
+    set => _inner.Text = value;
+}
+
+
+Nunca manter valor duplicado.
+
+🧱 PASSO 5 — Validação
+
+Herdar validação base (Required)
+
+Se necessário, sobrescrever ValidateInput()
+
+Exemplo:
+
+public override void ValidateInput()
+{
+    base.ValidateInput();
+
+    if (!HasError && !IsCpfValido(Text))
+        ShowError("CPF inválido");
+}
+
+🧱 PASSO 6 — Tema
+
+Não usar:
+❌ Color.Red
+❌ Color.Black
+
+Usar:
+✔️ theme.InputError
+✔️ theme.TextPrimary
+
+🧱 PASSO 7 — UX e acessibilidade
+
+Tab funciona
+
+Enter previsível
+
+Não roubar foco
+
+Sem MessageBox
+
+🧱 PASSO 8 — Documentação (OBRIGATÓRIA)
+
+Todo input novo deve ter:
+
+XML Summary na classe
+
+Explicação:
+
+o que faz
+
+quando usar
+
+quando não usar
+
+🧱 PASSO 9 — Checklist final (gate de entrada)
+
+Antes de aceitar um input no GS Core:
+
+Herda de GsInputBase
+
+Implementa IGsValidatable
+
+Implementa IGsRequiredAware
+
+Implementa IThemedControl
+
+Propaga eventos
+
+Não usa cores hardcoded
+
+Código comentado
+
+Se falhar em um item → não entra.
