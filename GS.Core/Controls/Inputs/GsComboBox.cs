@@ -190,10 +190,11 @@ namespace GS.Core.UI.Controls.Inputs
                     Width,
                     Height
                 ),
-                theme.TextSecondary,
+                theme.TextPlaceholder,
                 TextFormatFlags.VerticalCenter | TextFormatFlags.Left
             );
         }
+
 
         // ==========================================================
         // VALIDAÇÃO
