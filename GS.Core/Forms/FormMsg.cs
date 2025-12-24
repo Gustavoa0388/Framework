@@ -1,90 +1,118 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Forms
 {
     /// <summary>
     /// FormMsg
-    /// 
-    /// Classe utilitária para padronização de mensagens do sistema.
-    /// 
+    ///
+    /// Centralizador oficial de mensagens do GS Core UI.
+    ///
     /// RESPONSABILIDADES:
-    /// - Centralizar uso de MessageBox
-    /// - Evitar chamadas diretas espalhadas pelo sistema
-    /// 
-    /// STATUS:
-    /// - GS Core (estável)
-    /// 
-    /// IMPORTANTE:
-    /// - Mantém métodos legacy (Success) para compatibilidade
-    /// - Refatoração semântica fica para FASE EXTRA
+    /// - Exibir mensagens de Info, Success, Warning, Error e Confirm
+    /// - Aplicar tema do GS Core
+    /// - Padronizar UX de diálogo
+    ///
+    /// NÃO FAZ:
+    /// - Não executa regra de negócio
+    /// - Não substitui UX States (StateView)
+    /// - Não decide fluxo de aplicação
     /// </summary>
     public static class FormMsg
     {
-        /// <summary>
-        /// Mensagem de sucesso (LEGACY).
-        /// Mantida por compatibilidade com código existente.
-        /// </summary>
-        public static void Success(string message, string title = "Sucesso")
-        {
-            MessageBox.Show(
-                message,
-                title,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-        }
+        // =====================================================
+        // INFO
+        // =====================================================
 
-        /// <summary>
-        /// Mensagem informativa.
-        /// </summary>
         public static void Info(string message, string title = "Informação")
         {
-            MessageBox.Show(
-                message,
-                title,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            Show(message, title, MessageBoxIcon.Information);
         }
 
-        /// <summary>
-        /// Mensagem de erro.
-        /// </summary>
-        public static void Error(string message, string title = "Erro")
+        // =====================================================
+        // SUCCESS
+        // =====================================================
+
+        public static void Success(string message, string title = "Sucesso")
         {
-            MessageBox.Show(
-                message,
-                title,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
+            Show(message, title, MessageBoxIcon.Information);
         }
 
-        /// <summary>
-        /// Mensagem de aviso.
-        /// </summary>
+        // =====================================================
+        // WARNING
+        // =====================================================
+
         public static void Warning(string message, string title = "Atenção")
         {
-            MessageBox.Show(
-                message,
-                title,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
+            Show(message, title, MessageBoxIcon.Warning);
         }
 
-        /// <summary>
-        /// Mensagem de confirmação (Sim / Não).
-        /// Retorna true se o usuário confirmar.
-        /// </summary>
-        public static bool Confirm(string message, string title = "Confirmação")
+        // =====================================================
+        // ERROR
+        // =====================================================
+
+        public static void Error(string message, string title = "Erro")
         {
-            return MessageBox.Show(
+            Show(message, title, MessageBoxIcon.Error);
+        }
+
+        // =====================================================
+        // CONFIRM
+        // =====================================================
+
+        public static bool Confirm(
+            string message,
+            string title = "Confirmação",
+            string confirmText = "Sim",
+            string cancelText = "Não")
+        {
+            ApplyThemeIfNeeded();
+
+            var result = MessageBox.Show(
                 message,
                 title,
                 MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            ) == DialogResult.Yes;
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+
+            return result == DialogResult.Yes;
+        }
+
+        // =====================================================
+        // CORE
+        // =====================================================
+
+        private static void Show(
+            string message,
+            string title,
+            MessageBoxIcon icon)
+        {
+            ApplyThemeIfNeeded();
+
+            MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OK,
+                icon
+            );
+        }
+
+        // =====================================================
+        // THEME
+        // =====================================================
+
+        private static void ApplyThemeIfNeeded()
+        {
+            // Ponto único para evoluir:
+            // - Custom dialog
+            // - Dark mode real
+            // - Ícones próprios
+            // 
+            // Hoje mantém MessageBox,
+            // mas centralizado e rastreável.
+            var _ = ThemeManager.Current;
         }
     }
 }

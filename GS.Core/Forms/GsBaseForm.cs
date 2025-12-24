@@ -8,57 +8,69 @@ using GS.Core.UI.Theming;
 namespace GS.Core.UI.Forms
 {
     /// <summary>
-    /// Form base do GS Core.
-    /// Centraliza aplicação de tema, validação global e comportamento padrão.
-    /// NÃO utiliza Designer.
+    /// GsBaseForm
+    ///
+    /// Form base do GS Core UI.
+    ///
+    /// RESPONSABILIDADES:
+    /// - Centralizar aplicação de tema
+    /// - Oferecer validação global padronizada
+    /// - Servir como base neutra para formulários
+    ///
+    /// NÃO FAZ:
+    /// - Não controla estados de UX (Loading, Error, Empty)
+    /// - Não executa lógica de negócio
+    /// - Não define layout
     /// </summary>
     public class GsBaseForm : Form
     {
-        // ============================
-        // CONFIGURAÇÕES DE TEMA
-        // ============================
+        // =====================================================
+        // TEMA
+        // =====================================================
 
         /// <summary>
-        /// Define se o tema será aplicado automaticamente ao carregar o Form.
+        /// Aplica o tema automaticamente ao carregar o formulário.
         /// </summary>
         protected bool AutoApplyTheme { get; set; } = true;
 
         /// <summary>
-        /// Permite sobrescrever o tema padrão apenas neste Form.
-        /// Se null, usa o tema atual do ThemeManager.
+        /// Permite sobrescrever o tema apenas neste formulário.
+        /// Se null, utiliza o tema atual do ThemeManager.
         /// </summary>
         protected GsTheme CustomTheme { get; set; }
 
-        // ============================
+        // =====================================================
         // CONSTRUTOR
-        // ============================
+        // =====================================================
 
         protected GsBaseForm()
         {
-            // Boas práticas padrão
             StartPosition = FormStartPosition.CenterScreen;
-            
+            KeyPreview = true;
         }
 
-        // ============================
+        // =====================================================
         // CICLO DE VIDA
-        // ============================
+        // =====================================================
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);           
+            base.OnLoad(e);
             ApplyThemeIfNeeded();
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            // Gancho futuro: animações, logging, métricas
+            // Gancho futuro:
+            // - métricas
+            // - logging
+            // - animações
         }
 
-        // ============================
+        // =====================================================
         // TEMA
-        // ============================
+        // =====================================================
 
         protected virtual void ApplyThemeIfNeeded()
         {
@@ -70,18 +82,16 @@ namespace GS.Core.UI.Forms
                 return;
 
             ThemeManager.ApplyTheme(this, theme);
-            Invalidate(true); // força repaint completo
+            Invalidate(true);
         }
 
-
-        // ============================
+        // =====================================================
         // VALIDAÇÃO GLOBAL
-        // ============================
+        // =====================================================
 
         /// <summary>
-        /// Valida todos os inputs que implementam IGsValidatable.
+        /// Valida todos os controles que implementam IGsValidatable.
         /// Retorna true se todos estiverem válidos.
-        /// Pode ser sobrescrito por formulários especializados.
         /// </summary>
         public virtual bool ValidateForm()
         {
@@ -97,17 +107,15 @@ namespace GS.Core.UI.Forms
                     firstInvalid = input;
             }
 
-            // Foca no primeiro erro (UX profissional)
+            // UX profissional: foca no primeiro erro
             if (firstInvalid is Control ctrl && ctrl.CanFocus)
-            {
                 ctrl.Focus();
-            }
 
             return firstInvalid == null;
         }
 
         /// <summary>
-        /// Obtém recursivamente todos os controles que implementam IGsValidatable.
+        /// Obtém recursivamente todos os controles IGsValidatable.
         /// Inclui Panels, GroupBox, TabPages, etc.
         /// </summary>
         protected virtual List<IGsValidatable> GetAllValidatableControls(Control parent)
@@ -126,12 +134,12 @@ namespace GS.Core.UI.Forms
             return list;
         }
 
-        // ============================
-        // LEGADO / COMPATIBILIDADE (OPCIONAL)
-        // ============================
+        // =====================================================
+        // LEGADO (COMPATIBILIDADE)
+        // =====================================================
 
         /// <summary>
-        /// Método legado em PT-BR para compatibilidade temporária.
+        /// Método legado em PT-BR.
         /// Use ValidateForm().
         /// </summary>
         [Obsolete("Use ValidateForm()")]

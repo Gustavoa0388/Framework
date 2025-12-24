@@ -1,173 +1,168 @@
-﻿using System;
-using System.Linq;
+﻿using GS.Core.UI.Controls.UX;
+using GS.Core.UI.Forms;
+using System;
 using System.Windows.Forms;
-using GS.Core.UI.Controls.Base;
-using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Forms
 {
     /// <summary>
     /// FormBaseCadastro
-    /// 
-    /// Base oficial para todos os formulários de cadastro do GS Core.
-    /// 
-    /// RESPONSABILIDADE:
-    /// - Controlar o ciclo de vida do cadastro
-    /// - Centralizar habilitação/desabilitação de inputs
-    /// - Executar validação via IGsValidatable
-    /// 
+    ///
+    /// Form base para telas de cadastro/edição.
+    ///
+    /// RESPONSABILIDADES:
+    /// - Orquestrar estados de UX (Loading, Error, Success)
+    /// - Centralizar fluxo de salvar / carregar registro
+    /// - Integrar validação global do formulário
+    ///
     /// NÃO FAZ:
-    /// - Layout
-    /// - Mensagens
-    /// - Persistência
+    /// - Não usa Grid
+    /// - Não usa Paginação
+    /// - Não acessa banco
+    /// - Não executa regra de negócio
     /// </summary>
     public abstract class FormBaseCadastro : GsBaseForm
     {
-        /// <summary>
-        /// Indica se o formulário está em modo de edição.
-        /// </summary>
-        protected bool IsEditMode { get; private set; }
+        // =====================================================
+        // CONTROLES BASE
+        // =====================================================
+
+        protected GsStateView StateView { get; }
+
+        // =====================================================
+        // ESTADO
+        // =====================================================
+
+        protected bool IsReadOnly { get; private set; }
+
+        // =====================================================
+        // CONSTRUTOR
+        // =====================================================
 
         protected FormBaseCadastro()
         {
-            StartPosition = FormStartPosition.CenterScreen;
-            KeyPreview = true;
+            StateView = new GsStateView
+            {
+                Dock = DockStyle.Fill,
+                Visible = false
+            };
 
-            Load += OnFormLoad;
-        }
-
-        private void OnFormLoad(object sender, EventArgs e)
-        {
-            OnInitialize();
-            EnterViewMode();
+            Controls.Add(StateView);
+            StateView.BringToFront();
         }
 
         // =====================================================
-        // CONTRATOS OBRIGATÓRIOS
+        // CICLO DE VIDA
         // =====================================================
 
-        protected abstract void OnInitialize();
-        protected abstract void OnLoadData();
-        protected abstract void OnSave();
-        protected abstract void OnDelete();
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            OnLoadEntity();
+        }
 
         // =====================================================
-        // MODOS
+        // FLUXO PRINCIPAL
         // =====================================================
 
-        protected virtual void EnterViewMode()
-        {
-            IsEditMode = false;
-            SetInputsEnabled(false);
-            OnLoadData();
-        }
+        /// <summary>
+        /// Carrega o registro (novo ou existente).
+        /// Implementação obrigatória no formulário concreto.
+        /// </summary>
+        protected abstract void OnLoadEntity();
 
-        protected virtual void EnterEditMode()
-        {
-            IsEditMode = true;
-            SetInputsEnabled(true);
-        }
-
-        protected virtual void EnterNewMode()
-        {
-            IsEditMode = true;
-            ClearInputs();
-            SetInputsEnabled(true);
-        }
+        /// <summary>
+        /// Salva o registro.
+        /// Implementação obrigatória no formulário concreto.
+        /// </summary>
+        protected abstract void OnSaveEntity();
 
         // =====================================================
         // AÇÕES PADRÃO
         // =====================================================
 
-        protected void ActionNovo()
+        protected virtual void Save()
         {
-            EnterNewMode();
-        }
+            if (!ValidateForm())
+                return;
 
-        protected void ActionEditar()
-        {
-            EnterEditMode();
-        }
+            SetLoading("Salvando...");
 
-        protected void ActionSalvar()
-        {
-            ValidateForm(); // segue o contrato atual do Core
-
-            OnSave();
-            EnterViewMode();
-        }
-
-        protected void ActionExcluir()
-        {
-            OnDelete();
-            Close();
-        }
-
-        protected void ActionCancelar()
-        {
-            EnterViewMode();
-        }
-
-        // =====================================================
-        // VALIDAÇÃO
-        // =====================================================
-
-        protected virtual void ValidateForm()
-        {
-            var validatables = GetAllControls(this)
-                .OfType<IGsValidatable>();
-
-            foreach (var control in validatables)
+            try
             {
-                control.Validate();
+                OnSaveEntity();
+                ShowSuccess("Registro salvo com sucesso.");
             }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        // =====================================================
+        // UX STATES (PADRÃO BLOCO 4)
+        // =====================================================
+
+        protected void SetLoading(string message)
+        {
+            ToggleInputs(false);
+
+            StateView.State = GsUxState.Loading;
+            StateView.Message = message;
+            StateView.ShowProgress = true;
+            StateView.Visible = true;
+        }
+
+        protected void ShowSuccess(string message)
+        {
+            StateView.State = GsUxState.Success;
+            StateView.Message = message;
+            StateView.ShowProgress = false;
+            StateView.Visible = true;
+
+            // UX corporativa: feedback rápido e não bloqueante
+            var timer = new System.Windows.Forms.Timer { Interval = 1500 };
+            timer.Tick += (_, _) =>
+            {
+                timer.Stop();
+                timer.Dispose();
+
+                StateView.State = GsUxState.Hidden;
+                StateView.Visible = false;
+                ToggleInputs(true);
+            };
+            timer.Start();
+        }
+
+        protected void ShowError(string message)
+        {
+            ToggleInputs(true);
+
+            StateView.State = GsUxState.Error;
+            StateView.Message = message;
+            StateView.ShowProgress = false;
+            StateView.Visible = true;
+        }
+
+        protected void SetReadOnly(bool readOnly)
+        {
+            IsReadOnly = readOnly;
+            ToggleInputs(!readOnly);
         }
 
         // =====================================================
         // UTILITÁRIOS
         // =====================================================
 
-        private void SetInputsEnabled(bool enabled)
+        protected virtual void ToggleInputs(bool enabled)
         {
-            foreach (var control in GetAllControls(this))
+            foreach (Control ctrl in Controls)
             {
-                if (control is Control c && c is IGsValidatable)
-                    c.Enabled = enabled;
+                if (ctrl == StateView)
+                    continue;
+
+                ctrl.Enabled = enabled;
             }
-        }
-
-        private void ClearInputs()
-        {
-            foreach (var control in GetAllControls(this))
-            {
-                switch (control)
-                {
-                    case TextBoxBase txt:
-                        txt.Clear();
-                        break;
-
-                    case CheckBox chk:
-                        chk.Checked = false;
-                        break;
-
-                    case RadioButton rb:
-                        rb.Checked = false;
-                        break;
-
-                    case ComboBox cb:
-                        cb.SelectedIndex = -1;
-                        break;
-                }
-            }
-        }
-
-        private static Control[] GetAllControls(Control parent)
-        {
-            return parent.Controls
-                .Cast<Control>()
-                .SelectMany(GetAllControls)
-                .Concat(parent.Controls.Cast<Control>())
-                .ToArray();
         }
     }
 }

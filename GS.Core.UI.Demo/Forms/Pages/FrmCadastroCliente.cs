@@ -1,141 +1,131 @@
-﻿using GS.Core.UI.Controls.Display;
+﻿using System;
+using System.Windows.Forms;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Forms;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace GS.Core.UI.Demo.Forms.Pages
 {
     /// <summary>
-    /// FrmCadastroCliente (DEMO)
-    /// 
-    /// Demonstra o uso correto do FormBaseCadastro
-    /// com inputs GS Core e layout local.
+    /// FrmCadastroCliente
+    ///
+    /// Tela DEMO de cadastro de cliente.
+    /// Demonstra uso correto do GS Core UI.
     /// </summary>
-    public partial class FrmCadastroCliente : FormBaseCadastro
+    public class FrmCadastroCliente : FormBaseCadastro
     {
-        // =========================
+        // =====================================================
         // CONTROLES
-        // =========================
+        // =====================================================
 
-        private Panel pnlConteudo;
-
+        private Label lblNome;
         private GsTextBox txtNome;
-        private GsMaskedInput txtCpf;
-        private GsNumericInput txtIdade;
-        private GsDateSelector txtNascimento;
 
-        // =========================
+        private Label lblEmail;
+        private GsTextBox txtEmail;
+
+        private GsCheckBox chkAtivo;
+
+        private Button btnSalvar;
+        private Button btnCancelar;
+
+        // =====================================================
         // CONSTRUTOR
-        // =========================
+        // =====================================================
 
         public FrmCadastroCliente()
         {
-            // Tamanho inicial e mínimo (OBRIGATÓRIO)
-            StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(500, 400);
-            MinimumSize = new Size(500, 300);
+            Text = "Cadastro de Cliente";
+            Width = 500;
+            Height = 300;
+
             BuildLayout();
-            BuildForm();
         }
 
-        // =========================
+        // =====================================================
         // LAYOUT
-        // =========================
+        // =====================================================
 
         private void BuildLayout()
         {
-            pnlConteudo = new Panel
+            lblNome = new Label
             {
-                Dock = DockStyle.Fill,
-                Padding = new Padding(20)
+                Text = "Nome",
+                AutoSize = true,
+                Location = new System.Drawing.Point(20, 20)
             };
 
-            Controls.Add(pnlConteudo);
-        }
-
-        // =========================
-        // BUILD DO FORMULÁRIO
-        // =========================
-
-        private void BuildForm()
-        {
-            int x = 30;
-            int y = 30;
-            int gap = 55;
-
-            txtNome = new GsTextBox { Required = true };
-            AddLabeledControlLocal("Nome", txtNome, x, y);
-            y += gap;
-
-            txtCpf = new GsMaskedInput
+            txtNome = new GsTextBox
             {
-                Mask = "000.000.000-00",
-                Required = true
-            };
-            AddLabeledControlLocal("CPF", txtCpf, x, y);
-            y += gap;
-
-            txtIdade = new GsNumericInput { Required = true };
-            AddLabeledControlLocal("Idade", txtIdade, x, y);
-            y += gap;
-
-            txtNascimento = new GsDateSelector { Required = true };
-            AddLabeledControlLocal("Nascimento", txtNascimento, x, y);
-        }
-
-        // =========================
-        // HELPER LOCAL (DEMO)
-        // =========================
-
-        private void AddLabeledControlLocal(
-            string labelText,
-            Control control,
-            int x,
-            int y)
-        {
-            int labelWidth = 120;
-
-            var lbl = new GsLabel
-            {
-                Text = labelText,
-                Location = new Point(x, y),
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight,
-                TargetControl = control
+                Required = true,
+                Location = new System.Drawing.Point(20, 40),
+                Width = 420
             };
 
-            control.Location = new Point(x + labelWidth + 10, y);
-            control.Width = 220;
+            lblEmail = new Label
+            {
+                Text = "E-mail",
+                AutoSize = true,
+                Location = new System.Drawing.Point(20, 80)
+            };
 
-            pnlConteudo.Controls.Add(lbl);
-            pnlConteudo.Controls.Add(control);
+            txtEmail = new GsTextBox
+            {
+                Required = true,
+                Location = new System.Drawing.Point(20, 100),
+                Width = 420
+            };
+
+            chkAtivo = new GsCheckBox
+            {
+                Text = "Ativo",
+                Location = new System.Drawing.Point(20, 150),
+                Checked = true
+            };
+
+            btnSalvar = new Button
+            {
+                Text = "Salvar",
+                Width = 100,
+                Location = new System.Drawing.Point(240, 200)
+            };
+
+            btnCancelar = new Button
+            {
+                Text = "Cancelar",
+                Width = 100,
+                Location = new System.Drawing.Point(350, 200)
+            };
+
+            btnSalvar.Click += (_, _) => Save();
+            btnCancelar.Click += (_, _) => Close();
+
+            Controls.Add(lblNome);
+            Controls.Add(txtNome);
+            Controls.Add(lblEmail);
+            Controls.Add(txtEmail);
+            Controls.Add(chkAtivo);
+            Controls.Add(btnSalvar);
+            Controls.Add(btnCancelar);
         }
 
-        // =========================
-        // CONTRATOS OBRIGATÓRIOS
-        // =========================
+        // =====================================================
+        // FLUXO BASE
+        // =====================================================
 
-        protected override void OnInitialize()
+        protected override void OnLoadEntity()
         {
-            // DEMO: nada a inicializar
+            // DEMO:
+            // Cadastro novo
         }
 
-        protected override void OnLoadData()
+        protected override void OnSaveEntity()
         {
-            // DEMO: não carrega dados reais
-        }
+            // DEMO:
+            var nome = txtNome.Text;
+            var email = txtEmail.Text;
+            var ativo = chkAtivo.Checked;
 
-        protected override void OnSave()
-        {
-            // DEMO: simula sucesso
-            FormMsg.Success("Cliente cadastrado com sucesso!");
-        }
-
-        protected override void OnDelete()
-        {
-            // DEMO: não implementado
+            // Simula sucesso
         }
     }
 }
