@@ -188,29 +188,31 @@ namespace GS.Core.UI.Controls.Base
             base.OnCreateControl();
 
             // Evita recriação
-            if (InnerTextBox != null)
-                return;
-
             InnerTextBox = CreateInnerTextBox();
-            InnerTextBox.BorderStyle = BorderStyle.None;
 
-            // =============================
-            // FOCO
-            // =============================
-            InnerTextBox.GotFocus += (_, _) =>
+            if (InnerTextBox != null)
             {
-                IsFocused = true;
-                Invalidate();
-            };
+                InnerTextBox.BorderStyle = BorderStyle.None;
 
-            InnerTextBox.LostFocus += (_, _) =>
-            {
-                IsFocused = false;
-                ValidateInput();
-                Invalidate();
-            };
+                // =============================
+                // FOCO
+                // =============================
+                InnerTextBox.GotFocus += (_, _) =>
+                {
+                    IsFocused = true;
+                    Invalidate();
+                };
 
-            Controls.Add(InnerTextBox);
+                InnerTextBox.LostFocus += (_, _) =>
+                {
+                    IsFocused = false;
+                    ValidateInput();
+                    Invalidate();
+                };
+
+                Controls.Add(InnerTextBox);
+            }
+
 
             // =============================
             // LABEL DE ERRO
@@ -387,5 +389,7 @@ namespace GS.Core.UI.Controls.Base
                     InnerTextBox.Text = value;
             }
         }
+
     }
 }
+
