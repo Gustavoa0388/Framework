@@ -7,12 +7,34 @@ using GS.Core.UI.Controls.Base;
 namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
+    /// GsCheckBox
+    ///
     /// CheckBox padrão do GS Core.
-    /// Representa um input booleano com suporte a Required
-    /// e integração com o fluxo padrão de validação.
+    ///
+    /// OBJETIVO:
+    /// Representar um input booleano (true/false),
+    /// integrado ao sistema de validação, tema e UX do GS Core.
+    ///
+    /// ESTE CONTROLE:
+    /// - Herda de <see cref="GsInputBase"/> como container de UX
+    /// - Usa <see cref="CheckBox"/> como controle real
+    /// - Integra-se ao fluxo de validação (Required)
+    /// - Propaga eventos para formulários e containers
+    ///
+    /// ESTE CONTROLE NÃO FAZ:
+    /// - Não trabalha com texto como valor
+    /// - Não aplica regra de negócio
+    /// - Não acessa dados externos
+    ///
+    /// REGRA DE REQUIRED:
+    /// - Required = true → CheckBox deve estar marcado
     /// </summary>
-    public partial class GsCheckBox : GsInputBase
+    public class GsCheckBox : GsInputBase
     {
+        // ==========================================================
+        // CONTROLE INTERNO
+        // ==========================================================
+
         private CheckBox _checkBox;
 
         // ==========================================================
@@ -48,7 +70,7 @@ namespace GS.Core.UI.Controls.Inputs
         }
 
         /// <summary>
-        /// Permite estado indeterminado.
+        /// Permite estado indeterminado (true / false / indeterminate).
         /// </summary>
         [Category("GS Core")]
         [DefaultValue(false)]
@@ -63,11 +85,16 @@ namespace GS.Core.UI.Controls.Inputs
         }
 
         // ==========================================================
-        // CRIAÇÃO DO CONTROLE INTERNO
+        // CRIAÇÃO DO CONTROLE
         // ==========================================================
 
         /// <summary>
-        /// Cria o CheckBox interno.
+        /// Cria o controle interno real.
+        ///
+        /// OBS:
+        /// O GsCheckBox NÃO utiliza TextBox interno.
+        /// O GsInputBase é usado apenas como container
+        /// de validação, layout e tema.
         /// </summary>
         protected override TextBoxBase CreateInnerTextBox()
         {
@@ -77,18 +104,26 @@ namespace GS.Core.UI.Controls.Inputs
                 Cursor = Cursors.Hand
             };
 
+            // ============================
+            // PROPAGA EVENTOS ESSENCIAIS
+            // ============================
+
             _checkBox.CheckedChanged += (_, _) =>
             {
-                ValidateValue();
+                OnTextChanged(EventArgs.Empty);
+                ValidateInput();
             };
+
+            _checkBox.KeyDown += (s, e) => OnKeyDown(e);
+            _checkBox.KeyUp += (s, e) => OnKeyUp(e);
 
             Controls.Add(_checkBox);
             _checkBox.BringToFront();
 
             UpdateLayout();
 
-            // Dummy exigido pelo contrato do GsInputBase
-            return new TextBox();
+            // Não há TextBox real neste controle
+            return null;
         }
 
         // ==========================================================
@@ -100,10 +135,15 @@ namespace GS.Core.UI.Controls.Inputs
         /// </summary>
         protected override void UpdateLayout()
         {
+            base.UpdateLayout();
+
             if (_checkBox == null)
                 return;
 
-            _checkBox.Location = new Point(Padding.Left, Padding.Top);
+            _checkBox.Location = new Point(
+                Padding.Left,
+                Padding.Top
+            );
         }
 
         // ==========================================================
@@ -113,15 +153,15 @@ namespace GS.Core.UI.Controls.Inputs
         /// <summary>
         /// Valida o estado do CheckBox conforme regras do GS Core.
         /// </summary>
-        private void ValidateValue()
+        public override void ValidateInput()
         {
+            ClearError();
+
             if (Required && !_checkBox.Checked)
             {
                 ShowError(RequiredMessage);
                 return;
             }
-
-            ClearError();
         }
     }
 }
