@@ -1,90 +1,132 @@
-﻿using GS.Core.UI.Theming;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using GS.Core.UI.Controls.Base;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
     /// GsToggleSwitch
-    /// 
-    /// Controle moderno de alternância (on/off) do GS Core UI.
-    /// 
+    ///
+    /// Controle de alternância (On/Off) do GS Core UI.
+    ///
+    /// CLASSIFICAÇÃO:
+    /// - Input de ESTADO
+    /// - Input COMPOSTO (não baseado em TextBox)
+    ///
     /// RESPONSABILIDADES:
     /// - Representar estado booleano
-    /// - Integrar com Theme
-    /// - Exibir texto contextual opcional
-    /// 
+    /// - Integrar Required, Theme e UX
+    ///
     /// NÃO FAZ:
-    /// - Lógica de banco
-    /// - Tag legacy
-    /// - Múltiplos modelos visuais
+    /// - Não cria InnerTextBox
+    /// - Não executa lógica de negócio
     /// </summary>
-    public class GsToggleSwitch : CheckBox, IThemedControl
+    public class GsToggleSwitch : GsInputBase
     {
-        public GsToggleSwitch()
-        {
-            AutoSize = false;
-            Width = 50;
-            Height = 24;
+        private bool _checked;
 
-            Cursor = Cursors.Hand;
-            Appearance = Appearance.Button;
-            TextAlign = ContentAlignment.MiddleLeft;
-            Text = string.Empty;
+        // ==========================================================
+        // PROPRIEDADES
+        // ==========================================================
+
+        [Category("GS Core")]
+        public bool Checked
+        {
+            get => _checked;
+            set
+            {
+                if (_checked == value)
+                    return;
+
+                _checked = value;
+                Invalidate();
+                OnTextChanged(EventArgs.Empty);
+                ValidateInput();
+            }
         }
 
-        // =====================================================
-        // PROPRIEDADES
-        // =====================================================
-
-        /// <summary>
-        /// Texto exibido quando o toggle está ligado.
-        /// </summary>
         [Category("GS Core")]
         public string OnText { get; set; } = "On";
 
-        /// <summary>
-        /// Texto exibido quando o toggle está desligado.
-        /// </summary>
         [Category("GS Core")]
         public string OffText { get; set; } = "Off";
 
-        /// <summary>
-        /// Indica se o toggle está ligado.
-        /// </summary>
-        [Browsable(false)]
-        public bool IsOn
+        // ==========================================================
+        // CONSTRUTOR
+        // ==========================================================
+
+        public GsToggleSwitch()
         {
-            get => Checked;
-            set => Checked = value;
+            Height = 24;
+            Width = 50;
+            Cursor = Cursors.Hand;
+            TabStop = true;
         }
 
-        // =====================================================
+        // ==========================================================
+        // INPUT
+        // ==========================================================
+
+        protected override void OnClick(EventArgs e)
+        {
+            base.OnClick(e);
+            Checked = !Checked;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.KeyCode == Keys.Space)
+            {
+                Checked = !Checked;
+                e.Handled = true;
+            }
+        }
+
+        // ==========================================================
+        // VALIDAÇÃO
+        // ==========================================================
+
+        public override void ValidateInput()
+        {
+            ClearError();
+
+            if (Required && !Checked)
+            {
+                ShowError(RequiredMessage);
+            }
+        }
+
+        // ==========================================================
         // THEME
-        // =====================================================
+        // ==========================================================
 
-        public void ApplyTheme(GsTheme theme)
+        public override void ApplyTheme(GsTheme theme)
         {
+            base.ApplyTheme(theme);
             Font = theme.DefaultFont;
-            ForeColor = theme.ToggleText;
-            Invalidate();
         }
 
-        // =====================================================
+        // ==========================================================
         // RENDERIZAÇÃO
-        // =====================================================
+        // ==========================================================
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            base.OnPaint(e);
+
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             g.Clear(Parent?.BackColor ?? Color.Transparent);
 
             var theme = ThemeManager.Current;
 
-            Rectangle track = new Rectangle(0, 0, Width - 1, Height - 1);
-            Rectangle thumb = new Rectangle(
+            var track = new Rectangle(0, 0, Width - 1, Height - 1);
+            var thumb = new Rectangle(
                 Checked ? Width - Height : 0,
                 0,
                 Height,
@@ -105,14 +147,14 @@ namespace GS.Core.UI.Controls.Inputs
 
             string text = Checked ? OnText : OffText;
 
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrWhiteSpace(text))
             {
                 TextRenderer.DrawText(
                     g,
                     text,
                     Font,
                     new Rectangle(Width + 6, 0, 200, Height),
-                    ForeColor,
+                    theme.ToggleText,
                     TextFormatFlags.VerticalCenter | TextFormatFlags.Left
                 );
             }
