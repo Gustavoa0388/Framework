@@ -4,28 +4,47 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
+using GS.Core.UI.Theming;
 
 namespace GS.Core.UI.Controls.Inputs
 {
     /// <summary>
+    /// GsComboBox
+    ///
     /// ComboBox padrão do GS Core.
-    /// Input de seleção com suporte a:
-    /// - Placeholder visual
-    /// - Validação Required
-    /// - Restrição a itens da lista
-    /// - AutoComplete configurável
+    ///
+    /// OBJETIVO:
+    /// Representar um input de seleção,
+    /// integrado ao sistema de validação,
+    /// tema e UX do GS Core.
+    ///
+    /// ESTE CONTROLE:
+    /// - Usa ComboBox como controle real
+    /// - Suporta placeholder VISUAL (não faz parte dos dados)
+    /// - Integra-se ao fluxo de validação (Required)
+    /// - Propaga eventos para UX avançada
+    ///
+    /// ESTE CONTROLE NÃO FAZ:
+    /// - Não gerencia binding complexo
+    /// - Não executa regra de negócio
+    /// - Não acessa dados externos
     /// </summary>
     public partial class GsComboBox : GsInputBase
     {
+        // ==========================================================
+        // CONTROLE INTERNO
+        // ==========================================================
+
         private ComboBox _combo;
 
-        private readonly List<object> _itemsBuffer = new();
+        // ==========================================================
+        // PLACEHOLDER
+        // ==========================================================
 
-        private bool _placeholderActive = true;
         private string _placeholderText = "Selecione...";
 
         // ==========================================================
-        // PROPRIEDADES PÚBLICAS
+        // CONFIGURAÇÕES
         // ==========================================================
 
         /// <summary>
@@ -33,14 +52,13 @@ namespace GS.Core.UI.Controls.Inputs
         /// Não representa valor válido.
         /// </summary>
         [Category("GS Core")]
-        [Description("Texto exibido quando nenhum item está selecionado.")]
         public string Placeholder
         {
             get => _placeholderText;
             set
             {
                 _placeholderText = value;
-                ApplyPlaceholder();
+                Invalidate();
             }
         }
 
@@ -49,42 +67,13 @@ namespace GS.Core.UI.Controls.Inputs
         /// </summary>
         [Category("GS Core")]
         [DefaultValue(true)]
-        [Description("Impede valores que não estejam presentes na lista.")]
         public bool ApenasItensLista { get; set; } = true;
 
         /// <summary>
-        /// Modo de autocomplete do ComboBox.
-        /// </summary>
-        [Category("GS Core")]
-        public AutoCompleteMode AutoCompleteMode
-        {
-            get => _combo?.AutoCompleteMode ?? AutoCompleteMode.None;
-            set
-            {
-                if (_combo != null)
-                    _combo.AutoCompleteMode = value;
-            }
-        }
-
-        /// <summary>
-        /// Fonte de autocomplete do ComboBox.
-        /// </summary>
-        [Category("GS Core")]
-        public AutoCompleteSource AutoCompleteSource
-        {
-            get => _combo?.AutoCompleteSource ?? AutoCompleteSource.None;
-            set
-            {
-                if (_combo != null)
-                    _combo.AutoCompleteSource = value;
-            }
-        }
-
-        /// <summary>
-        /// Lista de itens do ComboBox.
+        /// Coleção de itens do ComboBox.
         /// </summary>
         [Browsable(false)]
-        public IList Items => _itemsBuffer;
+        public IList Items => _combo?.Items;
 
         /// <summary>
         /// Índice selecionado.
@@ -101,10 +90,10 @@ namespace GS.Core.UI.Controls.Inputs
         }
 
         /// <summary>
-        /// Valor selecionado.
+        /// Item selecionado.
         /// </summary>
         [Category("GS Core")]
-        public object SelectedValue
+        public object SelectedItem
         {
             get => _combo?.SelectedItem;
             set
@@ -115,48 +104,46 @@ namespace GS.Core.UI.Controls.Inputs
         }
 
         // ==========================================================
-        // CRIAÇÃO DO CONTROLE INTERNO
+        // CRIAÇÃO DO CONTROLE
         // ==========================================================
 
-        /// <summary>
-        /// Cria o controle interno do GsComboBox.
-        /// </summary>
         protected override TextBoxBase CreateInnerTextBox()
         {
             _combo = new ComboBox
             {
-                FlatStyle = FlatStyle.Flat,
                 DropDownStyle = ApenasItensLista
                     ? ComboBoxStyle.DropDownList
-                    : ComboBoxStyle.DropDown,
-                AutoCompleteMode = AutoCompleteMode.None,
-                AutoCompleteSource = AutoCompleteSource.None
+                    : ComboBoxStyle.DropDown
             };
 
-            _combo.GotFocus += (_, _) => RemovePlaceholder();
-            _combo.LostFocus += (_, _) => ValidateValue();
-            _combo.SelectedIndexChanged += (_, _) => ClearError();
+            // ============================
+            // EVENTOS
+            // ============================
+
+            _combo.SelectedIndexChanged += (_, _) =>
+            {
+                OnTextChanged(EventArgs.Empty);
+                ValidateInput();
+            };
+
+            _combo.TextChanged += (_, _) => OnTextChanged(EventArgs.Empty);
+            _combo.KeyDown += (s, e) => OnKeyDown(e);
+            _combo.KeyUp += (s, e) => OnKeyUp(e);
 
             Controls.Add(_combo);
             _combo.BringToFront();
 
-            SyncItems();
-            ApplyPlaceholder();
-            UpdateLayout();
-
-            // Dummy exigido pelo contrato do GsInputBase
-            return new TextBox();
+            return null; // Não há TextBox interno
         }
 
         // ==========================================================
         // LAYOUT
         // ==========================================================
 
-        /// <summary>
-        /// Atualiza layout do controle interno.
-        /// </summary>
         protected override void UpdateLayout()
         {
+            base.UpdateLayout();
+
             if (_combo == null)
                 return;
 
@@ -168,82 +155,71 @@ namespace GS.Core.UI.Controls.Inputs
         }
 
         // ==========================================================
-        // PLACEHOLDER
+        // PLACEHOLDER VISUAL
         // ==========================================================
 
-        private void ApplyPlaceholder()
+        protected override void OnPaint(PaintEventArgs e)
         {
+            base.OnPaint(e);
+
             if (_combo == null)
                 return;
 
-            if (_itemsBuffer.Count > 0)
+            // Só desenha placeholder se:
+            // - Nada selecionado
+            // - Texto vazio
+            // - Não está focado
+            if (_combo.SelectedIndex >= 0)
                 return;
 
-            _placeholderActive = true;
-            _combo.Items.Clear();
-            _combo.ForeColor = SystemColors.GrayText;
-            _combo.Items.Add(_placeholderText);
-            _combo.SelectedIndex = 0;
-        }
-
-        private void RemovePlaceholder()
-        {
-            if (!_placeholderActive)
+            if (!string.IsNullOrEmpty(_combo.Text))
                 return;
 
-            _placeholderActive = false;
-            _combo.ForeColor = SystemColors.WindowText;
-            SyncItems();
+            if (_combo.Focused)
+                return;
+
+            var theme = ThemeManager.Current;
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                _placeholderText,
+                Font,
+                new Rectangle(
+                    Padding.Left + 4,
+                    Padding.Top,
+                    Width,
+                    Height
+                ),
+                theme.TextSecondary,
+                TextFormatFlags.VerticalCenter | TextFormatFlags.Left
+            );
         }
 
         // ==========================================================
         // VALIDAÇÃO
         // ==========================================================
 
-        /// <summary>
-        /// Valida o valor selecionado conforme regras do GS Core.
-        /// </summary>
-        private void ValidateValue()
+        public override void ValidateInput()
         {
-            // Required
-            if (Required && (_placeholderActive || _combo.SelectedIndex < 0))
+            ClearError();
+
+            if (Required && _combo.SelectedIndex < 0)
             {
                 ShowError(RequiredMessage);
                 return;
             }
 
-            // Apenas itens da lista
             if (ApenasItensLista && _combo.SelectedIndex < 0 && !string.IsNullOrWhiteSpace(_combo.Text))
             {
                 ShowError("Selecione um item válido da lista.");
                 return;
             }
-
-            ClearError();
-        }
-
-        // ==========================================================
-        // SINCRONIZAÇÃO DE ITENS
-        // ==========================================================
-
-        private void SyncItems()
-        {
-            if (_combo == null)
-                return;
-
-            _combo.Items.Clear();
-
-            foreach (var item in _itemsBuffer)
-                _combo.Items.Add(item);
         }
 
         // ==========================================================
         // TEXTO
         // ==========================================================
 
-        /// <summary>
-        /// Texto do item selecionado.
-        /// </summary>
         public override string Text
         {
             get => _combo?.Text ?? string.Empty;
