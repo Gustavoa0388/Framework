@@ -111,8 +111,8 @@ namespace GS.Core.UI.Demo
             Controls.Add(sideMenu);
             sideMenu.SendToBack(); // 👈 importante
             tabMain.Dock = DockStyle.Fill;
-        }     
-               
+        }
+
         private void BuildMenu()
         {
             // MenuStrip padrão do WinForms
@@ -139,9 +139,6 @@ namespace GS.Core.UI.Demo
                     );
                 }
             };
-
-
-
             // -----------------------------
             // Cadastro de Clientes
             // -----------------------------
@@ -152,9 +149,20 @@ namespace GS.Core.UI.Demo
                 frm.ShowDialog(this);
             };
 
+            // -----------------------------
+            // Diagnóstico Visual
+            // -----------------------------
+            var itemDiagvisual = new ToolStripMenuItem("Diagnóstico Visual");
+            itemDiagvisual.Click += (_, _) =>
+            {
+                GsNavigationService.OpenModal<FrmDemoDiagnosticoVisual>(this);
+            };
+
+
             // Adiciona itens ao menu "Demos"
             menuDemos.DropDownItems.Add(itemConsulta);
             menuDemos.DropDownItems.Add(itemCadastro);
+            menuDemos.DropDownItems.Add(itemDiagvisual);
 
             // Adiciona menu "Demos" ao MenuStrip
             menu.Items.Add(menuDemos);
@@ -163,16 +171,15 @@ namespace GS.Core.UI.Demo
             Controls.Add(menu);
 
             // Garante que o menu fique acima do TabControl
-            menu.BringToFront();
+            menu.BringToFront();                      
         }
-
 
 
         // =========================================================
         // CONSTANTES DE LAYOUT (DEMO)
         // =========================================================
 
-        // Posições e espaçamentos usados nos métodos de build
+            // Posições e espaçamentos usados nos métodos de build
         private const int X = 20;
         private const int Y_START = 20;
         private const int GAP = 60;
