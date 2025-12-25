@@ -1,11 +1,12 @@
 ﻿using GS.Core.UI.Controls.Data;
 using GS.Core.UI.Controls.UX;
+using GS.Core.UI.Demo.Forms.Pages;
 using GS.Core.UI.Forms;
+using GS.Core.UI.Forms.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GS.Core.UI.Demo.Forms.Pages;
 
 namespace GS.Core.UI.Demo.Forms.Pages
 {
@@ -101,16 +102,13 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         protected override void OnNovoClick(object sender, EventArgs e)
         {
-            using (var frm = new FrmCadastroCliente())
-            {
-                frm.ShowDialog(this);
+            var result = GsNavigationService.OpenModal<FrmCadastroCliente>(this);
 
-                // Reage ao resultado do cadastro
-                if (frm.NavigationResult.IsSaved)
-                {
-                    ExecutarBusca();
-                }
+            if (result.IsSaved)
+            {
+                ExecutarBusca();
             }
+
         }
 
         // =====================================================
