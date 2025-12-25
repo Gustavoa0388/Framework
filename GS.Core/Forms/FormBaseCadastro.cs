@@ -12,14 +12,13 @@ namespace GS.Core.UI.Forms
     ///
     /// RESPONSABILIDADES:
     /// - Orquestrar estados de UX (Loading, Error, Success)
-    /// - Centralizar fluxo de salvar / carregar registro
+    /// - Centralizar fluxo de carregar / salvar registro
     /// - Integrar validação global do formulário
     ///
     /// NÃO FAZ:
-    /// - Não usa Grid
-    /// - Não usa Paginação
     /// - Não acessa banco
     /// - Não executa regra de negócio
+    /// - Não conhece telas externas
     /// </summary>
     public abstract class FormBaseCadastro : GsBaseForm
     {
@@ -28,6 +27,8 @@ namespace GS.Core.UI.Forms
         // =====================================================
 
         protected GsStateView StateView { get; }
+
+        private readonly GsBusyOverlay _busy;
 
         // =====================================================
         // ESTADO
@@ -38,7 +39,7 @@ namespace GS.Core.UI.Forms
         // =====================================================
         // CONSTRUTOR
         // =====================================================
-        private readonly GsBusyOverlay _busy;
+
         protected FormBaseCadastro()
         {
             StateView = new GsStateView
@@ -50,47 +51,43 @@ namespace GS.Core.UI.Forms
             Controls.Add(StateView);
             StateView.BringToFront();
 
-            {
-                _busy = new GsBusyOverlay();
-                Controls.Add(_busy);
-                _busy.BringToFront();
-            }
-        }
-
-protected void ShowBusy(string message)
-        {
-            _busy.Show(message);
-        }
-
-        protected void HideBusy()
-        {
-            _busy.Hide();
-        }
-
-
-        // =====================================================
-        // CICLO DE VIDA
-        // =====================================================
-
-        protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e);
-            OnLoadEntity();
+            _busy = new GsBusyOverlay();
+            Controls.Add(_busy);
+            _busy.BringToFront();
         }
 
         // =====================================================
-        // FLUXO PRINCIPAL
+        // LIFECYCLE GS CORE
         // =====================================================
 
         /// <summary>
         /// Carrega o registro (novo ou existente).
-        /// Implementação obrigatória no formulário concreto.
+        /// Executado automaticamente pelo lifecycle GS Core.
+        /// </summary>
+        protected override void OnLoadData()
+        {
+            OnLoadEntity();
+        }
+
+        /// <summary>
+        /// Gancho para ajustes finais após carga do registro.
+        /// </summary>
+        protected override void OnAfterLoad()
+        {
+            // reservado para formulários concretos
+        }
+
+        // =====================================================
+        // CONTRATOS OBRIGATÓRIOS
+        // =====================================================
+
+        /// <summary>
+        /// Implementação obrigatória para carregar o registro.
         /// </summary>
         protected abstract void OnLoadEntity();
 
         /// <summary>
-        /// Salva o registro.
-        /// Implementação obrigatória no formulário concreto.
+        /// Implementação obrigatória para salvar o registro.
         /// </summary>
         protected abstract void OnSaveEntity();
 
@@ -117,7 +114,7 @@ protected void ShowBusy(string message)
         }
 
         // =====================================================
-        // UX STATES (PADRÃO BLOCO 4)
+        // UX STATES
         // =====================================================
 
         protected void SetLoading(string message)
@@ -137,7 +134,6 @@ protected void ShowBusy(string message)
             StateView.ShowProgress = false;
             StateView.Visible = true;
 
-            // UX corporativa: feedback rápido e não bloqueante
             var timer = new System.Windows.Forms.Timer { Interval = 1500 };
             timer.Tick += (_, _) =>
             {
@@ -168,6 +164,20 @@ protected void ShowBusy(string message)
         }
 
         // =====================================================
+        // BUSY OVERLAY
+        // =====================================================
+
+        protected void ShowBusy(string message)
+        {
+            _busy.Show(message);
+        }
+
+        protected void HideBusy()
+        {
+            _busy.Hide();
+        }
+
+        // =====================================================
         // UTILITÁRIOS
         // =====================================================
 
@@ -175,7 +185,7 @@ protected void ShowBusy(string message)
         {
             foreach (Control ctrl in Controls)
             {
-                if (ctrl == StateView)
+                if (ctrl == StateView || ctrl == _busy)
                     continue;
 
                 ctrl.Enabled = enabled;
