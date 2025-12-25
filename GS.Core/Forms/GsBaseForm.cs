@@ -4,6 +4,9 @@ using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
 using GS.Core.UI.Theming;
 using GS.Core.UI.Forms.Navigation;
+using GS.Core.UI.Controls.Debug;
+using GS.Core.UI.Controls.UX;
+
 
 
 namespace GS.Core.UI.Forms
@@ -81,7 +84,6 @@ namespace GS.Core.UI.Forms
 
             ApplyThemeIfNeeded();
             OnInitialize();
-
             _initialized = true;
         }
 
@@ -115,8 +117,7 @@ namespace GS.Core.UI.Forms
             }
 
             base.OnFormClosing(e);
-        }
-
+        }     
 
         // =====================================================
         // PIPELINE CONTROLADO
@@ -165,6 +166,74 @@ namespace GS.Core.UI.Forms
         /// Retorne false para cancelar o fechamento.
         /// </summary>
         protected virtual bool OnBeforeClose() => true;
+
+        /// =====================================================
+        // DEBUG UX (OBSERVABILIDADE VISUAL)
+        // =====================================================
+
+        private GsDebugUxOverlay _debugUxOverlay;
+        private bool _enableDebugUx;
+
+        /// <summary>
+        /// Habilita ou desabilita o Debug UX visual.
+        /// Uso explícito e opt-in.
+        /// </summary>
+        public bool EnableDebugUx
+        {
+            get => _enableDebugUx;
+            set
+            {
+                if (_enableDebugUx == value)
+                    return;
+
+                _enableDebugUx = value;
+                UpdateDebugUxVisibility();
+            }
+        }
+
+        private void InitializeDebugUx()
+        {
+            _debugUxOverlay = new GsDebugUxOverlay
+            {
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                Visible = false
+            };
+
+            Controls.Add(_debugUxOverlay);
+            _debugUxOverlay.BringToFront();
+        }
+
+        private void UpdateDebugUxVisibility()
+        {
+            if (_debugUxOverlay == null)
+                return;
+
+            _debugUxOverlay.Visible = _enableDebugUx;
+        }
+
+        /// <summary>
+        /// Sincroniza os estados internos com o Debug UX.
+        /// </summary>
+        protected void SyncDebugUx(
+            GsUxState uxState,
+            bool isBusy,
+            bool isSkeletonActive,
+            bool diagnosticsAllowed,
+            bool hasTechnicalDetails)
+        {
+            if (!_enableDebugUx || _debugUxOverlay == null)
+                return;
+
+            _debugUxOverlay.UpdateState(
+                uxState,
+                isBusy,
+                isSkeletonActive,
+                NavigationResult?.ResultType ?? GsFormResultType.None,
+                diagnosticsAllowed,
+                hasTechnicalDetails
+            );
+        }
+
 
         // =====================================================
         // ENCERRAMENTO COM RESULTADO

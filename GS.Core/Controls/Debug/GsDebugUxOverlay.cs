@@ -10,21 +10,7 @@ namespace GS.Core.UI.Controls.Debug
     /// GsDebugUxOverlay
     ///
     /// Overlay visual flutuante para observabilidade de UX.
-    ///
-    /// RESPONSABILIDADE:
-    /// - Exibir estados internos de UX de forma visual
-    /// - Apoiar debug, suporte e auditoria
-    ///
-    /// NÃO FAZ:
-    /// - Não decide fluxo
-    /// - Não executa ações
-    /// - Não captura exceções
-    /// - Não persiste dados
-    /// - Não interfere na UI
-    ///
-    /// MODO:
-    /// - Opt-in
-    /// - Somente leitura
+    /// Somente leitura. Opt-in.
     /// </summary>
     public sealed partial class GsDebugUxOverlay : UserControl
     {
@@ -33,14 +19,9 @@ namespace GS.Core.UI.Controls.Debug
         // =====================================================
 
         private GsUxState _currentUxState = GsUxState.Hidden;
-        private bool _stateViewVisible;
-        private GsUxState? _stateViewState;
-
         private bool _busyActive;
         private bool _skeletonActive;
-
-        private GsFormResultType? _lastFormResult;
-
+        private GsFormResultType _lastFormResult = GsFormResultType.None;
         private bool _diagnosticsAllowed;
         private bool _hasTechnicalDetails;
 
@@ -50,39 +31,10 @@ namespace GS.Core.UI.Controls.Debug
 
         private readonly Label lblHeader;
         private readonly Label lblUxState;
-        private readonly Label lblStateView;
         private readonly Label lblBusy;
         private readonly Label lblSkeleton;
         private readonly Label lblNavigation;
         private readonly Label lblDiagnostics;
-
-        // =====================================================
-        // PROPRIEDADES PÚBLICAS (somente leitura)
-        // =====================================================
-
-        public bool IsEnabled => Visible;
-
-        public GsUxState CurrentUxState => _currentUxState;
-
-        public bool IsStateViewVisible => _stateViewVisible;
-
-        public GsUxState? StateViewState => _stateViewState;
-
-        public bool IsBusyActive => _busyActive;
-
-        public bool IsSkeletonActive => _skeletonActive;
-
-        public GsFormResultType? LastFormResult => _lastFormResult;
-
-        public bool DiagnosticsAllowed => _diagnosticsAllowed;
-
-        public bool HasTechnicalDetails => _hasTechnicalDetails;
-
-        // =====================================================
-        // EVENTOS
-        // =====================================================
-
-        public event EventHandler VisibilityChanged;
 
         // =====================================================
         // CONSTRUTOR
@@ -90,15 +42,13 @@ namespace GS.Core.UI.Controls.Debug
 
         public GsDebugUxOverlay()
         {
-            // Overlay flutuante
             Dock = DockStyle.None;
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            Size = new Size(260, 200);
-            BackColor = Color.FromArgb(230, 30, 30, 30); // escuro semi-transparente
+            Size = new Size(260, 180);
+            BackColor = Color.FromArgb(230, 30, 30, 30);
             ForeColor = Color.White;
             Visible = false;
 
-            // Header
             lblHeader = new Label
             {
                 Text = "DEBUG UX",
@@ -108,9 +58,7 @@ namespace GS.Core.UI.Controls.Debug
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold)
             };
 
-            // Labels de estado
             lblUxState = CreateLineLabel();
-            lblStateView = CreateLineLabel();
             lblBusy = CreateLineLabel();
             lblSkeleton = CreateLineLabel();
             lblNavigation = CreateLineLabel();
@@ -120,13 +68,10 @@ namespace GS.Core.UI.Controls.Debug
             {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.TopDown,
-                WrapContents = false,
-                Padding = new Padding(8),
-                AutoScroll = false
+                Padding = new Padding(8)
             };
 
             content.Controls.Add(lblUxState);
-            content.Controls.Add(lblStateView);
             content.Controls.Add(lblBusy);
             content.Controls.Add(lblSkeleton);
             content.Controls.Add(lblNavigation);
@@ -139,74 +84,28 @@ namespace GS.Core.UI.Controls.Debug
         }
 
         // =====================================================
-        // API PÚBLICA — CONTROLE DE VISIBILIDADE
+        // API PÚBLICA — SINCRONIZAÇÃO
         // =====================================================
 
-        public void Enable()
+        /// <summary>
+        /// Atualiza todos os estados observáveis do Debug UX.
+        /// Método de integração com o GsBaseForm.
+        /// </summary>
+        public void UpdateState(
+            GsUxState uxState,
+            bool isBusy,
+            bool isSkeletonActive,
+            GsFormResultType formResult,
+            bool diagnosticsAllowed,
+            bool hasTechnicalDetails)
         {
-            if (Visible)
-                return;
-
-            Visible = true;
-            VisibilityChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void Disable()
-        {
-            if (!Visible)
-                return;
-
-            Visible = false;
-            VisibilityChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void Toggle()
-        {
-            if (Visible)
-                Disable();
-            else
-                Enable();
-        }
-
-        // =====================================================
-        // API PÚBLICA — ATUALIZAÇÃO DE ESTADO (push explícito)
-        // =====================================================
-
-        public void UpdateUxState(GsUxState state)
-        {
-            _currentUxState = state;
-            AtualizarVisual();
-        }
-
-        public void UpdateStateView(GsUxState state, bool isVisible)
-        {
-            _stateViewState = state;
-            _stateViewVisible = isVisible;
-            AtualizarVisual();
-        }
-
-        public void UpdateBusyState(bool isActive)
-        {
-            _busyActive = isActive;
-            AtualizarVisual();
-        }
-
-        public void UpdateSkeletonState(bool isActive)
-        {
-            _skeletonActive = isActive;
-            AtualizarVisual();
-        }
-
-        public void UpdateFormResult(GsFormResultType resultType)
-        {
-            _lastFormResult = resultType;
-            AtualizarVisual();
-        }
-
-        public void UpdateDiagnostics(bool allowDiagnostics, bool hasTechnicalDetails)
-        {
-            _diagnosticsAllowed = allowDiagnostics;
+            _currentUxState = uxState;
+            _busyActive = isBusy;
+            _skeletonActive = isSkeletonActive;
+            _lastFormResult = formResult;
+            _diagnosticsAllowed = diagnosticsAllowed;
             _hasTechnicalDetails = hasTechnicalDetails;
+
             AtualizarVisual();
         }
 
@@ -217,10 +116,9 @@ namespace GS.Core.UI.Controls.Debug
         private void AtualizarVisual()
         {
             lblUxState.Text = $"UX State: {_currentUxState}";
-            lblStateView.Text = $"StateView: {(IsStateViewVisible ? _stateViewState?.ToString() : "Hidden")}";
             lblBusy.Text = $"Busy: {(_busyActive ? "Active" : "Inactive")}";
             lblSkeleton.Text = $"Skeleton: {(_skeletonActive ? "Active" : "Inactive")}";
-            lblNavigation.Text = $"FormResult: {_lastFormResult?.ToString() ?? "None"}";
+            lblNavigation.Text = $"FormResult: {_lastFormResult}";
             lblDiagnostics.Text =
                 $"Diagnostics: {(_diagnosticsAllowed ? "Allowed" : "Blocked")} | Details: {(_hasTechnicalDetails ? "Yes" : "No")}";
         }
@@ -229,12 +127,10 @@ namespace GS.Core.UI.Controls.Debug
         {
             return new Label
             {
-                AutoSize = false,
                 Height = 20,
                 Width = 220,
-                TextAlign = ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 8F),
-                Margin = new Padding(0, 2, 0, 2)
+                TextAlign = ContentAlignment.MiddleLeft
             };
         }
     }
