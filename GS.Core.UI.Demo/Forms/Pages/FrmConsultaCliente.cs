@@ -102,14 +102,16 @@ namespace GS.Core.UI.Demo.Forms.Pages
 
         protected override void OnNovoClick(object sender, EventArgs e)
         {
+            // Abre o cadastro via infraestrutura oficial de navegação
             var result = GsNavigationService.OpenModal<FrmCadastroCliente>(this);
 
+            // Tela pai decide o fluxo com base no resultado
             if (result.IsSaved)
             {
                 ExecutarBusca();
             }
-
         }
+
 
         // =====================================================
         // DTO (DEMO)

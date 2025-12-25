@@ -7,6 +7,8 @@ using GS.Core.UI.Forms;
 using GS.Core.UI.Theming;
 using System.Drawing;
 using System.Windows.Forms;
+using GS.Core.UI.Forms.Navigation;
+
 
 namespace GS.Core.UI.Demo
 {
@@ -125,20 +127,19 @@ namespace GS.Core.UI.Demo
             var itemConsulta = new ToolStripMenuItem("Consulta de Clientes");
             itemConsulta.Click += (_, _) =>
             {
-                using (var frm = new FrmConsultaCliente())
-                {
-                    frm.ShowDialog(this);
+                // Abre a consulta via infraestrutura GS Core
+                var result = GsNavigationService.OpenModal<FrmConsultaCliente>(this);
 
-                    // DEMO:
-                    // Apenas valida o contrato de navegação
-                    if (frm.NavigationResult.HasResult)
-                    {
-                        FormMsg.Info(
-                            $"Consulta encerrada com resultado: {frm.NavigationResult.ResultType}"
-                        );
-                    }
+                // DEMO:
+                // Apenas valida o contrato de navegação
+                if (result.HasResult)
+                {
+                    FormMsg.Info(
+                        $"Consulta encerrada com resultado: {result.ResultType}"
+                    );
                 }
             };
+
 
 
             // -----------------------------
