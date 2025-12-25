@@ -13,6 +13,7 @@
     <None Remove="Resources\eye_open.png" />
     <None Remove="Resources\icone_senha_mostrar.png" />
     <None Remove="Resources\icone_senha_ocultar.png" />
+    <None Remove="Resources\icon_empty_box.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\icone_senha_ocultar.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\icon_empty_box.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -28,6 +28,9 @@ namespace GS.Core.UI.Controls.UX
         private readonly GsProgressBar progress;
         private readonly Button btnAction;
 
+        private PictureBox picIcon;
+        private GsEmptyState _emptyState;
+
         private GsTheme _theme;
         private GsUxState _state = GsUxState.Hidden;
 
@@ -56,6 +59,7 @@ namespace GS.Core.UI.Controls.UX
             get => lblMessage.Text;
             set => lblMessage.Text = value;
         }
+
 
         public bool ShowProgress { get; set; }
 
@@ -97,6 +101,13 @@ namespace GS.Core.UI.Controls.UX
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            picIcon = new PictureBox
+            {
+                Size = new Size(64, 64),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Visible = false
+            };
+
             progress = new GsProgressBar
             {
                 Width = 220,
@@ -122,6 +133,7 @@ namespace GS.Core.UI.Controls.UX
                 Anchor = AnchorStyles.None
             };
 
+            layout.Controls.Add(picIcon);
             layout.Controls.Add(lblTitle);
             layout.Controls.Add(lblMessage);
             layout.Controls.Add(progress);
@@ -179,8 +191,19 @@ namespace GS.Core.UI.Controls.UX
 
                 case GsUxState.Empty:
                     textColor = _theme.Info;
-                    lblTitle.Text = "Sem dados";
-                    lblMessage.Text = Message;
+
+                    if (_emptyState == null)
+                    {
+                        lblTitle.Text = "Sem dados";
+                        lblMessage.Text = Message;
+                        picIcon.Visible = false;
+                    }
+                    else
+                    {
+                        lblTitle.Text = _emptyState.Title;
+                        lblMessage.Text = _emptyState.Message;
+                        picIcon.Visible = _emptyState.Icon != null;
+                    }
                     break;
 
                 case GsUxState.Error:
@@ -212,5 +235,35 @@ namespace GS.Core.UI.Controls.UX
             lblMessage.Visible = true;
             btnAction.Visible = !string.IsNullOrWhiteSpace(btnAction.Text);
         }
+        /// <summary>
+        /// Exibe um Empty State contextual baseado em modelo semântico.
+        /// </summary>
+        public void ShowEmpty(GsEmptyState state)
+        {
+            _emptyState = state;
+
+            State = GsUxState.Empty;
+
+            Title = state.Title;
+            Message = state.Message;
+
+            picIcon.Image = state.Icon;
+            picIcon.Visible = state.Icon != null;
+
+            ActionText = state.ActionText;
+
+            btnAction.Click -= OnActionClicked;
+            btnAction.Click += OnActionClicked;
+
+            ShowProgress = false;
+            Visible = true;
+        }
+        private void OnActionClicked(object sender, EventArgs e)
+        {
+            _emptyState?.Action?.Invoke();
+        }
+
+
+
     }
 }

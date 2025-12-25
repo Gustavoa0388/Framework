@@ -38,7 +38,7 @@ namespace GS.Core.UI.Forms
         // =====================================================
         // CONSTRUTOR
         // =====================================================
-
+        private readonly GsBusyOverlay _busy;
         protected FormBaseCadastro()
         {
             StateView = new GsStateView
@@ -49,7 +49,24 @@ namespace GS.Core.UI.Forms
 
             Controls.Add(StateView);
             StateView.BringToFront();
+
+            {
+                _busy = new GsBusyOverlay();
+                Controls.Add(_busy);
+                _busy.BringToFront();
+            }
         }
+
+protected void ShowBusy(string message)
+        {
+            _busy.Show(message);
+        }
+
+        protected void HideBusy()
+        {
+            _busy.Hide();
+        }
+
 
         // =====================================================
         // CICLO DE VIDA

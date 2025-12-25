@@ -307,8 +307,16 @@ namespace GS.Core.UI.Forms
                 Grid.State = GsGridState.Ready;
                 paginator.State = GsPaginatorState.Disabled;
 
-                StateView.State = GsUxState.Empty;
-                StateView.Message = "Nenhum registro encontrado.";
+                StateView.ShowEmpty(
+                new GsEmptyState(
+                title: "Nenhum registro encontrado",
+                 message: "Tente ajustar os filtros ou cadastrar um novo item.",
+                  icon: Properties.Resources.icon_empty_box,
+                 actionText: "Cadastrar",
+                 action: () => OnNovoClick(this, EventArgs.Empty)
+                 )
+                );
+
                 return;
             }
 

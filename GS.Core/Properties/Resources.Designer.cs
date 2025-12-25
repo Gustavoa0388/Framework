@@ -93,6 +93,16 @@ namespace GS.Core.UI.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icon_empty_box {
+            get {
+                object obj = ResourceManager.GetObject("icon_empty_box", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icone_senha_mostrar {
             get {
                 object obj = ResourceManager.GetObject("icone_senha_mostrar", resourceCulture);
