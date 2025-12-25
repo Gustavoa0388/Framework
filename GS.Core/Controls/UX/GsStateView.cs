@@ -30,6 +30,11 @@ namespace GS.Core.UI.Controls.UX
 
         private PictureBox picIcon;
         private GsEmptyState _emptyState;
+        private GsErrorState _errorState;
+
+        private Button btnDetails;
+        private TextBox txtDetails;
+
 
         private GsTheme _theme;
         private GsUxState _state = GsUxState.Hidden;
@@ -123,6 +128,29 @@ namespace GS.Core.UI.Controls.UX
 
             btnAction.Click += (_, _) => ActionClicked?.Invoke(this, EventArgs.Empty);
 
+            btnDetails = new Button
+            {
+                Text = "Detalhes técnicos",
+                AutoSize = true,
+                Visible = false
+            };
+            btnDetails.Click += (s, e) =>
+            {
+                txtDetails.Visible = !txtDetails.Visible;
+            };
+
+
+            txtDetails = new TextBox
+            {
+                Multiline = true,
+                ReadOnly = true,
+                Visible = false,
+                ScrollBars = ScrollBars.Vertical,
+                Height = 120,
+                Dock = DockStyle.Top
+            };
+
+
             var layout = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -136,6 +164,8 @@ namespace GS.Core.UI.Controls.UX
             layout.Controls.Add(picIcon);
             layout.Controls.Add(lblTitle);
             layout.Controls.Add(lblMessage);
+            layout.Controls.Add(btnDetails);
+            layout.Controls.Add(txtDetails);
             layout.Controls.Add(progress);
             layout.Controls.Add(btnAction);
 
@@ -208,9 +238,14 @@ namespace GS.Core.UI.Controls.UX
 
                 case GsUxState.Error:
                     textColor = _theme.Error;
-                    lblTitle.Text = "Erro";
-                    lblMessage.Text = Message;
+
+                    if (_errorState != null)
+                    {
+                        lblTitle.Text = _errorState.Title;
+                        lblMessage.Text = _errorState.Message;
+                    }
                     break;
+
 
                 case GsUxState.Success:
                     textColor = _theme.Success;
@@ -235,6 +270,11 @@ namespace GS.Core.UI.Controls.UX
             lblMessage.Visible = true;
             btnAction.Visible = !string.IsNullOrWhiteSpace(btnAction.Text);
         }
+
+        // =====================================================
+        // MÉTODOS DE EXIBIÇÃO DE ESTADOS
+        // =====================================================
+
         /// <summary>
         /// Exibe um Empty State contextual baseado em modelo semântico.
         /// </summary>
@@ -263,6 +303,39 @@ namespace GS.Core.UI.Controls.UX
             _emptyState?.Action?.Invoke();
         }
 
+        /// <summary>
+        /// Exibe um Error State semântico com retry opcional.
+        /// </summary>
+        public void ShowError(GsErrorState state)
+        {
+            _errorState = state;
+
+            State = GsUxState.Error;
+
+            Title = state.Title;
+            Message = state.Message;
+
+            // Retry
+            ActionText = state.RetryText;
+            btnAction.Visible = !string.IsNullOrWhiteSpace(state.RetryText)
+                                && state.RetryAction != null;
+
+            btnAction.Click -= OnRetryClicked;
+            btnAction.Click += OnRetryClicked;
+
+            // Detalhes técnicos
+            txtDetails.Text = state.TechnicalDetails ?? string.Empty;
+            txtDetails.Visible = false;
+
+            btnDetails.Visible = !string.IsNullOrWhiteSpace(state.TechnicalDetails);
+
+            ShowProgress = false;
+            Visible = true;
+        }
+        private void OnRetryClicked(object sender, EventArgs e)
+        {
+            _errorState?.RetryAction?.Invoke();
+        }
 
 
     }
