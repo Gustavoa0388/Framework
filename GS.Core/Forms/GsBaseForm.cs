@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
 using GS.Core.UI.Theming;
@@ -10,17 +9,17 @@ namespace GS.Core.UI.Forms
     /// <summary>
     /// GsBaseForm
     ///
-    /// Form base do GS Core UI.
+    /// Form base oficial do GS Core UI.
     ///
     /// RESPONSABILIDADES:
     /// - Centralizar aplicação de tema
     /// - Oferecer validação global padronizada
-    /// - Servir como base neutra para formulários
+    /// - Orquestrar o lifecycle oficial do GS Core UI
     ///
     /// NÃO FAZ:
-    /// - Não controla estados de UX (Loading, Error, Empty)
     /// - Não executa lógica de negócio
-    /// - Não define layout
+    /// - Não carrega dados automaticamente fora do contrato
+    /// - Não decide estados de UX
     /// </summary>
     public class GsBaseForm : Form
     {
@@ -40,6 +39,13 @@ namespace GS.Core.UI.Forms
         protected GsTheme CustomTheme { get; set; }
 
         // =====================================================
+        // CONTROLE DE LIFECYCLE
+        // =====================================================
+
+        private bool _initialized;
+        private bool _dataLoaded;
+
+        // =====================================================
         // CONSTRUTOR
         // =====================================================
 
@@ -50,23 +56,92 @@ namespace GS.Core.UI.Forms
         }
 
         // =====================================================
-        // CICLO DE VIDA
+        // WINFORMS → GS CORE LIFECYCLE
         // =====================================================
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if (_initialized)
+                return;
+
             ApplyThemeIfNeeded();
+            OnInitialize();
+
+            _initialized = true;
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            // Gancho futuro:
-            // - métricas
-            // - logging
-            // - animações
+
+            if (_dataLoaded)
+                return;
+
+            _dataLoaded = true;
+
+            ExecuteLoadPipeline();
         }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (!OnBeforeClose())
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        // =====================================================
+        // PIPELINE CONTROLADO
+        // =====================================================
+
+        private void ExecuteLoadPipeline()
+        {
+            try
+            {
+                OnLoadData();
+                OnAfterLoad();
+            }
+            catch
+            {
+                // Importante:
+                // O GsBaseForm NÃO decide UX nem tratamento de erro.
+                // Cada Form concreto é responsável por isso.
+                throw;
+            }
+        }
+
+        // =====================================================
+        // HOOKS OFICIAIS DO LIFECYCLE GS CORE
+        // =====================================================
+
+        /// <summary>
+        /// Executado uma única vez na inicialização do Form.
+        /// Use para setup estrutural.
+        /// </summary>
+        protected virtual void OnInitialize() { }
+
+        /// <summary>
+        /// Executado na primeira exibição do Form.
+        /// Use para carregar dados.
+        /// </summary>
+        protected virtual void OnLoadData() { }
+
+        /// <summary>
+        /// Executado após OnLoadData().
+        /// Use para ajustes finais de UX.
+        /// </summary>
+        protected virtual void OnAfterLoad() { }
+
+        /// <summary>
+        /// Executado antes do fechamento do Form.
+        /// Retorne false para cancelar o fechamento.
+        /// </summary>
+        protected virtual bool OnBeforeClose() => true;
 
         // =====================================================
         // TEMA
@@ -116,7 +191,6 @@ namespace GS.Core.UI.Forms
 
         /// <summary>
         /// Obtém recursivamente todos os controles IGsValidatable.
-        /// Inclui Panels, GroupBox, TabPages, etc.
         /// </summary>
         protected virtual List<IGsValidatable> GetAllValidatableControls(Control parent)
         {
