@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Base;
 using GS.Core.UI.Theming;
+using GS.Core.UI.Forms.Navigation;
+
 
 namespace GS.Core.UI.Forms
 {
@@ -44,6 +46,17 @@ namespace GS.Core.UI.Forms
 
         private bool _initialized;
         private bool _dataLoaded;
+
+        // =====================================================
+        // RESULTADO DE NAVEGAÇÃO
+        // =====================================================
+
+        /// <summary>
+        /// Resultado semântico da navegação deste formulário.
+        /// Sempre possuirá um valor ao final do ciclo de vida.
+        /// </summary>
+        public FormResult NavigationResult { get; private set; } = FormResult.None();
+
 
         // =====================================================
         // CONSTRUTOR
@@ -92,8 +105,18 @@ namespace GS.Core.UI.Forms
                 return;
             }
 
+            // =====================================================
+            // GARANTIA DE RESULTADO DE NAVEGAÇÃO
+            // =====================================================
+
+            if (NavigationResult == null || NavigationResult.ResultType == FormResultType.None)
+            {
+                NavigationResult = FormResult.Closed();
+            }
+
             base.OnFormClosing(e);
         }
+
 
         // =====================================================
         // PIPELINE CONTROLADO
@@ -142,6 +165,21 @@ namespace GS.Core.UI.Forms
         /// Retorne false para cancelar o fechamento.
         /// </summary>
         protected virtual bool OnBeforeClose() => true;
+
+        // =====================================================
+        // ENCERRAMENTO COM RESULTADO
+        // =====================================================
+
+        /// <summary>
+        /// Encerra o formulário informando explicitamente
+        /// um resultado semântico de navegação.
+        /// </summary>
+        protected void CloseWithResult(FormResult result)
+        {
+            NavigationResult = result ?? FormResult.None();
+            Close();
+        }
+
 
         // =====================================================
         // TEMA

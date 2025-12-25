@@ -125,10 +125,21 @@ namespace GS.Core.UI.Demo
             var itemConsulta = new ToolStripMenuItem("Consulta de Clientes");
             itemConsulta.Click += (_, _) =>
             {
-                // Abertura modal apenas para testes
-                using var frm = new FrmConsultaCliente();
-                frm.ShowDialog(this);
+                using (var frm = new FrmConsultaCliente())
+                {
+                    frm.ShowDialog(this);
+
+                    // DEMO:
+                    // Apenas valida o contrato de navegação
+                    if (frm.NavigationResult.HasResult)
+                    {
+                        FormMsg.Info(
+                            $"Consulta encerrada com resultado: {frm.NavigationResult.ResultType}"
+                        );
+                    }
+                }
             };
+
 
             // -----------------------------
             // Cadastro de Clientes

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using GS.Core.UI.Controls.Inputs;
 using GS.Core.UI.Forms;
+using GS.Core.UI.Forms.Navigation;
 
 namespace GS.Core.UI.Demo.Forms.Pages
 {
@@ -9,7 +10,15 @@ namespace GS.Core.UI.Demo.Forms.Pages
     /// FrmCadastroCliente
     ///
     /// Tela DEMO de cadastro de cliente.
-    /// Demonstra uso correto do GS Core UI.
+    ///
+    /// OBJETIVO:
+    /// - Demonstrar uso do FormBaseCadastro
+    /// - Validar fluxo de salvamento com retorno semântico
+    ///
+    /// OBSERVAÇÕES IMPORTANTES:
+    /// - Não acessa banco
+    /// - Não possui regra de negócio
+    /// - Serve apenas para validar o GS Core UI
     /// </summary>
     public class FrmCadastroCliente : FormBaseCadastro
     {
@@ -45,6 +54,13 @@ namespace GS.Core.UI.Demo.Forms.Pages
         // LAYOUT
         // =====================================================
 
+        /// <summary>
+        /// Cria o layout manualmente.
+        /// 
+        /// DECISÃO:
+        /// - Layout simples
+        /// - Sem Designer (mais controle e previsibilidade)
+        /// </summary>
         private void BuildLayout()
         {
             lblNome = new Label
@@ -96,8 +112,17 @@ namespace GS.Core.UI.Demo.Forms.Pages
                 Location = new System.Drawing.Point(350, 200)
             };
 
+            // =================================================
+            // EVENTOS
+            // =================================================
+
             btnSalvar.Click += (_, _) => Save();
-            btnCancelar.Click += (_, _) => Close();
+
+            btnCancelar.Click += (_, _) =>
+            {
+                // Encerramento explícito com intenção
+                CloseWithResult(FormResult.Canceled());
+            };
 
             Controls.Add(lblNome);
             Controls.Add(txtNome);
@@ -109,23 +134,35 @@ namespace GS.Core.UI.Demo.Forms.Pages
         }
 
         // =====================================================
-        // FLUXO BASE
+        // FLUXO BASE (FORMBASECADASTRO)
         // =====================================================
 
+        /// <summary>
+        /// Carregamento da entidade.
+        /// 
+        /// DEMO:
+        /// - Sempre cadastro novo
+        /// </summary>
         protected override void OnLoadEntity()
         {
-            // DEMO:
-            // Cadastro novo
+            // Nada a carregar (DEMO)
         }
 
+        /// <summary>
+        /// Salvamento da entidade.
+        /// 
+        /// DEMO:
+        /// - Simula sucesso
+        /// - Encerra com resultado Saved
+        /// </summary>
         protected override void OnSaveEntity()
         {
-            // DEMO:
             var nome = txtNome.Text;
             var email = txtEmail.Text;
             var ativo = chkAtivo.Checked;
 
-            // Simula sucesso
+            // Simula salvamento bem-sucedido
+            CloseWithResult(FormResult.Saved());
         }
     }
 }
