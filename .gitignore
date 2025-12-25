@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# === GS Core UI (Debug conceitual) ===
+!GS.Core/Controls/Debug/
+!GS.Core/Controls/Debug/**
