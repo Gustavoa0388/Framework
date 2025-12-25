@@ -11,7 +11,7 @@
     /// - Estado visual
     /// - Estado de UX
     /// </summary>
-    public enum FormResultType
+    public enum GsFormResultType
     {
         /// <summary>
         /// Nenhum resultado relevante.

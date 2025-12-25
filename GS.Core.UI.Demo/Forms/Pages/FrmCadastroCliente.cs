@@ -121,7 +121,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
             btnCancelar.Click += (_, _) =>
             {
                 // Encerramento explícito com intenção
-                CloseWithResult(FormResult.Canceled());
+                CloseWithResult(GsFormResult.Canceled());
             };
 
             Controls.Add(lblNome);
@@ -162,7 +162,7 @@ namespace GS.Core.UI.Demo.Forms.Pages
             var ativo = chkAtivo.Checked;
 
             // Simula salvamento bem-sucedido
-            CloseWithResult(FormResult.Saved());
+            CloseWithResult(GsFormResult.Saved());
         }
     }
 }

@@ -55,7 +55,7 @@ namespace GS.Core.UI.Forms
         /// Resultado semântico da navegação deste formulário.
         /// Sempre possuirá um valor ao final do ciclo de vida.
         /// </summary>
-        public FormResult NavigationResult { get; private set; } = FormResult.None();
+        public GsFormResult NavigationResult { get; private set; } = GsFormResult.None();
 
 
         // =====================================================
@@ -109,9 +109,9 @@ namespace GS.Core.UI.Forms
             // GARANTIA DE RESULTADO DE NAVEGAÇÃO
             // =====================================================
 
-            if (NavigationResult == null || NavigationResult.ResultType == FormResultType.None)
+            if (NavigationResult == null || NavigationResult.ResultType == GsFormResultType.None)
             {
-                NavigationResult = FormResult.Closed();
+                NavigationResult = GsFormResult.Closed();
             }
 
             base.OnFormClosing(e);
@@ -174,9 +174,9 @@ namespace GS.Core.UI.Forms
         /// Encerra o formulário informando explicitamente
         /// um resultado semântico de navegação.
         /// </summary>
-        protected void CloseWithResult(FormResult result)
+        protected void CloseWithResult(GsFormResult result)
         {
-            NavigationResult = result ?? FormResult.None();
+            NavigationResult = result ?? GsFormResult.None();
             Close();
         }
 

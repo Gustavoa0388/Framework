@@ -14,14 +14,14 @@
     /// - Apenas transporta intenção + valor
     /// </summary>
     /// <typeparam name="T">Tipo do valor retornado.</typeparam>
-    public sealed class FormResultT<T> : FormResult
+    public sealed class GsFormResultT<T> : GsFormResult
     {
         /// <summary>
         /// Valor retornado pela tela.
         /// </summary>
         public T Value { get; }
 
-        private FormResultT(FormResultType type, T value)
+        private GsFormResultT(GsFormResultType type, T value)
             : base(type)
         {
             Value = value;
@@ -34,9 +34,9 @@
         /// <summary>
         /// Cria um resultado de seleção com valor.
         /// </summary>
-        public static FormResultT<T> Selected(T value)
+        public static GsFormResultT<T> Selected(T value)
         {
-            return new FormResultT<T>(FormResultType.Selected, value);
+            return new GsFormResultT<T>(GsFormResultType.Selected, value);
         }
 
         // =====================================================
