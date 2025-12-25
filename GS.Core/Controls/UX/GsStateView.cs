@@ -246,7 +246,6 @@ namespace GS.Core.UI.Controls.UX
                     }
                     break;
 
-
                 case GsUxState.Success:
                     textColor = _theme.Success;
                     lblTitle.Text = "Sucesso";
