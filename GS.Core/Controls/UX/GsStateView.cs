@@ -322,11 +322,27 @@ namespace GS.Core.UI.Controls.UX
             btnAction.Click -= OnRetryClicked;
             btnAction.Click += OnRetryClicked;
 
-            // Detalhes técnicos
-            txtDetails.Text = state.TechnicalDetails ?? string.Empty;
+            // =====================================================
+            // DIAGNÓSTICO VISUAL (EXPLÍCITO)
+            // =====================================================
+
+            // O diagnóstico técnico só pode ser exibido se:
+            // - Houver detalhe técnico
+            // - A aplicação autorizar explicitamente
+            bool canShowDiagnostics =
+                state.AllowDiagnostics &&
+                !string.IsNullOrWhiteSpace(state.TechnicalDetails);
+
+            // Texto técnico (nunca visível por padrão)
+            txtDetails.Text = canShowDiagnostics
+                ? state.TechnicalDetails
+                : string.Empty;
+
             txtDetails.Visible = false;
 
-            btnDetails.Visible = !string.IsNullOrWhiteSpace(state.TechnicalDetails);
+            // Botão de diagnóstico só aparece se autorizado
+            btnDetails.Visible = canShowDiagnostics;
+
 
             ShowProgress = false;
             Visible = true;
