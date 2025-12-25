@@ -55,6 +55,28 @@ namespace GS.Core.UI.Forms.Navigation
             }
         }
 
+        /// <summary>
+        /// Abre um formulário modal GS Core UI usando factory explícita.
+        /// Permite formulários com construtor parametrizado.
+        /// </summary>
+        public static GsFormResult OpenModal<TForm>(
+            Func<TForm> factory,
+            Form owner = null)
+            where TForm : GsBaseForm
+        {
+            using (var form = factory())
+            {
+                if (owner != null)
+                {
+                    form.ShowDialog(owner);
+                }
+                else
+                {
+                    form.ShowDialog();
+                }
 
+                return form.NavigationResult ?? GsFormResult.None();
+            }
+        }
     }
 }
