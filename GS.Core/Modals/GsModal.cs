@@ -8,17 +8,6 @@ namespace GS.Core.UI.Modals
     ///
     /// Fachada pública oficial para abertura de modais
     /// corporativos do GS Core UI.
-    ///
-    /// RESPONSABILIDADE:
-    /// - Expor API única e explícita para modais
-    /// - Delegar abertura para GsNavigationService
-    /// - Retornar resultado semântico (GsFormResult)
-    ///
-    /// NÃO FAZ:
-    /// - Não decide fluxo
-    /// - Não executa regra de negócio
-    /// - Não mantém estado
-    /// - Não acessa UI diretamente
     /// </summary>
     public static class GsModal
     {
@@ -26,15 +15,36 @@ namespace GS.Core.UI.Modals
         // CONFIRM
         // =====================================================
 
-        /// <summary>
-        /// Exibe um modal de confirmação.
-        /// </summary>
-        /// <param name="message">Mensagem exibida ao usuário.</param>
-        /// <param name="owner">Form pai opcional.</param>
-        /// <returns>Resultado semântico da confirmação.</returns>
         public static GsFormResult Confirm(string message, Form owner = null)
         {
             return OpenModal<GsConfirmModalForm>(owner, message);
+        }
+
+        // =====================================================
+        // INFO
+        // =====================================================
+
+        public static GsFormResult Info(string message, Form owner = null)
+        {
+            return OpenModal<GsInfoModalForm>(owner, message);
+        }
+
+        // =====================================================
+        // WARNING
+        // =====================================================
+
+        public static GsFormResult Warning(string message, Form owner = null)
+        {
+            return OpenModal<GsWarningModalForm>(owner, message);
+        }
+
+        // =====================================================
+        // ERROR
+        // =====================================================
+
+        public static GsFormResult Error(string message, Form owner = null)
+        {
+            return OpenModal<GsErrorModalForm>(owner, message);
         }
 
         // =====================================================
@@ -44,7 +54,6 @@ namespace GS.Core.UI.Modals
         private static GsFormResult OpenModal<TModal>(Form owner, params object[] args)
             where TModal : GsModalBaseForm
         {
-            // Criação explícita para permitir construtores com parâmetros
             var modal = (TModal)System.Activator.CreateInstance(typeof(TModal), args);
 
             using (modal)
