@@ -54,5 +54,7 @@ namespace GS.Core.UI.Forms.Navigation
                 return form.NavigationResult ?? GsFormResult.None();
             }
         }
+
+
     }
 }
