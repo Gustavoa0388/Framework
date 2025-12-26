@@ -272,6 +272,11 @@ namespace GS.Core.UI.Forms
                 diagnosticsAllowed,
                 hasTechnicalDetails
             );
+
+            _debugUxOverlay.UpdateTelemetry(
+                UiTelemetry?.Snapshot()
+            );
+
         }
 
         // =====================================================
