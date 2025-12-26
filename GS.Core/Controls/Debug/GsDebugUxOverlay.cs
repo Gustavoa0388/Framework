@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using GS.Core.UI.Controls.UX;
 using GS.Core.UI.Forms.Navigation;
+using GS.Core.UI.Telemetry;
+using System.Collections.Generic;
+
 
 namespace GS.Core.UI.Controls.Debug
 {
@@ -24,6 +27,8 @@ namespace GS.Core.UI.Controls.Debug
         private GsFormResultType _lastFormResult = GsFormResultType.None;
         private bool _diagnosticsAllowed;
         private bool _hasTechnicalDetails;
+        private IReadOnlyDictionary<UiTelemetryMetric, int> _telemetrySnapshot;
+
 
         // =====================================================
         // CONTROLES VISUAIS
@@ -109,6 +114,16 @@ namespace GS.Core.UI.Controls.Debug
             AtualizarVisual();
         }
 
+        /// <summary>
+        /// Atualiza snapshot de telemetria (somente leitura).
+        /// </summary>
+        public void UpdateTelemetry(IReadOnlyDictionary<UiTelemetryMetric, int> snapshot)
+        {
+            _telemetrySnapshot = snapshot;
+            AtualizarVisual();
+        }
+
+
         // =====================================================
         // VISUAL
         // =====================================================
@@ -121,7 +136,17 @@ namespace GS.Core.UI.Controls.Debug
             lblNavigation.Text = $"FormResult: {_lastFormResult}";
             lblDiagnostics.Text =
                 $"Diagnostics: {(_diagnosticsAllowed ? "Allowed" : "Blocked")} | Details: {(_hasTechnicalDetails ? "Yes" : "No")}";
+
+            if (_telemetrySnapshot != null && _telemetrySnapshot.Count > 0)
+            {
+                foreach (var item in _telemetrySnapshot)
+                {
+                    // Exibição básica (diagnóstico, não UI final)
+                    Console.WriteLine($"[Telemetry] {item.Key}: {item.Value}");
+                }
+            }
         }
+
 
         private static Label CreateLineLabel()
         {
