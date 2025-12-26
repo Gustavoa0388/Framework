@@ -286,8 +286,12 @@ namespace GS.Core.UI.Forms
         protected void CloseWithResult(GsFormResult result)
         {
             NavigationResult = result ?? GsFormResult.None();
+
+            UiTelemetry?.Increment(UiTelemetryMetric.FormResultDefined);
+
             Close();
         }
+
 
         // =====================================================
         // TEMA
