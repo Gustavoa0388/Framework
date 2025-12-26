@@ -122,17 +122,16 @@ namespace GS.Core.UI.Forms
                 return;
             }
 
-            // =====================================================
-            // GARANTIA DE RESULTADO DE NAVEGAÇÃO
-            // =====================================================
-
             if (NavigationResult == null || NavigationResult.ResultType == GsFormResultType.None)
             {
                 NavigationResult = GsFormResult.Closed();
             }
 
+            UiTelemetry?.Increment(UiTelemetryMetric.FormClosed);
+
             base.OnFormClosing(e);
         }
+
 
         // =====================================================
         // PIPELINE CONTROLADO
