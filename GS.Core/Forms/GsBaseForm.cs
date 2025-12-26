@@ -6,8 +6,7 @@ using GS.Core.UI.Theming;
 using GS.Core.UI.Forms.Navigation;
 using GS.Core.UI.Controls.Debug;
 using GS.Core.UI.Controls.UX;
-
-
+using GS.Core.UI.Telemetry;
 
 namespace GS.Core.UI.Forms
 {
@@ -60,6 +59,23 @@ namespace GS.Core.UI.Forms
         /// </summary>
         public GsFormResult NavigationResult { get; private set; } = GsFormResult.None();
 
+        // =====================================================
+        // UI TELEMETRIA MANUAL (OPT-IN)
+        // =====================================================
+
+        private GsUiTelemetry _uiTelemetry;
+
+        /// <summary>
+        /// Habilita ou desabilita a UI Telemetria Manual para este formulário.
+        /// Desabilitada por padrão.
+        /// </summary>
+        protected bool EnableUiTelemetry { get; set; } = false;
+
+        /// <summary>
+        /// Acesso somente leitura à UI Telemetria Manual.
+        /// Pode ser usado por Debug UX e diagnóstico.
+        /// </summary>
+        protected GsUiTelemetry UiTelemetry => _uiTelemetry;
 
         // =====================================================
         // CONSTRUTOR
@@ -95,7 +111,6 @@ namespace GS.Core.UI.Forms
                 return;
 
             _dataLoaded = true;
-
             ExecuteLoadPipeline();
         }
 
@@ -117,7 +132,7 @@ namespace GS.Core.UI.Forms
             }
 
             base.OnFormClosing(e);
-        }     
+        }
 
         // =====================================================
         // PIPELINE CONTROLADO
@@ -145,9 +160,28 @@ namespace GS.Core.UI.Forms
 
         /// <summary>
         /// Executado uma única vez na inicialização do Form.
-        /// Use para setup estrutural.
+        /// Infraestrutura do framework é inicializada aqui.
         /// </summary>
-        protected virtual void OnInitialize() { }
+        protected virtual void OnInitialize()
+        {
+            InitializeInfrastructure();
+            OnInitializeInternal();
+        }
+
+        /// <summary>
+        /// Inicialização de infraestrutura do GS Core UI.
+        /// Blindada contra override indevido.
+        /// </summary>
+        private void InitializeInfrastructure()
+        {
+            _uiTelemetry = new GsUiTelemetry(EnableUiTelemetry);
+        }
+
+        /// <summary>
+        /// Hook seguro para inicialização de formulários filhos.
+        /// A infraestrutura do GS Core já estará pronta.
+        /// </summary>
+        protected virtual void OnInitializeInternal() { }
 
         /// <summary>
         /// Executado na primeira exibição do Form.
@@ -167,7 +201,7 @@ namespace GS.Core.UI.Forms
         /// </summary>
         protected virtual bool OnBeforeClose() => true;
 
-        /// =====================================================
+        // =====================================================
         // DEBUG UX (OBSERVABILIDADE VISUAL)
         // =====================================================
 
@@ -234,7 +268,6 @@ namespace GS.Core.UI.Forms
             );
         }
 
-
         // =====================================================
         // ENCERRAMENTO COM RESULTADO
         // =====================================================
@@ -248,7 +281,6 @@ namespace GS.Core.UI.Forms
             NavigationResult = result ?? GsFormResult.None();
             Close();
         }
-
 
         // =====================================================
         // TEMA
