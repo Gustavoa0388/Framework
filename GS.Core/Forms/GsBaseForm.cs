@@ -221,9 +221,16 @@ namespace GS.Core.UI.Forms
                     return;
 
                 _enableDebugUx = value;
+
+                if (_enableDebugUx)
+                    UiTelemetry?.Increment(UiTelemetryMetric.DebugUxEnabled);
+                else
+                    UiTelemetry?.Increment(UiTelemetryMetric.DebugUxDisabled);
+
                 UpdateDebugUxVisibility();
             }
         }
+
 
         private void InitializeDebugUx()
         {
